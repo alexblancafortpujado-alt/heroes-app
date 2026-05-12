@@ -2056,6 +2056,347 @@
     100% { box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
   }
 
+  /* Skilltree */
+  .st-module-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .st-module-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 11px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    transition: all 0.2s ease;
+  }
+  .st-module-tab:hover:not(.is-locked) {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .st-module-tab.is-active {
+    background: rgba(242,192,99,0.16);
+    border-color: rgba(242,192,99,0.5);
+    color: #F2C063;
+    box-shadow: 0 0 18px rgba(242,192,99,0.18);
+  }
+  .st-module-tab.is-locked {
+    opacity: 0.42;
+    cursor: not-allowed;
+  }
+  .st-module-tab-icon { font-size: 14px; line-height: 1; }
+  .st-module-tab-name { line-height: 1; }
+  .st-module-tab.is-active .st-module-tab-icon {
+    filter: drop-shadow(0 0 6px rgba(242,192,99,0.7));
+  }
+
+  .st-module-header {
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .st-module-name {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    background: linear-gradient(180deg, #FFFFFF 0%, #C7C4BC 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .st-module-subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-top: 8px;
+    margin-bottom: 18px;
+    letter-spacing: 0.02em;
+  }
+  .st-module-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .st-module-progress-bar {
+    flex: 1;
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+  }
+  .st-module-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6BE3A4 0%, #6BA8E3 28%, #B89BE9 52%, #F2C063 78%, #FF8E72 100%);
+    box-shadow: 0 0 14px rgba(242,192,99,0.4);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius: 5px;
+  }
+  .st-module-progress-text {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-primary);
+    min-width: 90px;
+    text-align: right;
+  }
+  .st-mastery-banner {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background:
+      linear-gradient(90deg, rgba(242,192,99,0.18) 0%, rgba(255,142,114,0.18) 100%);
+    border: 1px solid rgba(242,192,99,0.4);
+    text-align: center;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.30em;
+    color: #F2C063;
+    text-shadow: 0 0 12px rgba(242,192,99,0.6);
+    box-shadow: 0 0 36px rgba(242,192,99,0.20);
+    animation: st-mastery-pulse 3s ease-in-out infinite;
+  }
+  @keyframes st-mastery-pulse {
+    0%, 100% { box-shadow: 0 0 36px rgba(242,192,99,0.20); }
+    50% { box-shadow: 0 0 60px rgba(242,192,99,0.40); }
+  }
+
+  .st-chapter {
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 0;
+    position: relative;
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    box-shadow:
+      inset 4px 0 0 0 var(--day-color),
+      inset 0 1px 0 0 rgba(255,255,255,0.06),
+      0 12px 40px rgba(0,0,0,0.45);
+    transition: box-shadow 0.6s ease, transform 0.3s ease;
+  }
+  .st-chapter.is-complete {
+    box-shadow:
+      inset 4px 0 0 0 var(--day-color),
+      inset 0 1px 0 0 rgba(255,255,255,0.06),
+      0 12px 40px rgba(0,0,0,0.45),
+      0 0 60px color-mix(in srgb, var(--day-color) 35%, transparent);
+  }
+  .st-chapter-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .st-chapter-name {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+  .st-chapter-subtitle {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+  }
+  .st-chapter-progress {
+    margin-left: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .st-chapter.is-complete .st-chapter-progress {
+    color: var(--day-color);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--day-color) 60%, transparent);
+  }
+  .st-chapter-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .st-chapter-bar-fill {
+    height: 100%;
+    background: var(--day-color);
+    box-shadow: 0 0 10px var(--day-color);
+    transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius: 2px;
+  }
+
+  .st-subgroup { margin-bottom: 18px; }
+  .st-subgroup:last-child { margin-bottom: 0; }
+  .st-subgroup-name {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s ease;
+  }
+  .st-subgroup-name::before {
+    content: '';
+    width: 16px;
+    height: 1.5px;
+    background: var(--day-color);
+    opacity: 0.55;
+    border-radius: 1px;
+    flex-shrink: 0;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+  }
+  .st-subgroup.is-complete .st-subgroup-name {
+    color: var(--day-color);
+  }
+  .st-subgroup.is-complete .st-subgroup-name::before {
+    opacity: 1;
+    box-shadow: 0 0 8px var(--day-color);
+  }
+
+  .st-node {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 11px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 13.5px;
+    line-height: 1.4;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .st-node:last-child { margin-bottom: 0; }
+  .st-node:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: color-mix(in srgb, var(--day-color) 40%, transparent);
+    transform: translateX(2px);
+  }
+  .st-node:active { transform: translateX(2px) scale(0.99); }
+  .st-node-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.45);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .st-node-check {
+    font-size: 13px;
+    color: #0A0A0B;
+    font-weight: 900;
+    opacity: 0;
+    transform: scale(0.4);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    line-height: 1;
+  }
+  .st-node.is-done {
+    background: color-mix(in srgb, var(--day-color) 8%, rgba(255,255,255,0.03));
+    border-color: color-mix(in srgb, var(--day-color) 30%, transparent);
+  }
+  .st-node.is-done .st-node-circle {
+    background: var(--day-color);
+    border-color: var(--day-color);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--day-color) 70%, transparent);
+  }
+  .st-node.is-done .st-node-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .st-node.is-done .st-node-label {
+    color: var(--text-primary);
+  }
+  .st-node-label { flex: 1; word-break: break-word; }
+
+  .st-trunk {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    height: 36px;
+    position: relative;
+  }
+  .st-trunk-line {
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--from-color) 0%, var(--to-color) 100%);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--from-color) 60%, transparent);
+    position: relative;
+  }
+  .st-trunk-line::before, .st-trunk-line::after {
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .st-trunk-line::before {
+    top: -4px;
+    background: var(--from-color);
+    box-shadow: 0 0 8px var(--from-color);
+  }
+  .st-trunk-line::after {
+    bottom: -4px;
+    background: var(--to-color);
+    box-shadow: 0 0 8px var(--to-color);
+  }
+
+  .st-chapter-celebrate-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 16px;
+    opacity: 0;
+  }
+  .st-chapter-celebrate-glow.is-firing {
+    animation: st-chapter-glow 1.2s ease-out;
+  }
+  @keyframes st-chapter-glow {
+    0%   { opacity: 0; box-shadow: 0 0 0 0 var(--day-color) inset; }
+    30%  { opacity: 1; box-shadow: 0 0 0 4px color-mix(in srgb, var(--day-color) 50%, transparent) inset, 0 0 90px var(--day-color); }
+    100% { opacity: 0; box-shadow: 0 0 0 0 var(--day-color) inset; }
+  }
+
+  @media (max-width: 480px) {
+    .st-module-name { font-size: 28px; }
+    .st-module-progress-text { font-size: 12px; min-width: 70px; }
+    .st-chapter { padding: 18px 16px; }
+    .st-chapter-name { font-size: 17px; }
+    .st-node { font-size: 12.5px; padding: 9px 12px; gap: 10px; }
+    .st-node-circle { width: 22px; height: 22px; }
+  }
+
   /* Auth gate (Clerk) */
   body.auth-pending > *:not(.auth-gate):not(#authGate) {
     visibility: hidden;
@@ -2261,6 +2602,7 @@
   <button class="tab-btn" data-tab="habits" type="button">Habits</button>
   <button class="tab-btn" data-tab="calendar" type="button">Calendar</button>
   <button class="tab-btn" data-tab="portal" type="button">Portal</button>
+  <button class="tab-btn" data-tab="skilltree" type="button">Skilltree</button>
 </nav>
 
 <div class="tab-panel is-active" data-tab="dashboard">
@@ -2451,6 +2793,14 @@
     </div>
   </div>
 </div><!-- /tab-panel portal -->
+
+<div class="tab-panel" data-tab="skilltree">
+  <div class="section">
+    <div class="section-title">Skilltree</div>
+    <div class="st-module-tabs" id="stModuleTabs"></div>
+    <div id="stContent"></div>
+  </div>
+</div><!-- /tab-panel skilltree -->
 
 <div class="cal-modal-bg" id="portalModalBg" style="display:none;">
   <div class="cal-modal portal-modal" role="dialog" aria-modal="true">
@@ -4448,6 +4798,455 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     }
   }
 
+  // ─── Skilltree ────────────────────────────────────────────────────
+  const SKILLTREE_MODULES = [
+    {
+      id: 'modo-creativo',
+      name: 'Modo Creativo',
+      subtitle: 'Mentalidad y bases · 5 días',
+      icon: '🎮',
+      chapters: [
+        {
+          id: 'intro', name: 'Inicio', subtitle: 'Antes de empezar', color: '#6BE3A4',
+          subgroups: [
+            { name: '', tasks: [
+              'Entender qué es el Heroes Protocol',
+              'Entender por qué Modo Creativo es tan importante',
+              'Empezar el reto de 5 días',
+            ]}
+          ]
+        },
+        {
+          id: 'dia-1', name: 'Día 1', subtitle: 'Ingeniería inversa + Escultura ideal', color: '#6BA8E3',
+          subgroups: [
+            { name: 'Vídeo 1: El videojuego de la vida', tasks: [
+              'Entender que la vida es el mejor videojuego de la historia',
+              'Entender la diferencia entre Modo Supervivencia y Modo Creativo',
+              'Entender que la mayoría nunca desbloqueará el Modo Creativo',
+              'Firmar contrato',
+            ]},
+            { name: 'Vídeo 2: Inspiración vs Exploración', tasks: [
+              'Entender la importancia de aprender',
+              'Entender qué es el Nivel de Consciencia',
+              'Entender la diferencia entre Inspiración y Exploración',
+              'Entender las dos formas de pagar el aprendizaje',
+            ]},
+            { name: 'Vídeo 3: Ley Causal', tasks: [
+              'Entender que la Ley Causal es la base de todo',
+              'Entender cómo funciona la Ley Causal',
+              'Entender diferentes ejemplos de cómo aplica a la vida real',
+            ]},
+            { name: 'Vídeo 4: Ingeniería inversa', tasks: [
+              'Entender qué es la Ingeniería Inversa',
+              'Entender que vida → acciones → decisiones → creencias',
+              'Entender que las creencias son el input que crea la vida ideal',
+            ]},
+            { name: 'Vídeo 5: Metáfora del escultor', tasks: [
+              'Entender que tu vida es una roca y tú eres un escultor',
+              'Entender los 5 errores que toda persona mediocre comete',
+            ]},
+            { name: 'Vídeo 6: Simio vs Ángel', tasks: [
+              'Entender la importancia del dolor y del deseo',
+              'Entender la diferencia entre desear desde el Simio y el Ángel',
+            ]},
+            { name: 'Vídeo 7: Slides', tasks: [
+              'Entender que existen recuerdos del futuro',
+              'Entender qué es una Slide',
+              'Entender las 6 slides clave',
+            ]},
+            { name: 'Práctica 1: Slides', tasks: [
+              'Escribir "Yo"', 'Escribir "Ella"', 'Escribir "Habilidades"',
+              'Escribir "Amigos"', 'Escribir "Hobbies"', 'Escribir "Templo"',
+            ]},
+            { name: 'Vídeo 8: Teoría del portal', tasks: [
+              'Entender qué es la Teoría del Portal',
+              'Entender qué es el Anti-portal',
+            ]},
+            { name: 'Práctica 2: Portal', tasks: [
+              'Crear tu Portal', 'Crear tu Anti-Portal', 'Haz el post de comunidad',
+            ]},
+          ]
+        },
+        {
+          id: 'dia-2', name: 'Día 2', subtitle: 'Problem Solver + Creencias', color: '#B89BE9',
+          subgroups: [
+            { name: 'Vídeo 1: Problem Solver', tasks: [
+              'Entender que los problemas tienen calidad',
+              'Entender que la calidad de tu vida depende de la calidad de tus problemas',
+              'Entender que la clave está en convertirse en un Problem Solver',
+            ]},
+            { name: 'Vídeo 2: Percepción', tasks: [
+              'Entender la Selección Natural',
+              'Entender que todo lo que percibimos pasa por nuestros 6 sentidos pochos',
+              'Entender las diferencias entre la Realidad y la Interfaz',
+            ]},
+            { name: 'Vídeo 3: Creencias', tasks: [
+              'Entender que la realidad también la filtramos por las creencias',
+              'Entender la metáfora del mando de la play',
+              'Entender la metáfora de los surfers',
+              'Entender que creencias → decisiones → acciones → vida',
+            ]},
+            { name: 'Vídeo 4: Balanzas mágicas', tasks: [
+              'Entender la metáfora de las Balanzas Mágicas',
+              'Entender que las creencias provienen de las experiencias',
+              'Entender la historia del surf y por qué las creencias son tan importantes',
+            ]},
+            { name: 'Vídeo 5: Abre tu mente', tasks: [
+              'Entender la importancia de no aferrarse a las creencias',
+              'Entender que el cerebro no quiere cambiar creencias',
+              'Entender que las creencias son un lifestyle',
+              'Entender que la mayoría de creencias que tienes te limitan y es la razón por la que no ganas',
+            ]},
+            { name: 'Vídeo 6: Ciclos', tasks: [
+              'Entender la metáfora de Mike el cocinero',
+              'Entender la diferencia entre un Ciclo Positivo vs un Ciclo Negativo',
+              'Entender cómo esto se aplica a tu vida',
+            ]},
+            { name: 'Práctica 1: Método Científico', tasks: [
+              'Entender qué es el método científico',
+              'Montar todos los sistemas para aplicar el método científico',
+              'Seguir el paso a paso para entrar y salir de ciclos',
+            ]},
+          ]
+        },
+        {
+          id: 'dia-3', name: 'Día 3', subtitle: 'Constancia', color: '#F2C063',
+          subgroups: [
+            { name: 'Vídeo 1: Boss Final', tasks: [
+              'Entender que hay una parte de ti que no te quiere ver ganar',
+              'Entender la metáfora del ángel y el diablo',
+              'Entender la diferencia entre tu Yo Actual y tu Yo Ideal',
+              'Entender la diferencia entre gratificación instantánea y gratificación tardía',
+              'Entender cómo ganar al diablo',
+            ]},
+            { name: 'Vídeo 2: Calidad del placer', tasks: [
+              'Entender que hay diferentes tipos de placeres',
+              'Entender la diferencia entre placeres de baja calidad y placeres de alta',
+              'Entender la diferencia entre una vida fácil y una vida plena',
+            ]},
+            { name: 'Vídeo 3: Ama el villano', tasks: [
+              'Entender la importancia de Bowser',
+              'Entender que el dolor, la resistencia, es la clave de la felicidad y el progreso',
+            ]},
+            { name: 'Práctica 1: Método científico aplicado al dolor', tasks: [
+              'Encontrar cuello de botella: evitar el dolor',
+              'Encontrar creencias limitantes',
+              'Encontrar creencias correctas',
+              'Entender los ciclos',
+              'Preparar plan para romper los ciclos',
+            ]},
+          ]
+        },
+        {
+          id: 'dia-4', name: 'Día 4', subtitle: 'Ca$h', color: '#FF8E72',
+          subgroups: [
+            { name: 'Vídeo 1: Tiempo/Dinero', tasks: [
+              'Entender qué es realmente el dinero',
+              'Entender el ying y yang (tiempo y dinero)',
+              'Entender la diferencia entre ricos y Nuevos Ricos',
+              'Entender la importancia de usar el dinero para comprar equipamiento',
+            ]},
+            { name: 'Vídeo 2: Leverage', tasks: [
+              'Entender la diferencia entre el Modo Historia vs Rankeds',
+              'Entender la metáfora de las mariposas',
+              'Entender que tiempo = dinero y cómo el trabajo tradicional te jode tu vida',
+              'Entender qué es el Leverage',
+            ]},
+            { name: 'Vídeo 3: Cómo yo gano dinero', tasks: [
+              'Entender los dos negocios de Alekai',
+              'Entender la importancia de tener un passion project (para aprender)',
+              'Entender el caso de Gontzal',
+            ]},
+            { name: 'Vídeo 4: Friki a Nuevo Rico', tasks: [
+              'Entender que nunca había sido tan fácil y difícil a la vez',
+              'Entender que el dinero se genera con el valor',
+              'Entender los 2 grandes tipos de leverage inicial',
+              'Entender la importancia de tener una Marca Personal',
+            ]},
+            { name: 'Vídeo 5: Protocolo 1k', tasks: [
+              'Entender la historia de Alekai',
+              'Entender el Protocolo 1k',
+            ]},
+          ]
+        },
+      ]
+    },
+  ];
+
+  const SKILLTREE_LOCKED_MODULES = [
+    { icon: '🔒', name: 'Módulo 2 · próximamente' },
+    { icon: '🔒', name: 'Módulo 3 · próximamente' },
+  ];
+
+  const ST_KEY = 'skilltree_v1';
+  let stCurrentModuleId = SKILLTREE_MODULES[0].id;
+  let stRendered = false;
+
+  function getSkilltreeState() { return storeGet(ST_KEY) || {}; }
+  function setSkilltreeTask(taskId, done) {
+    const state = getSkilltreeState();
+    if (done) state[taskId] = true; else delete state[taskId];
+    storeSet(ST_KEY, state);
+  }
+  function stTaskId(moduleId, chIdx, sgIdx, tIdx) {
+    return moduleId + '/c' + chIdx + '/g' + sgIdx + '/t' + tIdx;
+  }
+
+  function renderSkilltreeModuleTabs() {
+    const tabs = document.getElementById('stModuleTabs');
+    tabs.innerHTML = '';
+    SKILLTREE_MODULES.forEach(m => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'st-module-tab' + (m.id === stCurrentModuleId ? ' is-active' : '');
+      btn.dataset.moduleId = m.id;
+      btn.innerHTML = '<span class="st-module-tab-icon">' + m.icon + '</span><span class="st-module-tab-name">' + m.name + '</span>';
+      btn.addEventListener('click', () => {
+        stCurrentModuleId = m.id;
+        renderSkilltree();
+      });
+      tabs.appendChild(btn);
+    });
+    SKILLTREE_LOCKED_MODULES.forEach(m => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'st-module-tab is-locked';
+      btn.disabled = true;
+      btn.innerHTML = '<span class="st-module-tab-icon">' + m.icon + '</span><span class="st-module-tab-name">' + m.name + '</span>';
+      tabs.appendChild(btn);
+    });
+  }
+
+  function computeChapterStats(module, chIdx, state) {
+    const ch = module.chapters[chIdx];
+    let total = 0, done = 0;
+    ch.subgroups.forEach((sg, sgIdx) => {
+      sg.tasks.forEach((_, tIdx) => {
+        total++;
+        if (state[stTaskId(module.id, chIdx, sgIdx, tIdx)]) done++;
+      });
+    });
+    return { total, done, complete: total > 0 && done === total };
+  }
+
+  function computeSubgroupStats(module, chIdx, sgIdx, state) {
+    const sg = module.chapters[chIdx].subgroups[sgIdx];
+    let done = 0;
+    sg.tasks.forEach((_, tIdx) => {
+      if (state[stTaskId(module.id, chIdx, sgIdx, tIdx)]) done++;
+    });
+    return { total: sg.tasks.length, done, complete: done === sg.tasks.length };
+  }
+
+  function renderSkilltree() {
+    const content = document.getElementById('stContent');
+    if (!content) return;
+    renderSkilltreeModuleTabs();
+    const module = SKILLTREE_MODULES.find(m => m.id === stCurrentModuleId) || SKILLTREE_MODULES[0];
+    const state = getSkilltreeState();
+
+    let totalTasks = 0, doneTasks = 0;
+    module.chapters.forEach((ch, chIdx) => {
+      const s = computeChapterStats(module, chIdx, state);
+      totalTasks += s.total; doneTasks += s.done;
+    });
+    const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+    const mastered = totalTasks > 0 && doneTasks === totalTasks;
+
+    content.innerHTML = '';
+
+    const header = document.createElement('div');
+    header.className = 'st-module-header' + (mastered ? ' is-mastered' : '');
+    header.innerHTML =
+      '<div class="st-module-name">' + module.name + '</div>' +
+      '<div class="st-module-subtitle">' + module.subtitle + '</div>' +
+      '<div class="st-module-progress-row">' +
+        '<div class="st-module-progress-bar"><div class="st-module-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="st-module-progress-text">' + doneTasks + ' / ' + totalTasks + ' · ' + pct + '%</div>' +
+      '</div>' +
+      (mastered ? '<div class="st-mastery-banner">✦ MASTERY UNLOCKED ✦</div>' : '');
+    content.appendChild(header);
+
+    module.chapters.forEach((ch, chIdx) => {
+      const stats = computeChapterStats(module, chIdx, state);
+      const card = document.createElement('div');
+      card.className = 'st-chapter' + (stats.complete ? ' is-complete' : '');
+      card.style.setProperty('--day-color', ch.color);
+      card.dataset.chIdx = String(chIdx);
+
+      const chPct = stats.total > 0 ? (stats.done / stats.total) * 100 : 0;
+      const hdr = document.createElement('div');
+      hdr.className = 'st-chapter-header';
+      hdr.innerHTML =
+        '<div class="st-chapter-name">' + ch.name + '</div>' +
+        '<div class="st-chapter-subtitle">' + (ch.subtitle || '') + '</div>' +
+        '<div class="st-chapter-progress">' + stats.done + ' / ' + stats.total + '</div>';
+      card.appendChild(hdr);
+
+      const bar = document.createElement('div');
+      bar.className = 'st-chapter-bar';
+      bar.innerHTML = '<div class="st-chapter-bar-fill" style="width:' + chPct + '%"></div>';
+      card.appendChild(bar);
+
+      ch.subgroups.forEach((sg, sgIdx) => {
+        const sgStats = computeSubgroupStats(module, chIdx, sgIdx, state);
+        const sgEl = document.createElement('div');
+        sgEl.className = 'st-subgroup' + (sgStats.complete ? ' is-complete' : '');
+        sgEl.dataset.sgIdx = String(sgIdx);
+        if (sg.name) {
+          const hd = document.createElement('div');
+          hd.className = 'st-subgroup-name';
+          hd.textContent = sg.name;
+          sgEl.appendChild(hd);
+        }
+        sg.tasks.forEach((taskText, tIdx) => {
+          const tid = stTaskId(module.id, chIdx, sgIdx, tIdx);
+          const isDone = !!state[tid];
+          const node = document.createElement('button');
+          node.type = 'button';
+          node.className = 'st-node' + (isDone ? ' is-done' : '');
+          node.dataset.taskId = tid;
+          node.style.setProperty('--day-color', ch.color);
+          node.innerHTML =
+            '<span class="st-node-circle"><span class="st-node-check">✓</span></span>' +
+            '<span class="st-node-label"></span>';
+          node.querySelector('.st-node-label').textContent = taskText;
+          node.addEventListener('click', () => onSkilltreeNodeClick(node, module, chIdx, sgIdx, tIdx, ch.color));
+          sgEl.appendChild(node);
+        });
+        card.appendChild(sgEl);
+      });
+
+      content.appendChild(card);
+
+      if (chIdx < module.chapters.length - 1) {
+        const next = module.chapters[chIdx + 1];
+        const trunk = document.createElement('div');
+        trunk.className = 'st-trunk';
+        trunk.innerHTML = '<div class="st-trunk-line" style="--from-color:' + ch.color + ';--to-color:' + next.color + '"></div>';
+        content.appendChild(trunk);
+      }
+    });
+
+    stRendered = true;
+  }
+
+  function onSkilltreeNodeClick(node, module, chIdx, sgIdx, tIdx, dayColor) {
+    const tid = stTaskId(module.id, chIdx, sgIdx, tIdx);
+    const wasDone = node.classList.contains('is-done');
+    const nowDone = !wasDone;
+    setSkilltreeTask(tid, nowDone);
+
+    node.classList.toggle('is-done', nowDone);
+
+    const ch = module.chapters[chIdx];
+    const card = node.closest('.st-chapter');
+    const sgEl = node.closest('.st-subgroup');
+    const state = getSkilltreeState();
+
+    // Update progress bar + counter in chapter
+    const stats = computeChapterStats(module, chIdx, state);
+    const chPct = stats.total > 0 ? (stats.done / stats.total) * 100 : 0;
+    const fill = card.querySelector('.st-chapter-bar-fill');
+    if (fill) fill.style.width = chPct + '%';
+    const counter = card.querySelector('.st-chapter-progress');
+    if (counter) counter.textContent = stats.done + ' / ' + stats.total;
+
+    // Subgroup state
+    const sgStats = computeSubgroupStats(module, chIdx, sgIdx, state);
+    const sgWasComplete = sgEl.classList.contains('is-complete');
+    const sgNowComplete = sgStats.complete;
+    sgEl.classList.toggle('is-complete', sgNowComplete);
+
+    // Chapter complete state
+    const chWasComplete = card.classList.contains('is-complete');
+    const chNowComplete = stats.complete;
+    card.classList.toggle('is-complete', chNowComplete);
+
+    // Module total + bar
+    let totalTasks = 0, doneTasks = 0;
+    module.chapters.forEach((c, i) => {
+      const s = computeChapterStats(module, i, state);
+      totalTasks += s.total; doneTasks += s.done;
+    });
+    const moduleFill = document.querySelector('.st-module-progress-fill');
+    const moduleText = document.querySelector('.st-module-progress-text');
+    const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+    if (moduleFill) moduleFill.style.width = pct + '%';
+    if (moduleText) moduleText.textContent = doneTasks + ' / ' + totalTasks + ' · ' + pct + '%';
+
+    if (!nowDone) {
+      if (navigator.vibrate) navigator.vibrate(6);
+      return;
+    }
+
+    // Burst at node
+    const r = node.getBoundingClientRect();
+    burstAt(r.left + 20, r.top + r.height / 2, {
+      count: 12, spread: 50, sizeMin: 4, sizeMax: 9,
+      colors: [dayColor, '#FFFFFF', dayColor]
+    });
+    chime('check');
+    if (navigator.vibrate) navigator.vibrate([8, 24, 10]);
+
+    // Subgroup just completed
+    if (!sgWasComplete && sgNowComplete) {
+      setTimeout(() => {
+        chime('pop');
+        const sgR = sgEl.getBoundingClientRect();
+        burstAt(sgR.left + sgR.width / 2, sgR.top + 30, {
+          count: 14, spread: 70, colors: [dayColor, '#FFFFFF']
+        });
+      }, 150);
+    }
+
+    // Chapter just completed
+    if (!chWasComplete && chNowComplete) {
+      setTimeout(() => {
+        chime('celebration');
+        if (navigator.vibrate) navigator.vibrate([12, 40, 30, 60, 50]);
+        const cardR = card.getBoundingClientRect();
+        spawnConfetti(cardR, {
+          count: 40,
+          colors: [dayColor, '#FFFFFF', dayColor, '#FFD89E', dayColor]
+        });
+        const glow = document.createElement('div');
+        glow.className = 'st-chapter-celebrate-glow is-firing';
+        glow.style.setProperty('--day-color', dayColor);
+        card.appendChild(glow);
+        setTimeout(() => glow.remove(), 1300);
+      }, 250);
+    }
+
+    // Module just mastered
+    const masteryWas = document.querySelector('.st-module-header.is-mastered');
+    if (!masteryWas && totalTasks > 0 && doneTasks === totalTasks) {
+      setTimeout(() => {
+        const header = document.querySelector('.st-module-header');
+        if (header) {
+          header.classList.add('is-mastered');
+          if (!header.querySelector('.st-mastery-banner')) {
+            const banner = document.createElement('div');
+            banner.className = 'st-mastery-banner';
+            banner.textContent = '✦ MASTERY UNLOCKED ✦';
+            header.appendChild(banner);
+          }
+        }
+        chime('finale');
+        if (navigator.vibrate) navigator.vibrate([20, 60, 40, 60, 60, 80, 100]);
+        const headerR = (document.querySelector('.st-module-header') || document.body).getBoundingClientRect();
+        spawnConfetti({ left: 0, top: -20, width: window.innerWidth, height: window.innerHeight * 0.5 }, {
+          count: 80,
+          colors: ['#F2C063', '#FFD89E', '#FFE4B0', '#FFFFFF', '#FFC857', '#FF9F1C', '#6BE3A4', '#6BA8E3', '#B89BE9', '#FF8E72']
+        });
+        const flash = document.createElement('div');
+        flash.className = 'priority-screen-flash';
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 780);
+      }, 450);
+    }
+  }
+
   // ─── Tabs ─────────────────────────────────────────────────────────
   function setActiveTab(name) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('is-active', b.dataset.tab === name));
@@ -4457,6 +5256,8 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
       requestAnimationFrame(() => scrollCalendarToNow());
     } else if (name === 'portal') {
       loadPortalNotes();
+    } else if (name === 'skilltree') {
+      renderSkilltree();
     }
   }
   document.querySelectorAll('.tab-btn').forEach(b => {
