@@ -8484,20 +8484,6 @@
     return out.join('\n');
   }
 
-  function bossDownloadFile(filename, text) {
-    try {
-      const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (e) { console.warn('[boss] download failed', e); }
-  }
-
   function flashBossBtn(btn, successText, durationMs) {
     if (!btn) return;
     if (!btn.dataset.originalLabel) btn.dataset.originalLabel = btn.textContent;
@@ -8511,17 +8497,207 @@
     }, durationMs || 2000);
   }
 
-  function exportBoss(boss, isDefeated, sourceBtn, successText) {
-    if (!boss) return;
-    const md = bossToMarkdown(boss, isDefeated);
-    const today = new Date().toISOString().slice(0, 10);
-    const filename = 'boss-' + bossSlug(boss.name) + '-' + today + '.md';
-    bossDownloadFile(filename, md);
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(md).catch(() => {});
+  let _jsPdfPromise = null;
+  function loadJsPdf() {
+    if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf);
+    if (_jsPdfPromise) return _jsPdfPromise;
+    _jsPdfPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.async = true;
+      s.onload = () => {
+        if (window.jspdf && window.jspdf.jsPDF) resolve(window.jspdf);
+        else reject(new Error('jsPDF loaded but global missing'));
+      };
+      s.onerror = () => reject(new Error('Failed to load jsPDF'));
+      document.head.appendChild(s);
+    });
+    return _jsPdfPromise;
+  }
+
+  async function bossBuildPdf(boss, isDefeated) {
+    const { jsPDF } = await loadJsPdf();
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+    const PAGE_W = doc.internal.pageSize.getWidth();
+    const PAGE_H = doc.internal.pageSize.getHeight();
+    const MX = 56;
+    const MY_TOP = 64;
+    const MY_BOT = 64;
+    const CONTENT_W = PAGE_W - MX * 2;
+    let y = MY_TOP;
+
+    function ensure(extra) {
+      if (y + extra > PAGE_H - MY_BOT) {
+        doc.addPage();
+        y = MY_TOP;
+      }
     }
-    flashBossBtn(sourceBtn, successText || '✓ Copiado y descargado', 2200);
-    if (typeof chime === 'function') chime('pop');
+    function paragraph(text, opts) {
+      const o = opts || {};
+      doc.setFont('helvetica', o.weight || 'normal');
+      doc.setFontSize(o.size || 10);
+      const color = o.color || [40, 40, 40];
+      doc.setTextColor(color[0], color[1], color[2]);
+      const lines = doc.splitTextToSize(text, o.width || CONTENT_W);
+      const lh = o.lineHeight || (o.size ? o.size + 3 : 13);
+      ensure(lines.length * lh);
+      doc.text(lines, MX + (o.indent || 0), y);
+      y += lines.length * lh;
+    }
+    function divider() {
+      ensure(8);
+      doc.setDrawColor(220, 220, 220);
+      doc.setLineWidth(0.5);
+      doc.line(MX, y, MX + CONTENT_W, y);
+      y += 8;
+    }
+    function spacer(px) { y += px; }
+
+    // ── Title ──
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.setTextColor(20, 20, 25);
+    const titleLines = doc.splitTextToSize('Boss Fight: ' + boss.name, CONTENT_W);
+    ensure(titleLines.length * 26);
+    doc.text(titleLines, MX, y);
+    y += titleLines.length * 26;
+    spacer(4);
+
+    // ── Subtitle stamp ──
+    paragraph('EXPORTACIÓN DE CONOCIMIENTO  ·  ' + new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }), {
+      size: 9, color: [120, 120, 120]
+    });
+    spacer(10);
+    divider();
+    spacer(10);
+
+    // ── Context / what is this ──
+    paragraph(
+      'Este documento es la exportación del conocimiento acumulado por el usuario al enfrentarse a un “boss” — el nombre que la app Heroes le da a un cuello de botella personal que está intentando superar. ' +
+      'Cada apunte fue añadido durante el proceso y está clasificado en tres categorías:',
+      { size: 10, color: [60, 60, 60], lineHeight: 14 }
+    );
+    spacer(6);
+    paragraph('•  Creencias limitantes — pensamientos o convicciones que frenan el avance.', { size: 10, color: [60, 60, 60], indent: 14 });
+    paragraph('•  Aprendizajes — descubrimientos hechos durante el camino.', { size: 10, color: [60, 60, 60], indent: 14 });
+    paragraph('•  Soluciones — estrategias o acciones que se aplican para romper el cuello de botella.', { size: 10, color: [60, 60, 60], indent: 14 });
+    spacer(8);
+    paragraph(
+      'Está pensado como contexto para una IA (p. ej., Claude) que ayude al usuario a profundizar en este tema, o como archivo de referencia personal.',
+      { size: 10, color: [60, 60, 60], lineHeight: 14 }
+    );
+    spacer(12);
+    divider();
+    spacer(10);
+
+    // ── Status line ──
+    const notes = boss.notes || [];
+    const created = boss.createdAt ? formatDate(boss.createdAt) : '—';
+    let statusLine;
+    if (isDefeated) {
+      const killed = boss.defeatedAt ? formatDate(boss.defeatedAt) : '—';
+      statusLine = 'Estado: Derrotado el ' + killed + '   ·   Invocado el ' + created + '   ·   ' + notes.length + ' apuntes';
+    } else {
+      const hp = bossHpFromNotes(notes);
+      statusLine = 'Estado: Activo desde ' + created + '   ·   HP ' + hp + '/100   ·   ' + notes.length + ' apuntes';
+    }
+    paragraph(statusLine, { size: 10.5, weight: 'bold', color: [30, 30, 30] });
+    spacer(22);
+
+    // ── Sections ──
+    const sections = [
+      { key: 'belief',   title: 'Creencias limitantes', color: [204, 31, 58] },
+      { key: 'learning', title: 'Aprendizajes',          color: [184, 134, 11] },
+      { key: 'solution', title: 'Soluciones',            color: [40, 130, 80] }
+    ];
+
+    let anySection = false;
+    for (const sec of sections) {
+      const secNotes = notes.filter(n => (n.type || 'belief') === sec.key);
+      if (!secNotes.length) continue;
+      anySection = true;
+
+      ensure(56);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(sec.color[0], sec.color[1], sec.color[2]);
+      doc.text(sec.title, MX, y);
+      y += 6;
+      doc.setDrawColor(sec.color[0], sec.color[1], sec.color[2]);
+      doc.setLineWidth(1);
+      doc.line(MX, y + 4, MX + 32, y + 4);
+      y += 18;
+
+      for (const n of secNotes) {
+        const date = n.ts ? formatDate(n.ts) : '—';
+        const body = (n.text || '').replace(/\r?\n+/g, '  ').trim();
+        if (!body) continue;
+        const wrapped = doc.splitTextToSize(body, CONTENT_W - 64);
+        const blockH = Math.max(wrapped.length * 13, 16) + 10;
+        ensure(blockH);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(140, 140, 140);
+        doc.text(date, MX, y + 9);
+
+        doc.setFontSize(10);
+        doc.setTextColor(30, 30, 30);
+        doc.text(wrapped, MX + 60, y + 9);
+
+        y += blockH;
+      }
+      spacer(16);
+    }
+
+    if (!anySection) {
+      paragraph('Aún no se han añadido apuntes a este boss.', { size: 10, color: [120, 120, 120] });
+    }
+
+    // ── Footer with page numbers ──
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(160, 160, 160);
+      const footer = 'Heroes App   ·   Boss: ' + boss.name + '   ·   ' + i + ' / ' + totalPages;
+      doc.text(footer, MX, PAGE_H - 30);
+    }
+
+    return doc;
+  }
+
+  async function exportBoss(boss, isDefeated, sourceBtn, successText) {
+    if (!boss) return;
+    // Loading state on button
+    let originalLabel = null;
+    if (sourceBtn) {
+      if (!sourceBtn.dataset.originalLabel) sourceBtn.dataset.originalLabel = sourceBtn.textContent;
+      originalLabel = sourceBtn.dataset.originalLabel;
+      sourceBtn.textContent = 'Generando…';
+      sourceBtn.disabled = true;
+    }
+    try {
+      const doc = await bossBuildPdf(boss, isDefeated);
+      const today = new Date().toISOString().slice(0, 10);
+      const filename = 'boss-' + bossSlug(boss.name) + '-' + today + '.pdf';
+      doc.save(filename);
+
+      // Also copy markdown to clipboard for convenience
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(bossToMarkdown(boss, isDefeated)).catch(() => {});
+      }
+      flashBossBtn(sourceBtn, successText || '✓ PDF descargado', 2400);
+      if (typeof chime === 'function') chime('pop');
+    } catch (e) {
+      console.error('[boss] PDF export failed', e);
+      if (sourceBtn) {
+        sourceBtn.textContent = originalLabel || 'Exportar conocimiento';
+        sourceBtn.disabled = false;
+      }
+      alert('No se pudo generar el PDF. Revisa la conexión a internet (se carga jsPDF de un CDN).');
+    }
   }
 
   function bossNoteDamage(note) {
@@ -8658,7 +8834,7 @@
       exp.className = 'boss-trophy-export';
       exp.type = 'button';
       exp.textContent = '⤓';
-      exp.title = 'Exportar conocimiento (markdown)';
+      exp.title = 'Exportar conocimiento (PDF)';
       exp.setAttribute('aria-label', 'Exportar conocimiento de ' + b.name);
       exp.addEventListener('click', (e) => {
         e.stopPropagation();
