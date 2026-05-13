@@ -2470,35 +2470,46 @@
   }
 
   .stv2-line {
-    stroke: rgba(255,255,255,0.10);
+    stroke: rgba(255,255,255,0.09);
     stroke-width: 1.4;
     fill: none;
-    transition: stroke 0.4s ease, stroke-width 0.4s ease, opacity 0.4s ease, filter 0.4s ease;
+    transition: stroke 0.45s ease, stroke-width 0.45s ease, opacity 0.45s ease, filter 0.45s ease;
   }
   .stv2-line.is-lit {
     stroke: var(--day-color);
-    stroke-width: 2;
-    opacity: 0.85;
-    filter: drop-shadow(0 0 4px var(--day-color));
+    stroke-width: 2.4;
+    opacity: 0.92;
+    filter: drop-shadow(0 0 6px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
+    animation: stv2-line-breathe 4.5s ease-in-out infinite;
+  }
+  @keyframes stv2-line-breathe {
+    0%, 100% { opacity: 0.78; }
+    50% { opacity: 1; }
   }
 
-  .stv2-node { cursor: pointer; transition: transform 0.2s ease; }
+  .stv2-node { cursor: pointer; }
   .stv2-node-glow {
     fill: var(--day-color);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.45s ease;
+    transition: opacity 0.5s ease;
   }
   .stv2-node-bg {
-    fill: #0F0F12;
-    stroke: rgba(255,255,255,0.22);
+    fill: #0E0E11;
+    stroke: rgba(255,255,255,0.20);
     stroke-width: 1.5;
-    transition: stroke 0.3s ease, fill 0.3s ease, stroke-width 0.3s ease;
+    transform-origin: center;
+    transform-box: fill-box;
+    transition: stroke 0.3s ease, fill 0.4s ease, stroke-width 0.3s ease,
+                transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                filter 0.45s ease;
   }
   .stv2-node-inner {
-    fill: rgba(255,255,255,0.04);
+    fill: rgba(255,255,255,0.06);
     pointer-events: none;
-    transition: fill 0.3s ease;
+    transform-origin: center;
+    transform-box: fill-box;
+    transition: fill 0.3s ease, transform 0.22s ease;
   }
   .stv2-canvas-wrap svg, .stv2-canvas-wrap svg * {
     -webkit-user-select: none;
@@ -2510,35 +2521,100 @@
 
   .stv2-node:hover .stv2-node-bg {
     stroke: var(--day-color);
-    stroke-width: 2.2;
+    stroke-width: 2.4;
+    transform: scale(1.45);
+    filter: drop-shadow(0 0 8px var(--day-color));
   }
+  .stv2-node:hover .stv2-node-inner { transform: scale(1.4); }
+  .stv2-node:hover .stv2-node-glow { opacity: 0.55 !important; }
+
   .stv2-node.is-done .stv2-node-bg {
     fill: var(--day-color);
     stroke: var(--day-color);
+    filter: drop-shadow(0 0 10px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
   }
   .stv2-node.is-done .stv2-node-inner {
-    fill: rgba(255,255,255,0.85);
+    fill: rgba(255,255,255,0.95);
   }
   .stv2-node.is-done .stv2-node-glow {
     opacity: 0.55;
+    animation: stv2-node-pulse 3.6s ease-in-out infinite;
+  }
+  @keyframes stv2-node-pulse {
+    0%, 100% { opacity: 0.42; }
+    50% { opacity: 0.78; }
+  }
+  .stv2-node-task.is-done .stv2-node-bg {
+    filter: drop-shadow(0 0 8px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
+  }
+  .stv2-node-chapter.is-done .stv2-node-bg {
+    filter: drop-shadow(0 0 18px var(--day-color)) drop-shadow(0 0 6px var(--day-color));
+  }
+  .stv2-node-subgroup.is-done .stv2-node-bg {
+    filter: drop-shadow(0 0 12px var(--day-color)) drop-shadow(0 0 4px var(--day-color));
   }
 
   /* Hub special styling */
   .stv2-node-hub .stv2-node-bg {
-    fill: #1A1208;
+    fill: #1F1408;
     stroke: #FFD89E;
-    stroke-width: 2.5;
+    stroke-width: 2.6;
+    filter: drop-shadow(0 0 14px rgba(255,216,158,0.6)) drop-shadow(0 0 4px #FFD89E);
   }
   .stv2-node-hub .stv2-node-glow {
     fill: #FFD89E;
-    opacity: 0.35;
+    opacity: 0.45;
+    animation: stv2-node-pulse 3s ease-in-out infinite;
   }
   .stv2-node-hub.is-done .stv2-node-bg {
     fill: #FFD89E;
+    filter: drop-shadow(0 0 26px #FFD89E) drop-shadow(0 0 10px #FFD89E);
+  }
+  .stv2-hub-ring {
+    fill: none;
+    stroke: rgba(255,216,158,0.18);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 6;
+    animation: stv2-hub-ring-rotate 30s linear infinite;
+    transform-origin: 0 0;
+  }
+  @keyframes stv2-hub-ring-rotate {
+    to { transform: rotate(360deg); }
   }
 
-  /* Chapter as 8-pointed star-like (we'll use 12-sided polygon for jewel) */
-  .stv2-node-chapter .stv2-node-bg { stroke-width: 2; }
+  /* Notable ring around chapter nodes (decorative) */
+  .stv2-chapter-ring {
+    fill: none;
+    stroke: rgba(255,255,255,0.10);
+    stroke-width: 1;
+    pointer-events: none;
+  }
+  .stv2-node-chapter.is-done .stv2-chapter-ring {
+    stroke: var(--day-color);
+    stroke-width: 1.5;
+    opacity: 0.5;
+  }
+
+  /* Click ripple */
+  .stv2-ripple {
+    fill: none;
+    stroke-width: 2;
+    pointer-events: none;
+    animation: stv2-ripple-anim 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes stv2-ripple-anim {
+    0%   { r: 8;  opacity: 0.9; stroke-width: 3; }
+    100% { r: 70; opacity: 0;   stroke-width: 0.4; }
+  }
+
+  /* Star twinkle for select stars */
+  .stv2-star-tw {
+    animation: stv2-twinkle 4s ease-in-out infinite;
+  }
+  @keyframes stv2-twinkle {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.2; }
+  }
 
   .stv2-tooltip {
     position: fixed;
@@ -5503,12 +5579,13 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
 
   // ─── Skilltree v2 (Gate of Fates) ─────────────────────────────────
   const SVG_NS = 'http://www.w3.org/2000/svg';
+  const STV2_DEFAULT_VIEWBOX = { x: -1100, y: -1100, w: 2200, h: 2200 };
   let stv2State = {
     moduleId: SKILLTREE_MODULES[0].id,
     nodes: [],
     lines: [],
     rendered: false,
-    viewBox: { x: -900, y: -900, w: 1800, h: 1800 },
+    viewBox: { ...STV2_DEFAULT_VIEWBOX },
     tooltipFor: null
   };
 
@@ -5569,9 +5646,17 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     if (data.tIdx !== undefined) g.dataset.tIdx = data.tIdx;
 
     const glow = document.createElementNS(SVG_NS, 'circle');
-    glow.setAttribute('r', r * 2.4);
+    glow.setAttribute('r', r * 2.6);
     glow.setAttribute('class', 'stv2-node-glow');
     g.appendChild(glow);
+
+    // Decorative ring for chapter
+    if (data.type === 'chapter') {
+      const ring = document.createElementNS(SVG_NS, 'circle');
+      ring.setAttribute('r', r * 1.55);
+      ring.setAttribute('class', 'stv2-chapter-ring');
+      g.appendChild(ring);
+    }
 
     const bg = document.createElementNS(SVG_NS, 'circle');
     bg.setAttribute('r', r);
@@ -5582,6 +5667,14 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     inner.setAttribute('r', r * 0.45);
     inner.setAttribute('class', 'stv2-node-inner');
     g.appendChild(inner);
+
+    // Hub gets a decorative rotating ring
+    if (data.type === 'hub') {
+      const hubRing = document.createElementNS(SVG_NS, 'circle');
+      hubRing.setAttribute('r', r * 1.8);
+      hubRing.setAttribute('class', 'stv2-hub-ring');
+      g.appendChild(hubRing);
+    }
 
     return g;
   }
@@ -5615,7 +5708,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
       btn.innerHTML = '<span class="st-module-tab-icon">' + m.icon + '</span><span class="st-module-tab-name">' + m.name + '</span>';
       btn.addEventListener('click', () => {
         stv2State.moduleId = m.id;
-        stv2State.viewBox = { x: -900, y: -900, w: 1800, h: 1800 };
+        stv2State.viewBox = { ...STV2_DEFAULT_VIEWBOX };
         renderSkilltreeV2();
       });
       tabsEl.appendChild(btn);
@@ -5647,11 +5740,12 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
         stv2State.viewBox.x + ' ' + stv2State.viewBox.y + ' ' +
         stv2State.viewBox.w + ' ' + stv2State.viewBox.h + '" preserveAspectRatio="xMidYMid meet">' +
         '<g id="stv2Stars" class="stv2-stars"></g>' +
-        '<circle class="stv2-ring" cx="0" cy="0" r="240"/>' +
-        '<circle class="stv2-ring" cx="0" cy="0" r="440"/>' +
-        '<circle class="stv2-ring" cx="0" cy="0" r="640"/>' +
+        '<circle class="stv2-ring" cx="0" cy="0" r="300"/>' +
+        '<circle class="stv2-ring" cx="0" cy="0" r="560"/>' +
+        '<circle class="stv2-ring" cx="0" cy="0" r="820"/>' +
         '<g id="stv2LinesG"></g>' +
         '<g id="stv2NodesG"></g>' +
+        '<g id="stv2RippleG"></g>' +
       '</svg>' +
       '<div class="stv2-tooltip" id="stv2Tooltip" style="display:none;">' +
         '<div class="stv2-tooltip-meta"></div>' +
@@ -5669,15 +5763,19 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     const linesG = document.getElementById('stv2LinesG');
     const nodesG = document.getElementById('stv2NodesG');
 
-    // Stars
-    for (let i = 0; i < 240; i++) {
+    // Stars (with some twinkling)
+    for (let i = 0; i < 340; i++) {
       const star = document.createElementNS(SVG_NS, 'circle');
       const a = Math.random() * 2 * Math.PI;
-      const rad = 80 + Math.pow(Math.random(), 0.7) * 850;
+      const rad = 80 + Math.pow(Math.random(), 0.65) * 1080;
       star.setAttribute('cx', rad * Math.cos(a));
       star.setAttribute('cy', rad * Math.sin(a));
-      star.setAttribute('r', 0.4 + Math.random() * 1.3);
-      star.setAttribute('fill', 'rgba(255,255,255,' + (0.18 + Math.random() * 0.45) + ')');
+      star.setAttribute('r', 0.4 + Math.random() * 1.6);
+      star.setAttribute('fill', 'rgba(255,255,255,' + (0.18 + Math.random() * 0.55) + ')');
+      if (Math.random() < 0.35) {
+        star.setAttribute('class', 'stv2-star-tw');
+        star.style.animationDelay = (Math.random() * 4) + 's';
+      }
       starsG.appendChild(star);
     }
 
@@ -5686,14 +5784,14 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
 
     // HUB
     const hubData = { type: 'hub', x: 0, y: 0, color: '#FFD89E', label: module.name, meta: 'CENTRO' };
-    const hubEl = stv2CreateNode(hubData, 28);
+    const hubEl = stv2CreateNode(hubData, 40);
     nodesG.appendChild(hubEl);
     stv2State.nodes.push({ ...hubData, el: hubEl });
 
     const N = module.chapters.length;
     module.chapters.forEach((ch, chIdx) => {
       const chAngle = (chIdx / N) * 2 * Math.PI - Math.PI / 2;
-      const chR = 240;
+      const chR = 320;
       const chX = chR * Math.cos(chAngle);
       const chY = chR * Math.sin(chAngle);
 
@@ -5701,7 +5799,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
         type: 'chapter', x: chX, y: chY, color: ch.color, chIdx,
         label: ch.name, meta: ch.subtitle || 'CAPÍTULO'
       };
-      const chEl = stv2CreateNode(chData, 18);
+      const chEl = stv2CreateNode(chData, 22);
       nodesG.appendChild(chEl);
       stv2State.nodes.push({ ...chData, el: chEl });
 
@@ -5709,13 +5807,14 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
       linesG.appendChild(hubLine);
       stv2State.lines.push({ el: hubLine, fromType: 'hub', toType: 'chapter', toChIdx: chIdx, color: ch.color });
 
-      const wedgeSpread = (2 * Math.PI / N) * 0.85;
+      const wedgeSpread = (2 * Math.PI / N) * 0.86;
       const numSg = ch.subgroups.length;
 
       ch.subgroups.forEach((sg, sgIdx) => {
         const sgAngle = chAngle + stv2FanOffset(sgIdx, numSg, wedgeSpread);
-        // Staggered radius: alternate near/far so subgroups don't all collide on one ring
-        const sgR = 180 + (sgIdx % 2) * 40;
+        // Staggered orbit: alternate three rings to spread crowded chapters like Día 1
+        const orbitOffset = (sgIdx % 3) * 70; // 0 / 70 / 140
+        const sgR = 200 + orbitOffset;
         const sgX = chX + sgR * Math.cos(sgAngle);
         const sgY = chY + sgR * Math.sin(sgAngle);
 
@@ -5723,7 +5822,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
           type: 'subgroup', x: sgX, y: sgY, color: ch.color, chIdx, sgIdx,
           label: sg.name || ch.name, meta: 'VÍDEO / PRÁCTICA'
         };
-        const sgEl = stv2CreateNode(sgData, 12);
+        const sgEl = stv2CreateNode(sgData, 14);
         nodesG.appendChild(sgEl);
         stv2State.nodes.push({ ...sgData, el: sgEl });
 
@@ -5731,12 +5830,12 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
         linesG.appendChild(sgLine);
         stv2State.lines.push({ el: sgLine, fromType: 'chapter', toType: 'subgroup', toChIdx: chIdx, toSgIdx: sgIdx, color: ch.color });
 
-        // Tasks: fan outward in a 200° arc from the subgroup (away from chapter)
-        const taskWedge = 200 * Math.PI / 180;
+        // Tasks: fan outward in a 220° arc from the subgroup (away from chapter)
+        const taskWedge = 220 * Math.PI / 180;
         const tNum = sg.tasks.length;
         sg.tasks.forEach((taskText, tIdx) => {
           const tAngle = sgAngle + stv2FanOffset(tIdx, tNum, taskWedge);
-          const tR = 75;
+          const tR = 92;
           const tX = sgX + tR * Math.cos(tAngle);
           const tY = sgY + tR * Math.sin(tAngle);
 
@@ -5747,7 +5846,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
             label: taskText,
             meta: ch.name + ' · ' + (sg.name || 'tarea')
           };
-          const tEl = stv2CreateNode(tData, 8);
+          const tEl = stv2CreateNode(tData, 10);
           nodesG.appendChild(tEl);
           stv2State.nodes.push({ ...tData, el: tEl });
 
@@ -5875,7 +5974,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
       stv2Zoom(1.18, c.x + c.w / 2, c.y + c.h / 2, svg);
     });
     document.getElementById('stv2ZoomFit').addEventListener('click', () => {
-      stv2State.viewBox = { x: -900, y: -900, w: 1800, h: 1800 };
+      stv2State.viewBox = { ...STV2_DEFAULT_VIEWBOX };
       stv2UpdateViewBox(svg);
     });
 
@@ -5970,9 +6069,27 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
       return;
     }
 
-    burstAt(cx, cy, { count: 12, spread: 50, sizeMin: 4, sizeMax: 9, colors: [ch.color, '#FFFFFF', ch.color] });
+    // SVG ripple at node position
+    const rippleG = document.getElementById('stv2RippleG');
+    if (rippleG) {
+      const mTr = nodeEl.getAttribute('transform').match(/translate\(([\-\d.]+)[ ,]+([\-\d.]+)\)/);
+      if (mTr) {
+        const rx = parseFloat(mTr[1]);
+        const ry = parseFloat(mTr[2]);
+        const ripple = document.createElementNS(SVG_NS, 'circle');
+        ripple.setAttribute('cx', rx);
+        ripple.setAttribute('cy', ry);
+        ripple.setAttribute('r', '8');
+        ripple.setAttribute('stroke', ch.color);
+        ripple.setAttribute('class', 'stv2-ripple');
+        rippleG.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 800);
+      }
+    }
+
+    burstAt(cx, cy, { count: 22, spread: 80, sizeMin: 5, sizeMax: 11, colors: [ch.color, '#FFFFFF', ch.color, '#FFD89E'] });
     chime('check');
-    if (navigator.vibrate) navigator.vibrate([8, 24, 10]);
+    if (navigator.vibrate) navigator.vibrate([10, 28, 14]);
 
     // Subgroup just completed?
     const sgNow = computeSubgroupStats(module, chIdx, sgIdx, state);
