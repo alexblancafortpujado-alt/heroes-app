@@ -1770,157 +1770,121 @@
   }
   .cal-modal-save:hover { filter: brightness(1.05); }
 
-  /* Portal */
-  .portal-wrap {
-    margin: 0 auto 28px;
-    max-width: 420px;
+  /* Portal v2 — Notion-style mood board */
+  .pv2-block {
+    max-width: 1100px;
+    margin: 0 auto 48px;
   }
-  .portal-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
+  .pv2-block:last-child {
+    margin-bottom: 0;
   }
-  .portal-label {
+  .pv2-eyebrow {
     font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-tertiary);
+    margin-bottom: 14px;
   }
-  .portal-meta {
-    flex: 1;
+  /* Inspiration board: 1920×1080 ratio (16:9). Two rows.
+     Top row: 4 cells, each 340×453 (aspect 340/453 ≈ 0.7505).
+     Bottom row: 4 cells, each 340×639 (aspect 340/639 ≈ 0.5321). */
+  .pv2-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .pv2-board .pv2-slot[data-row="top"] { aspect-ratio: 340 / 453; }
+  .pv2-board .pv2-slot[data-row="bot"] { aspect-ratio: 340 / 639; }
+
+  /* Slides grid — 6 frames. Each frame is 1039×1080 (≈ 0.962 aspect).
+     Frame contains 2×2 grid of 520×540 slots (≈ 0.962 aspect each). */
+  .pv2-slides-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  @media (max-width: 980px) {
+    .pv2-slides-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    .pv2-slides-grid { grid-template-columns: 1fr; }
+  }
+  .pv2-slide {
+    aspect-ratio: 1039 / 1080;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .pv2-slide .pv2-slot { aspect-ratio: auto; height: 100%; }
+  .pv2-slide-label {
+    position: absolute;
+    top: -22px;
+    left: 4px;
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     font-size: 10.5px;
     color: var(--text-tertiary);
-    letter-spacing: 0.04em;
-    text-align: right;
+    letter-spacing: 0.06em;
     font-variant-numeric: tabular-nums;
   }
-  .portal-edit-btn {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: var(--text-secondary);
+
+  /* Image slot — placeholder when empty, image when filled */
+  .pv2-slot {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.025);
+    border: 1px dashed rgba(255,255,255,0.10);
     cursor: pointer;
-    font-size: 13px;
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    display: inline-flex;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-    font-family: inherit;
   }
-  .portal-edit-btn:hover {
-    color: var(--text-primary);
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.18);
+  .pv2-slot:hover {
+    border-color: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.04);
   }
-  .portal-frame {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    border-radius: 16px;
-    overflow: hidden;
-    background: rgba(255,255,255,0.03);
-    box-shadow:
-      0 18px 50px rgba(0,0,0,0.5),
-      inset 0 0 0 1px rgba(255,255,255,0.06);
-    cursor: pointer;
+  .pv2-slot.has-img {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #0a0a0e;
   }
-  .portal-frame::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    box-shadow: inset 0 0 70px 8px rgba(0,0,0,0.45);
-    border-radius: 16px;
+  .pv2-slot.is-drag-over {
+    border: 2px dashed rgba(107,227,164,0.7);
+    background: rgba(107,227,164,0.05);
   }
-  .portal-frame.is-drag-over {
-    outline: 2px dashed rgba(107,227,164,0.6);
-    outline-offset: 4px;
-  }
-  .portal-img {
-    position: absolute;
-    inset: 0;
+  .pv2-slot img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
-    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: scale(1);
+    display: block;
   }
-  .portal-img.is-active {
-    opacity: 1;
-    animation: portal-kenburns 12s ease-out forwards;
-  }
-  @keyframes portal-kenburns {
-    0%   { transform: scale(1.0); }
-    100% { transform: scale(1.08); }
-  }
-  .portal-empty {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    text-align: center;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
-    pointer-events: none;
-  }
-  .portal-empty-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
-  .portal-empty-hint {
-    font-size: 12px;
-    color: var(--text-tertiary);
-    max-width: 280px;
-    line-height: 1.5;
-  }
-
-  /* Portal grid layout (Portal tab) */
-  .portal-grid {
-    display: grid;
-    grid-template-columns: minmax(280px, 420px) 1fr;
-    gap: 36px;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  .portal-grid .portal-wrap {
-    margin: 0;
-    max-width: 100%;
-  }
-  .portal-text-wrap {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-  .portal-text-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
-  .portal-text-date {
-    flex: 1;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  .pv2-slot-placeholder {
     font-size: 11px;
     color: var(--text-tertiary);
     letter-spacing: 0.04em;
-    font-variant-numeric: tabular-nums;
+    text-align: center;
+    padding: 0 8px;
+    pointer-events: none;
+    user-select: none;
   }
-  .portal-notes-textarea {
+  .pv2-slot.has-img .pv2-slot-placeholder { display: none; }
+
+  /* Portal v2 textarea */
+  .pv2-textarea {
     width: 100%;
-    flex: 1 1 auto;
-    min-height: 280px;
+    min-height: 180px;
     padding: 18px 20px;
     border-radius: 12px;
     background: rgba(255,255,255,0.035);
@@ -1937,40 +1901,13 @@
     box-sizing: border-box;
     white-space: pre-wrap;
   }
-  .portal-notes-textarea:focus {
+  .pv2-textarea:focus {
     border-color: rgba(255,255,255,0.20);
     background: rgba(255,255,255,0.05);
   }
-  .portal-notes-textarea::placeholder {
+  .pv2-textarea::placeholder {
     color: var(--text-tertiary);
     font-weight: 400;
-  }
-
-  /* Portal modal extras */
-  .cal-modal.portal-modal { max-width: 540px; }
-  .portal-textarea {
-    width: 100%;
-    min-height: 220px;
-    padding: 11px 14px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: var(--text-primary);
-    font-size: 12.5px;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    outline: none;
-    resize: vertical;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-    line-height: 1.5;
-  }
-  .portal-textarea:focus { border-color: rgba(255,255,255,0.30); }
-  .portal-textarea::placeholder { color: var(--text-tertiary); white-space: pre-line; }
-  .portal-modal-hint {
-    font-size: 11px;
-    color: var(--text-tertiary);
-    margin-bottom: 18px;
-    line-height: 1.5;
   }
 
   /* Global FX */
@@ -3334,9 +3271,11 @@
     .cal-month-event { font-size: 9.5px; padding: 1px 4px; }
     .cal-toolbar { gap: 6px; }
     .cal-view-btn { padding: 4px 8px; font-size: 10px; letter-spacing: 0.06em; }
-    .portal-grid { grid-template-columns: 1fr; gap: 24px; }
-    .portal-grid .portal-wrap { max-width: 360px; margin: 0 auto; }
-    .portal-notes-textarea { font-size: 15px; min-height: 280px; padding: 14px 16px; }
+    .pv2-board { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
+    .pv2-textarea { font-size: 15px; min-height: 160px; padding: 14px 16px; }
+    .pv2-slide { padding: 8px; gap: 8px; }
+    .pv2-eyebrow { margin-bottom: 10px; }
+    .pv2-block { margin-bottom: 36px; }
   }
 </style>
 <script
@@ -3534,29 +3473,35 @@
 <div class="tab-panel" data-tab="portal">
   <div class="section">
     <div class="section-title">Portal</div>
-    <div class="portal-grid">
-      <div class="portal-wrap">
-        <div class="portal-eyebrow">
-          <span class="portal-label">— Inspiration</span>
-          <span class="portal-meta" id="portalMeta">0 images</span>
-          <button class="portal-edit-btn" id="portalEditBtn" type="button" title="Manage images">⚙</button>
-        </div>
-        <div class="portal-frame" id="portalFrame">
-          <img class="portal-img" id="portalImgA" alt="" />
-          <img class="portal-img" id="portalImgB" alt="" />
-          <div class="portal-empty" id="portalEmpty">
-            <div class="portal-empty-title">Your portal is empty</div>
-            <div class="portal-empty-hint">Drag an image here from your Pinterest tab, or click ⚙ to paste image URLs.</div>
-          </div>
-        </div>
-      </div>
-      <div class="portal-text-wrap">
-        <div class="portal-text-eyebrow">
-          <span class="portal-label">— Notes</span>
-          <span class="portal-text-date" id="portalNotesDate">—</span>
-        </div>
-        <textarea class="portal-notes-textarea" id="portalNotesArea" placeholder="Write your beliefs and thoughts here…" spellcheck="true"></textarea>
-      </div>
+
+    <div class="pv2-block">
+      <div class="pv2-eyebrow">— Mood board</div>
+      <div class="pv2-board" id="pv2BoardInspiration"></div>
+    </div>
+
+    <div class="pv2-block">
+      <div class="pv2-eyebrow">— 10 creencias clave</div>
+      <textarea class="pv2-textarea" id="pv2Beliefs" placeholder="1. …&#10;2. …&#10;3. …" spellcheck="true"></textarea>
+    </div>
+
+    <div class="pv2-block">
+      <div class="pv2-eyebrow">— Slides</div>
+      <div class="pv2-slides-grid" id="pv2Slides"></div>
+    </div>
+
+    <div class="pv2-block">
+      <div class="pv2-eyebrow">— Portal</div>
+      <textarea class="pv2-textarea" id="pv2PortalText" placeholder="Tu portal…" spellcheck="true"></textarea>
+    </div>
+
+    <div class="pv2-block">
+      <div class="pv2-eyebrow">— Anti-slides</div>
+      <div class="pv2-slides-grid" id="pv2Antislides"></div>
+    </div>
+
+    <div class="pv2-block">
+      <div class="pv2-eyebrow">— Anti-portal</div>
+      <textarea class="pv2-textarea" id="pv2AntiportalText" placeholder="Tu anti-portal…" spellcheck="true"></textarea>
     </div>
   </div>
 </div><!-- /tab-panel portal -->
@@ -3595,22 +3540,6 @@
     </div>
   </div>
 </div><!-- /tab-panel admin -->
-
-<div class="cal-modal-bg" id="portalModalBg" style="display:none;">
-  <div class="cal-modal portal-modal" role="dialog" aria-modal="true">
-    <div class="cal-modal-title">Portal images</div>
-    <textarea class="portal-textarea" id="portalUrls" placeholder="Paste image URLs, one per line.
-Right-click any image on Pinterest and choose &quot;Copy image address&quot;."></textarea>
-    <div class="portal-modal-hint">One URL per line. Pinterest CDN URLs (i.pinimg.com) work great. You can also drag-and-drop images from your Pinterest tab directly onto the portal frame.</div>
-    <div class="cal-modal-actions">
-      <span></span>
-      <div class="cal-modal-actions-right">
-        <button class="cal-modal-cancel" id="portalCancelBtn" type="button">Cancel</button>
-        <button class="cal-modal-save" id="portalSaveBtn" type="button">Save</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="cal-modal-bg" id="calModalBg" style="display:none;">
   <div class="cal-modal" role="dialog" aria-modal="true">
@@ -5442,80 +5371,30 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     scroll.scrollTop = Math.max(0, min - 90);
   }
 
-  // ─── Portal ───────────────────────────────────────────────────────
-  const PORTAL_KEY = 'portal_images_v1';
-  const PORTAL_INTERVAL = 8000;
+  // ─── Portal v2 — Notion-style mood board ─────────────────────────
+  const PORTAL_V2_KEY = 'portal_v2_data';
 
-  function getPortalImages() { return storeGet(PORTAL_KEY) || []; }
-  function setPortalImages(arr) { storeSet(PORTAL_KEY, arr); }
-
-  let portalIdx = -1;
-  let portalActiveSlot = 'A';
-  let portalInterval = null;
-
-  function pickPortalNext(len, current) {
-    if (len <= 1) return 0;
-    let next = Math.floor(Math.random() * len);
-    if (next === current) next = (next + 1) % len;
-    return next;
-  }
-
-  function showPortalImage(forceIdx) {
-    const images = getPortalImages();
-    const empty = document.getElementById('portalEmpty');
-    const meta = document.getElementById('portalMeta');
-    const imgA = document.getElementById('portalImgA');
-    const imgB = document.getElementById('portalImgB');
-
-    if (images.length === 0) {
-      empty.style.display = '';
-      imgA.classList.remove('is-active');
-      imgB.classList.remove('is-active');
-      imgA.removeAttribute('src');
-      imgB.removeAttribute('src');
-      meta.textContent = '0 images';
-      portalIdx = -1;
-      return;
-    }
-    empty.style.display = 'none';
-
-    const next = (typeof forceIdx === 'number') ? forceIdx : pickPortalNext(images.length, portalIdx);
-    portalIdx = next;
-
-    const inactive = portalActiveSlot === 'A' ? imgB : imgA;
-    const active = portalActiveSlot === 'A' ? imgA : imgB;
-
-    inactive.onload = () => {
-      active.classList.remove('is-active');
-      inactive.classList.add('is-active');
-      portalActiveSlot = portalActiveSlot === 'A' ? 'B' : 'A';
+  function getPortalV2Data() {
+    const data = storeGet(PORTAL_V2_KEY) || {};
+    return {
+      inspiration: Array.isArray(data.inspiration) && data.inspiration.length === 8
+        ? data.inspiration.slice(0, 8)
+        : new Array(8).fill(''),
+      beliefs: typeof data.beliefs === 'string' ? data.beliefs : '',
+      slides: Array.isArray(data.slides) && data.slides.length === 6
+        ? data.slides.map(s => Array.isArray(s) && s.length === 4 ? s.slice(0, 4) : ['', '', '', ''])
+        : Array.from({ length: 6 }, () => ['', '', '', '']),
+      portalText: typeof data.portalText === 'string' ? data.portalText : '',
+      antislides: Array.isArray(data.antislides) && data.antislides.length === 6
+        ? data.antislides.map(s => Array.isArray(s) && s.length === 4 ? s.slice(0, 4) : ['', '', '', ''])
+        : Array.from({ length: 6 }, () => ['', '', '', '']),
+      antiportalText: typeof data.antiportalText === 'string' ? data.antiportalText : ''
     };
-    inactive.onerror = () => { /* skip silently */ };
-    inactive.src = images[next];
-    meta.textContent = (next + 1) + ' / ' + images.length;
   }
 
-  function startPortal() {
-    if (portalInterval) clearInterval(portalInterval);
-    showPortalImage();
-    portalInterval = setInterval(() => showPortalImage(), PORTAL_INTERVAL);
-  }
+  function setPortalV2Data(data) { storeSet(PORTAL_V2_KEY, data); }
 
-  const portalFrameEl = document.getElementById('portalFrame');
-  portalFrameEl.addEventListener('click', (e) => {
-    if (e.target.closest('button')) return;
-    if (getPortalImages().length === 0) return;
-    showPortalImage();
-  });
-
-  portalFrameEl.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    portalFrameEl.classList.add('is-drag-over');
-  });
-  portalFrameEl.addEventListener('dragleave', () => portalFrameEl.classList.remove('is-drag-over'));
-  portalFrameEl.addEventListener('drop', (e) => {
-    e.preventDefault();
-    portalFrameEl.classList.remove('is-drag-over');
+  function extractDroppedUrl(e) {
     const types = Array.from(e.dataTransfer.types || []);
     let url = '';
     if (types.includes('text/uri-list')) url = e.dataTransfer.getData('text/uri-list');
@@ -5526,70 +5405,165 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     }
     if (!url && types.includes('text/plain')) url = e.dataTransfer.getData('text/plain');
     url = (url || '').trim().split(/\s+/)[0];
-    if (url && /^https?:\/\//.test(url)) {
-      const arr = getPortalImages();
-      if (!arr.includes(url)) {
-        arr.push(url);
-        setPortalImages(arr);
-        const r = portalFrameEl.getBoundingClientRect();
-        burstAt(r.left + r.width / 2, r.top + r.height / 2, { count: 14, spread: 80, colors: ['#6BE3A4', '#FFFFFF', '#FFD89E'] });
-        chime('pop');
+    return /^https?:\/\//.test(url) ? url : '';
+  }
+
+  function makePv2Slot(rowKind, placeholder) {
+    const slot = document.createElement('div');
+    slot.className = 'pv2-slot';
+    if (rowKind) slot.dataset.row = rowKind;
+    const ph = document.createElement('div');
+    ph.className = 'pv2-slot-placeholder';
+    ph.textContent = placeholder || '+ image';
+    slot.appendChild(ph);
+    return slot;
+  }
+
+  function applyPv2SlotImage(slot, url) {
+    const existing = slot.querySelector('img');
+    if (existing) existing.remove();
+    if (url) {
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = '';
+      img.draggable = false;
+      slot.classList.add('has-img');
+      slot.appendChild(img);
+    } else {
+      slot.classList.remove('has-img');
+    }
+  }
+
+  function wirePv2Slot(slot, onSet) {
+    slot.addEventListener('click', (e) => {
+      if (e.target.closest('img') && slot.classList.contains('has-img')) {
+        // Already has image — click to replace
       }
-      portalIdx = -1;
-      startPortal();
-    }
-  });
+      const url = prompt('Image URL (Pinterest etc):');
+      if (url === null) return;
+      const trimmed = url.trim();
+      if (trimmed === '') { onSet(''); return; }
+      if (!/^https?:\/\//.test(trimmed)) { alert('URL must start with http:// or https://'); return; }
+      onSet(trimmed);
+      const r = slot.getBoundingClientRect();
+      if (typeof burstAt === 'function') {
+        burstAt(r.left + r.width / 2, r.top + r.height / 2, { count: 10, spread: 60, colors: ['#6BE3A4', '#FFFFFF', '#FFD89E'] });
+      }
+      if (typeof chime === 'function') chime('pop');
+    });
+    slot.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      slot.classList.add('is-drag-over');
+    });
+    slot.addEventListener('dragleave', () => slot.classList.remove('is-drag-over'));
+    slot.addEventListener('drop', (e) => {
+      e.preventDefault();
+      slot.classList.remove('is-drag-over');
+      const url = extractDroppedUrl(e);
+      if (!url) return;
+      onSet(url);
+      const r = slot.getBoundingClientRect();
+      if (typeof burstAt === 'function') {
+        burstAt(r.left + r.width / 2, r.top + r.height / 2, { count: 14, spread: 80, colors: ['#6BE3A4', '#FFFFFF', '#FFD89E'] });
+      }
+      if (typeof chime === 'function') chime('pop');
+    });
+    slot.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (!slot.classList.contains('has-img')) return;
+      if (confirm('Remove this image?')) onSet('');
+    });
+  }
 
-  document.getElementById('portalEditBtn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    const bg = document.getElementById('portalModalBg');
-    const ta = document.getElementById('portalUrls');
-    ta.value = getPortalImages().join('\n');
-    bg.style.display = '';
-    setTimeout(() => ta.focus(), 50);
-
-    function close() { bg.style.display = 'none'; cleanup(); }
-    function save() {
-      const lines = ta.value.split('\n').map(s => s.trim()).filter(Boolean);
-      const filtered = lines.filter(u => /^https?:\/\//.test(u));
-      setPortalImages(filtered);
-      close();
-      portalIdx = -1;
-      startPortal();
-    }
-    function onBg(ev) { if (ev.target === bg) close(); }
-    function onKey(ev) { if (ev.key === 'Escape') { ev.preventDefault(); close(); } }
-    function cleanup() {
-      document.getElementById('portalCancelBtn').removeEventListener('click', close);
-      document.getElementById('portalSaveBtn').removeEventListener('click', save);
-      bg.removeEventListener('click', onBg);
-      document.removeEventListener('keydown', onKey);
-    }
-    document.getElementById('portalCancelBtn').addEventListener('click', close);
-    document.getElementById('portalSaveBtn').addEventListener('click', save);
-    bg.addEventListener('click', onBg);
-    document.addEventListener('keydown', onKey);
-  });
-
-  // ─── Portal notes ────────────────────────────────────────────────
-  const PORTAL_NOTES_KEY = 'portal_notes_v1';
-  let portalNotesSaveTimer = null;
-
-  function loadPortalNotes() {
-    const ta = document.getElementById('portalNotesArea');
-    const dateEl = document.getElementById('portalNotesDate');
-    if (dateEl) dateEl.textContent = formatDate(getActiveDateString());
+  const _pv2TextareaTimers = new WeakMap();
+  function setupPv2Textarea(ta, getValue, setValue) {
     if (!ta) return;
-    if (!ta.dataset.loaded) {
-      ta.value = storeGet(PORTAL_NOTES_KEY) || '';
-      ta.dataset.loaded = '1';
-      ta.addEventListener('input', () => {
-        clearTimeout(portalNotesSaveTimer);
-        portalNotesSaveTimer = setTimeout(() => {
-          storeSet(PORTAL_NOTES_KEY, ta.value);
-        }, 300);
-      });
+    if (ta.dataset.loaded === '1') return;
+    ta.value = getValue() || '';
+    ta.dataset.loaded = '1';
+    ta.addEventListener('input', () => {
+      clearTimeout(_pv2TextareaTimers.get(ta));
+      _pv2TextareaTimers.set(ta, setTimeout(() => setValue(ta.value), 300));
+    });
+  }
+
+  function renderPortalV2() {
+    const data = getPortalV2Data();
+
+    // Inspiration board: 4 top (340×453) + 4 bottom (340×639)
+    const boardEl = document.getElementById('pv2BoardInspiration');
+    if (boardEl && !boardEl.dataset.rendered) {
+      boardEl.innerHTML = '';
+      for (let i = 0; i < 4; i++) {
+        const slot = makePv2Slot('top', '+ image');
+        applyPv2SlotImage(slot, data.inspiration[i] || '');
+        const idx = i;
+        wirePv2Slot(slot, (url) => {
+          const d = getPortalV2Data();
+          d.inspiration[idx] = url;
+          setPortalV2Data(d);
+          applyPv2SlotImage(slot, url);
+        });
+        boardEl.appendChild(slot);
+      }
+      for (let i = 4; i < 8; i++) {
+        const slot = makePv2Slot('bot', '+ image');
+        applyPv2SlotImage(slot, data.inspiration[i] || '');
+        const idx = i;
+        wirePv2Slot(slot, (url) => {
+          const d = getPortalV2Data();
+          d.inspiration[idx] = url;
+          setPortalV2Data(d);
+          applyPv2SlotImage(slot, url);
+        });
+        boardEl.appendChild(slot);
+      }
+      boardEl.dataset.rendered = '1';
     }
+
+    // 6 slides
+    renderPv2SlidesGrid('pv2Slides', 'slides', data.slides);
+    // 6 anti-slides
+    renderPv2SlidesGrid('pv2Antislides', 'antislides', data.antislides);
+
+    // Textareas
+    setupPv2Textarea(document.getElementById('pv2Beliefs'),
+      () => getPortalV2Data().beliefs,
+      (v) => { const d = getPortalV2Data(); d.beliefs = v; setPortalV2Data(d); });
+    setupPv2Textarea(document.getElementById('pv2PortalText'),
+      () => getPortalV2Data().portalText,
+      (v) => { const d = getPortalV2Data(); d.portalText = v; setPortalV2Data(d); });
+    setupPv2Textarea(document.getElementById('pv2AntiportalText'),
+      () => getPortalV2Data().antiportalText,
+      (v) => { const d = getPortalV2Data(); d.antiportalText = v; setPortalV2Data(d); });
+  }
+
+  function renderPv2SlidesGrid(containerId, dataKey, slidesData) {
+    const grid = document.getElementById(containerId);
+    if (!grid || grid.dataset.rendered) return;
+    grid.innerHTML = '';
+    for (let s = 0; s < 6; s++) {
+      const slide = document.createElement('div');
+      slide.className = 'pv2-slide';
+      const label = document.createElement('div');
+      label.className = 'pv2-slide-label';
+      label.textContent = (dataKey === 'antislides' ? 'Anti-slide ' : 'Slide ') + String(s + 1).padStart(2, '0');
+      slide.appendChild(label);
+      for (let i = 0; i < 4; i++) {
+        const slot = makePv2Slot('', '+');
+        applyPv2SlotImage(slot, (slidesData[s] && slidesData[s][i]) || '');
+        const sIdx = s, iIdx = i;
+        wirePv2Slot(slot, (url) => {
+          const d = getPortalV2Data();
+          d[dataKey][sIdx][iIdx] = url;
+          setPortalV2Data(d);
+          applyPv2SlotImage(slot, url);
+        });
+        slide.appendChild(slot);
+      }
+      grid.appendChild(slide);
+    }
+    grid.dataset.rendered = '1';
   }
 
   // ─── Skilltree ────────────────────────────────────────────────────
@@ -7076,7 +7050,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     if (name === 'calendar') {
       requestAnimationFrame(() => scrollCalendarToNow());
     } else if (name === 'portal') {
-      loadPortalNotes();
+      renderPortalV2();
     } else if (name === 'skilltree') {
       renderSkilltree();
     } else if (name === 'skilltree-v2') {
@@ -7114,8 +7088,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     setupCalendarGrid();
     renderCalendar();
     setInterval(() => { if (calView === 'day' || calView === 'week') renderCalendar(); }, 60 * 1000);
-    startPortal();
-    loadPortalNotes();
+    renderPortalV2();
     try {
       const saved = localStorage.getItem('active_tab_v1');
       if (saved) setActiveTab(saved);
