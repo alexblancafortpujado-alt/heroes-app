@@ -1805,18 +1805,32 @@
   .pv2-board .pv2-slot[data-row="top"] { aspect-ratio: 340 / 453; }
   .pv2-board .pv2-slot[data-row="bot"] { aspect-ratio: 340 / 639; }
 
-  /* Slides grid — 6 frames. Each frame is 1039×1080 (≈ 0.962 aspect).
-     Frame contains 2×2 grid of 520×540 slots (≈ 0.962 aspect each). */
-  .pv2-slides-grid {
+  /* Slides — one page per slide, stacked vertically.
+     Each page = 4-image frame + textarea side-by-side. */
+  .pv2-slides-list {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+  .pv2-slide-page {
+    max-width: 920px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .pv2-slide-page-label {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .pv2-slide-page-body {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-  }
-  @media (max-width: 980px) {
-    .pv2-slides-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 620px) {
-    .pv2-slides-grid { grid-template-columns: 1fr; }
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    align-items: stretch;
   }
   .pv2-slide {
     aspect-ratio: 1039 / 1080;
@@ -1828,18 +1842,39 @@
     border-radius: 14px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
-    position: relative;
   }
   .pv2-slide .pv2-slot { aspect-ratio: auto; height: 100%; }
-  .pv2-slide-label {
-    position: absolute;
-    top: -22px;
-    left: 4px;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 10.5px;
+  .pv2-slide-text {
+    width: 100%;
+    min-height: 100%;
+    padding: 18px 20px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--text-primary);
+    font-size: 15.5px;
+    font-family: inherit;
+    line-height: 1.65;
+    outline: none;
+    resize: vertical;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+  }
+  .pv2-slide-text:focus {
+    border-color: rgba(255,255,255,0.20);
+    background: rgba(255,255,255,0.05);
+  }
+  .pv2-slide-text::placeholder {
     color: var(--text-tertiary);
-    letter-spacing: 0.06em;
-    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+  }
+  @media (max-width: 760px) {
+    .pv2-slide-page-body { grid-template-columns: 1fr; }
+    .pv2-slides-list { gap: 40px; }
+    .pv2-slide-text { min-height: 220px; }
   }
 
   /* Image slot — placeholder when empty, image when filled */
@@ -3496,7 +3531,7 @@
 
     <div class="pv2-block">
       <div class="pv2-eyebrow">— Slides</div>
-      <div class="pv2-slides-grid" id="pv2Slides"></div>
+      <div class="pv2-slides-list" id="pv2Slides"></div>
     </div>
 
     <div class="pv2-block">
@@ -3506,7 +3541,7 @@
 
     <div class="pv2-block">
       <div class="pv2-eyebrow">— Anti-slides</div>
-      <div class="pv2-slides-grid" id="pv2Antislides"></div>
+      <div class="pv2-slides-list" id="pv2Antislides"></div>
     </div>
 
     <div class="pv2-block">
@@ -5402,16 +5437,29 @@
     return out;
   }
 
+  function normalizeSlideEntry(v) {
+    // Legacy format: array of 4 image slots (strings or {url,x,y} objects).
+    // New format: { images: [...], text: '' }.
+    if (Array.isArray(v)) return { images: normalizeSlotArray(v, 4), text: '' };
+    if (v && typeof v === 'object') {
+      return {
+        images: normalizeSlotArray(Array.isArray(v.images) ? v.images : null, 4),
+        text: typeof v.text === 'string' ? v.text : ''
+      };
+    }
+    return { images: normalizeSlotArray(null, 4), text: '' };
+  }
+
   function getPortalV2Data() {
     const data = storeGet(PORTAL_V2_KEY) || {};
     return {
       inspiration: normalizeSlotArray(data.inspiration, 8),
       beliefs: typeof data.beliefs === 'string' ? data.beliefs : '',
       slides: Array.from({ length: 6 }, (_, i) =>
-        normalizeSlotArray(Array.isArray(data.slides) ? data.slides[i] : null, 4)),
+        normalizeSlideEntry(Array.isArray(data.slides) ? data.slides[i] : null)),
       portalText: typeof data.portalText === 'string' ? data.portalText : '',
       antislides: Array.from({ length: 6 }, (_, i) =>
-        normalizeSlotArray(Array.isArray(data.antislides) ? data.antislides[i] : null, 4)),
+        normalizeSlideEntry(Array.isArray(data.antislides) ? data.antislides[i] : null)),
       antiportalText: typeof data.antiportalText === 'string' ? data.antiportalText : ''
     };
   }
@@ -5608,30 +5656,51 @@
   function renderPv2SlidesGrid(containerId, dataKey, slidesData) {
     const grid = document.getElementById(containerId);
     if (!grid || grid.dataset.rendered) return;
+    const isAnti = dataKey === 'antislides';
     grid.innerHTML = '';
     for (let s = 0; s < 6; s++) {
-      const slide = document.createElement('div');
-      slide.className = 'pv2-slide';
+      const sIdx = s;
+      const page = document.createElement('div');
+      page.className = 'pv2-slide-page';
+
       const label = document.createElement('div');
-      label.className = 'pv2-slide-label';
-      label.textContent = (dataKey === 'antislides' ? 'Anti-slide ' : 'Slide ') + String(s + 1).padStart(2, '0');
-      slide.appendChild(label);
+      label.className = 'pv2-slide-page-label';
+      label.textContent = (isAnti ? 'Anti-slide ' : 'Slide ') + String(s + 1).padStart(2, '0');
+      page.appendChild(label);
+
+      const body = document.createElement('div');
+      body.className = 'pv2-slide-page-body';
+
+      const frame = document.createElement('div');
+      frame.className = 'pv2-slide';
       for (let i = 0; i < 4; i++) {
+        const iIdx = i;
         const slot = makePv2Slot('', '+');
-        const sIdx = s, iIdx = i;
-        applyPv2SlotImage(slot, slidesData[sIdx][iIdx]);
+        applyPv2SlotImage(slot, slidesData[sIdx].images[iIdx]);
         wirePv2Slot(slot,
-          () => getPortalV2Data()[dataKey][sIdx][iIdx],
+          () => getPortalV2Data()[dataKey][sIdx].images[iIdx],
           (newSlot) => {
             const d = getPortalV2Data();
-            d[dataKey][sIdx][iIdx] = newSlot;
+            d[dataKey][sIdx].images[iIdx] = newSlot;
             setPortalV2Data(d);
             applyPv2SlotImage(slot, newSlot);
           }
         );
-        slide.appendChild(slot);
+        frame.appendChild(slot);
       }
-      grid.appendChild(slide);
+      body.appendChild(frame);
+
+      const ta = document.createElement('textarea');
+      ta.className = 'pv2-slide-text';
+      ta.spellcheck = true;
+      ta.placeholder = (isAnti ? 'Anti-slide ' : 'Slide ') + (s + 1) + '…';
+      setupPv2Textarea(ta,
+        () => getPortalV2Data()[dataKey][sIdx].text,
+        (v) => { const d = getPortalV2Data(); d[dataKey][sIdx].text = v; setPortalV2Data(d); });
+      body.appendChild(ta);
+
+      page.appendChild(body);
+      grid.appendChild(page);
     }
     grid.dataset.rendered = '1';
   }
