@@ -1855,7 +1855,7 @@
     background: rgba(255,255,255,0.035);
     border: 1px solid rgba(255,255,255,0.06);
     color: var(--text-primary);
-    font-size: var(--pv2-slide-text-size, 15.5px);
+    font-size: 15.5px;
     font-family: inherit;
     line-height: 1.65;
     outline: none;
@@ -1968,65 +1968,6 @@
   }
   .pv2-slot.has-img .pv2-slot-placeholder { display: none; }
 
-  /* Portal v2 — text size control + scaled textareas */
-  .tab-panel[data-tab="portal"] {
-    --pv2-text-size: 16px;
-    --pv2-slide-text-size: 15.5px;
-  }
-  .tab-panel[data-tab="portal"][data-text-size="S"] {
-    --pv2-text-size: 14px;
-    --pv2-slide-text-size: 13.5px;
-  }
-  .tab-panel[data-tab="portal"][data-text-size="L"] {
-    --pv2-text-size: 21px;
-    --pv2-slide-text-size: 20px;
-  }
-  .pv2-tools {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 1100px;
-    margin: 0 auto 32px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .pv2-tools-label {
-    flex: 1;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-  }
-  .pv2-size-btn {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.10);
-    color: var(--text-secondary);
-    cursor: pointer;
-    width: 34px;
-    height: 30px;
-    border-radius: 7px;
-    font-family: inherit;
-    font-weight: 700;
-    line-height: 1;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    padding: 0;
-  }
-  .pv2-size-btn[data-size="S"] { font-size: 12px; }
-  .pv2-size-btn[data-size="M"] { font-size: 15px; }
-  .pv2-size-btn[data-size="L"] { font-size: 19px; }
-  .pv2-size-btn:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.22);
-    color: var(--text-primary);
-  }
-  .pv2-size-btn.is-active {
-    background: rgba(242,192,99,0.14);
-    border-color: rgba(242,192,99,0.5);
-    color: #F2C063;
-  }
-
   /* Portal v2 textarea */
   .pv2-textarea {
     width: 100%;
@@ -2036,14 +1977,14 @@
     background: rgba(255,255,255,0.035);
     border: 1px solid rgba(255,255,255,0.06);
     color: var(--text-primary);
-    font-size: var(--pv2-text-size, 16px);
+    font-size: 16px;
     font-family: inherit;
     line-height: 1.65;
     outline: none;
     resize: vertical;
     font-weight: 500;
     letter-spacing: -0.005em;
-    transition: border-color 0.2s ease, background 0.2s ease, font-size 0.18s ease;
+    transition: border-color 0.2s ease, background 0.2s ease;
     box-sizing: border-box;
     white-space: pre-wrap;
   }
@@ -2054,6 +1995,114 @@
   .pv2-textarea::placeholder {
     color: var(--text-tertiary);
     font-weight: 400;
+  }
+
+  /* Portal v2 — per-textarea fullscreen */
+  .pv2-textarea-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .pv2-textarea-wrap > textarea { flex: 1; }
+  .pv2-textarea-expand {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    font-family: inherit;
+  }
+  .pv2-textarea-wrap:hover .pv2-textarea-expand,
+  .pv2-textarea-wrap:focus-within .pv2-textarea-expand {
+    opacity: 1;
+  }
+  .pv2-textarea-expand:hover {
+    color: #fff;
+    background: rgba(0,0,0,0.78);
+    border-color: rgba(255,255,255,0.5);
+  }
+  .pv2-textarea-expand svg { width: 14px; height: 14px; display: block; }
+
+  .pv2-text-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 6, 10, 0.97);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 24px;
+    animation: pv2-text-overlay-in 0.18s ease-out;
+  }
+  @keyframes pv2-text-overlay-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  .pv2-text-overlay-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 auto 20px;
+    max-width: 920px;
+    width: 100%;
+  }
+  .pv2-text-overlay-title {
+    flex: 1;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+  .pv2-text-overlay-close {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  .pv2-text-overlay-close:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.5);
+  }
+  .pv2-text-overlay-slot {
+    flex: 1;
+    max-width: 920px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    min-height: 0;
+  }
+  .pv2-text-overlay-slot > .is-fullscreen {
+    flex: 1;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    font-size: 22px !important;
+    line-height: 1.6 !important;
+    padding: 32px !important;
+    resize: none !important;
+    border-radius: 14px !important;
   }
 
   /* Portal v2 — image lightbox */
@@ -4388,13 +4437,6 @@
   <div class="section">
     <div class="section-title">Portal</div>
 
-    <div class="pv2-tools">
-      <span class="pv2-tools-label">— Tamaño de texto</span>
-      <button class="pv2-size-btn" type="button" data-size="S" aria-label="Tamaño pequeño">A</button>
-      <button class="pv2-size-btn is-active" type="button" data-size="M" aria-label="Tamaño medio">A</button>
-      <button class="pv2-size-btn" type="button" data-size="L" aria-label="Tamaño grande">A</button>
-    </div>
-
     <div class="pv2-block">
       <div class="pv2-eyebrow">— Mood board</div>
       <div class="pv2-board" id="pv2BoardInspiration"></div>
@@ -4612,6 +4654,14 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="pv2-text-overlay" id="pv2TextOverlay" style="display:none;" role="dialog" aria-modal="true">
+  <div class="pv2-text-overlay-header">
+    <span class="pv2-text-overlay-title" id="pv2TextOverlayTitle">Texto</span>
+    <button class="pv2-text-overlay-close" id="pv2TextOverlayClose" type="button">Cerrar ✕</button>
+  </div>
+  <div class="pv2-text-overlay-slot" id="pv2TextOverlaySlot"></div>
 </div>
 
 <div class="pv2-lightbox" id="pv2Lightbox" style="display:none;" role="dialog" aria-modal="true">
@@ -6431,40 +6481,6 @@
 
   // ─── Portal v2 — Notion-style mood board ─────────────────────────
   const PORTAL_V2_KEY = 'portal_v2_data';
-  const PORTAL_TEXT_SIZE_KEY = 'portal_text_size';
-
-  function getPortalTextSize() {
-    const v = storeGet(PORTAL_TEXT_SIZE_KEY);
-    return (v === 'S' || v === 'L') ? v : 'M';
-  }
-  function setPortalTextSize(size) {
-    storeSet(PORTAL_TEXT_SIZE_KEY, size);
-  }
-  function applyPortalTextSize(size) {
-    const panel = document.querySelector('.tab-panel[data-tab="portal"]');
-    if (!panel) return;
-    if (size === 'M') panel.removeAttribute('data-text-size');
-    else panel.setAttribute('data-text-size', size);
-    document.querySelectorAll('.pv2-size-btn').forEach(b => {
-      b.classList.toggle('is-active', b.dataset.size === size);
-    });
-  }
-  let _pv2TextSizeWired = false;
-  function setupPortalTextSize() {
-    if (_pv2TextSizeWired) return;
-    const btns = document.querySelectorAll('.pv2-size-btn');
-    if (!btns.length) return;
-    _pv2TextSizeWired = true;
-    btns.forEach(b => {
-      b.addEventListener('click', () => {
-        const size = b.dataset.size;
-        setPortalTextSize(size);
-        applyPortalTextSize(size);
-        if (typeof chime === 'function') chime('pop');
-      });
-    });
-    applyPortalTextSize(getPortalTextSize());
-  }
   const EMPTY_SLOT = { url: '', x: 50, y: 50 };
 
   function normalizeSlot(v) {
@@ -6830,7 +6846,80 @@
   }
 
   const _pv2TextareaTimers = new WeakMap();
-  function setupPv2Textarea(ta, getValue, setValue) {
+  const PV2_EXPAND_SVG =
+    '<svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M2 2v5h2V4h3V2H2zm12 0H9v2h3v3h2V2zM2 14h5v-2H4V9H2v5zm12 0V9h-2v3h-3v2h5z"/>' +
+    '</svg>';
+
+  function _pv2WrapAndAttachExpand(ta, label) {
+    if (!ta || !ta.parentNode) return;
+    if (ta.parentNode.classList && ta.parentNode.classList.contains('pv2-textarea-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'pv2-textarea-wrap';
+    ta.parentNode.insertBefore(wrap, ta);
+    wrap.appendChild(ta);
+
+    const btn = document.createElement('button');
+    btn.className = 'pv2-textarea-expand';
+    btn.type = 'button';
+    btn.title = 'Abrir en pantalla completa';
+    btn.setAttribute('aria-label', 'Abrir en pantalla completa');
+    btn.innerHTML = PV2_EXPAND_SVG;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openTextareaFullscreen(ta, label || '');
+    });
+    wrap.appendChild(btn);
+  }
+
+  let _pv2OverlayWired = false;
+  function setupTextOverlay() {
+    if (_pv2OverlayWired) return;
+    const overlay = document.getElementById('pv2TextOverlay');
+    const closeBtn = document.getElementById('pv2TextOverlayClose');
+    if (!overlay) return;
+    _pv2OverlayWired = true;
+    closeBtn && closeBtn.addEventListener('click', closeTextareaFullscreen);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeTextareaFullscreen();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (overlay.style.display === 'none') return;
+      if (e.key === 'Escape') { e.preventDefault(); closeTextareaFullscreen(); }
+    });
+  }
+
+  function openTextareaFullscreen(ta, label) {
+    setupTextOverlay();
+    const overlay = document.getElementById('pv2TextOverlay');
+    const slot = document.getElementById('pv2TextOverlaySlot');
+    const titleEl = document.getElementById('pv2TextOverlayTitle');
+    if (!overlay || !slot || !ta) return;
+    ta._originParent = ta.parentNode;
+    ta._originNext = ta.nextSibling;
+    ta.classList.add('is-fullscreen');
+    slot.appendChild(ta);
+    if (titleEl) titleEl.textContent = label || 'Texto';
+    overlay.style.display = '';
+    setTimeout(() => { try { ta.focus(); } catch (e) {} }, 40);
+  }
+
+  function closeTextareaFullscreen() {
+    const overlay = document.getElementById('pv2TextOverlay');
+    if (!overlay) return;
+    const ta = overlay.querySelector('.is-fullscreen');
+    if (ta) {
+      ta.classList.remove('is-fullscreen');
+      if (ta._originParent) {
+        ta._originParent.insertBefore(ta, ta._originNext || null);
+        delete ta._originParent;
+        delete ta._originNext;
+      }
+    }
+    overlay.style.display = 'none';
+  }
+
+  function setupPv2Textarea(ta, getValue, setValue, label) {
     if (!ta) return;
     if (ta.dataset.loaded === '1') return;
     ta.value = getValue() || '';
@@ -6839,10 +6928,10 @@
       clearTimeout(_pv2TextareaTimers.get(ta));
       _pv2TextareaTimers.set(ta, setTimeout(() => setValue(ta.value), 300));
     });
+    _pv2WrapAndAttachExpand(ta, label);
   }
 
   function renderPortalV2() {
-    setupPortalTextSize();
     const data = getPortalV2Data();
 
     // Inspiration board: 4 top (340×453) + 4 bottom (340×639)
@@ -6872,13 +6961,16 @@
 
     setupPv2Textarea(document.getElementById('pv2Beliefs'),
       () => getPortalV2Data().beliefs,
-      (v) => { const d = getPortalV2Data(); d.beliefs = v; setPortalV2Data(d); });
+      (v) => { const d = getPortalV2Data(); d.beliefs = v; setPortalV2Data(d); },
+      '10 creencias clave');
     setupPv2Textarea(document.getElementById('pv2PortalText'),
       () => getPortalV2Data().portalText,
-      (v) => { const d = getPortalV2Data(); d.portalText = v; setPortalV2Data(d); });
+      (v) => { const d = getPortalV2Data(); d.portalText = v; setPortalV2Data(d); },
+      'Portal');
     setupPv2Textarea(document.getElementById('pv2AntiportalText'),
       () => getPortalV2Data().antiportalText,
-      (v) => { const d = getPortalV2Data(); d.antiportalText = v; setPortalV2Data(d); });
+      (v) => { const d = getPortalV2Data(); d.antiportalText = v; setPortalV2Data(d); },
+      'Anti-portal');
   }
 
   function renderPv2SlidesGrid(containerId, dataKey, slidesData) {
@@ -6922,9 +7014,11 @@
       ta.className = 'pv2-slide-text';
       ta.spellcheck = true;
       ta.placeholder = (isAnti ? 'Anti-slide ' : 'Slide ') + (s + 1) + '…';
+      const slideLabel = (isAnti ? 'Anti-slide ' : 'Slide ') + String(sIdx + 1).padStart(2, '0');
       setupPv2Textarea(ta,
         () => getPortalV2Data()[dataKey][sIdx].text,
-        (v) => { const d = getPortalV2Data(); d[dataKey][sIdx].text = v; setPortalV2Data(d); });
+        (v) => { const d = getPortalV2Data(); d[dataKey][sIdx].text = v; setPortalV2Data(d); },
+        slideLabel);
       body.appendChild(ta);
 
       page.appendChild(body);
