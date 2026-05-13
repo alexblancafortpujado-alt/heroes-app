@@ -2605,13 +2605,13 @@
   .stv2-node.is-done .stv2-node-bg {
     fill: var(--day-color);
     stroke: var(--day-color);
-    filter: drop-shadow(0 0 10px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
+    filter: drop-shadow(0 0 14px var(--day-color)) drop-shadow(0 0 5px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
   }
   .stv2-node.is-done .stv2-node-inner {
     fill: rgba(255,255,255,0.95);
   }
   .stv2-node.is-done .stv2-node-glow {
-    opacity: 0.55;
+    opacity: 0.72;
     animation: stv2-node-pulse 3.6s ease-in-out infinite;
   }
   @keyframes stv2-node-pulse {
@@ -2619,13 +2619,13 @@
     50% { opacity: 0.78; }
   }
   .stv2-node-task.is-done .stv2-node-bg {
-    filter: drop-shadow(0 0 8px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
+    filter: drop-shadow(0 0 10px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
   }
   .stv2-node-chapter.is-done .stv2-node-bg {
-    filter: drop-shadow(0 0 18px var(--day-color)) drop-shadow(0 0 6px var(--day-color));
+    filter: drop-shadow(0 0 24px var(--day-color)) drop-shadow(0 0 8px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
   }
   .stv2-node-subgroup.is-done .stv2-node-bg {
-    filter: drop-shadow(0 0 12px var(--day-color)) drop-shadow(0 0 4px var(--day-color));
+    filter: drop-shadow(0 0 16px var(--day-color)) drop-shadow(0 0 5px var(--day-color));
   }
 
   /* Hub special styling */
@@ -2789,6 +2789,56 @@
     text-transform: none;
   }
 
+  /* Always-visible labels under chapters + hub */
+  .stv2-chapter-label, .stv2-hub-label, .stv2-chapter-sublabel {
+    pointer-events: none;
+    font-family: Georgia, 'Cinzel', 'Times New Roman', serif;
+    text-anchor: middle;
+    paint-order: stroke;
+    transition: filter 0.35s ease;
+  }
+  .stv2-chapter-label {
+    fill: var(--day-color);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    stroke: rgba(0,0,0,0.95);
+    stroke-width: 6px;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.95)) drop-shadow(0 0 4px var(--day-color));
+  }
+  .stv2-chapter-sublabel {
+    fill: rgba(255,255,255,0.55);
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    stroke: rgba(0,0,0,0.95);
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.98));
+  }
+  .stv2-hub-label {
+    fill: #FFD89E;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    stroke: rgba(0,0,0,0.98);
+    stroke-width: 7px;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,1)) drop-shadow(0 0 6px rgba(255,216,158,0.6));
+  }
+  .stv2-hub-sublabel {
+    fill: rgba(255,216,158,0.7);
+    font-size: 13px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    letter-spacing: 0.10em;
+    text-anchor: middle;
+    pointer-events: none;
+    stroke: rgba(0,0,0,0.98);
+    stroke-width: 5px;
+    paint-order: stroke;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,1));
+  }
+
   .stv2-next-halo {
     fill: none;
     stroke: var(--day-color);
@@ -2849,300 +2899,6 @@
     .stv2-title { font-size: 24px; }
     .stv2-canvas-wrap { height: 70vh; }
     .stv2-tooltip { font-size: 12px; max-width: 260px; }
-  }
-
-  /* Skilltree v3 — Path of Pathing style */
-  .stv3-module-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-  }
-  .stv3-header {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-  .stv3-title {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    color: var(--text-primary);
-  }
-  .stv3-subtitle {
-    font-size: 12px;
-    color: var(--text-tertiary);
-    flex: 1;
-    min-width: 200px;
-    letter-spacing: 0.04em;
-  }
-  .stv3-progress-text {
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--text-primary);
-  }
-
-  .stv3-canvas-wrap {
-    position: relative;
-    width: 100%;
-    height: 78vh;
-    min-height: 520px;
-    border-radius: 10px;
-    overflow: hidden;
-    background:
-      radial-gradient(ellipse at center, #11151F 0%, #06080F 78%);
-    border: 1px solid #5C4F42;
-    cursor: grab;
-    user-select: none;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.65), inset 0 0 140px rgba(0,0,0,0.55);
-    touch-action: none;
-  }
-  .stv3-canvas-wrap.is-panning { cursor: grabbing; }
-  .stv3-canvas-wrap svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .stv3-canvas-wrap svg, .stv3-canvas-wrap svg * {
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  .stv3-line {
-    stroke: #3D332B;
-    stroke-width: 1.9;
-    fill: none;
-    transition: stroke 0.35s ease, stroke-width 0.35s ease, filter 0.35s ease;
-  }
-  .stv3-line.is-lit {
-    stroke: var(--day-color);
-    stroke-width: 2.7;
-    filter: drop-shadow(0 0 6px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
-  }
-
-  .stv3-node { cursor: pointer; }
-  .stv3-node-frame {
-    fill: none;
-    stroke: rgba(107, 92, 79, 0.55);
-    stroke-width: 1.5;
-    pointer-events: none;
-    transition: stroke 0.3s ease, filter 0.35s ease, stroke-width 0.3s ease;
-  }
-  .stv3-node.is-done .stv3-node-frame {
-    stroke: #CBB59C;
-    stroke-width: 2;
-    filter: drop-shadow(0 0 6px var(--day-color));
-  }
-  .stv3-node:hover .stv3-node-frame {
-    stroke: #CBB59C;
-    stroke-width: 2;
-  }
-  .stv3-node-shape {
-    fill: #1B130E;
-    stroke: #6B5C4F;
-    stroke-width: 2;
-    transform-origin: center;
-    transform-box: fill-box;
-    transition: fill 0.3s ease, stroke 0.3s ease, stroke-width 0.25s ease,
-                transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
-                filter 0.35s ease;
-    filter: drop-shadow(0 0 3px rgba(203, 181, 156, 0.08));
-  }
-  .stv3-node-inner {
-    fill: #5C4F42;
-    pointer-events: none;
-    transform-origin: center;
-    transform-box: fill-box;
-    transition: fill 0.3s ease, transform 0.22s ease;
-  }
-  .stv3-node:hover .stv3-node-shape {
-    stroke: #CBB59C;
-    stroke-width: 2.6;
-    transform: scale(1.28);
-    filter: drop-shadow(0 0 12px rgba(203, 181, 156, 0.50));
-  }
-  .stv3-node:hover .stv3-node-inner { transform: scale(1.20); fill: #CBB59C; }
-  .stv3-node.is-done .stv3-node-shape {
-    fill: var(--day-color);
-    stroke: #CBB59C;
-    filter: drop-shadow(0 0 12px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
-  }
-  .stv3-node-task.is-done .stv3-node-shape {
-    filter: drop-shadow(0 0 8px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
-  }
-  .stv3-node-subgroup.is-done .stv3-node-shape {
-    filter: drop-shadow(0 0 16px var(--day-color)) drop-shadow(0 0 4px var(--day-color));
-  }
-  .stv3-node-chapter.is-done .stv3-node-shape {
-    filter: drop-shadow(0 0 22px var(--day-color)) drop-shadow(0 0 6px var(--day-color));
-  }
-  .stv3-node.is-done .stv3-node-inner {
-    fill: #1A140E;
-  }
-  .stv3-node-hub .stv3-node-frame {
-    stroke: rgba(255, 216, 158, 0.45);
-    stroke-width: 1.8;
-  }
-  .stv3-node-hub .stv3-node-shape {
-    fill: #2A1C0A;
-    stroke: #FFD89E;
-    stroke-width: 2.6;
-    filter: drop-shadow(0 0 16px rgba(255,216,158,0.55)) drop-shadow(0 0 4px #FFD89E);
-  }
-  .stv3-node-hub.is-done .stv3-node-shape {
-    fill: #FFD89E;
-    filter: drop-shadow(0 0 28px #FFD89E) drop-shadow(0 0 8px #FFD89E);
-  }
-  .stv3-node-hub.is-done .stv3-node-frame {
-    stroke: #FFD89E;
-    filter: drop-shadow(0 0 12px #FFD89E);
-  }
-
-  /* Info panel (bottom-right, PoE atlas-style) */
-  .stv3-info-panel {
-    position: absolute;
-    bottom: 14px;
-    right: 14px;
-    width: 320px;
-    background: rgba(8, 6, 5, 0.95);
-    border: 1px solid #CBB59C;
-    border-left: 4px solid var(--day-color, #CBB59C);
-    border-radius: 4px;
-    padding: 14px 16px;
-    z-index: 4;
-    color: #FFFFFF;
-    line-height: 1.5;
-    backdrop-filter: blur(10px);
-    display: none;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 18px rgba(203, 181, 156, 0.08);
-    pointer-events: none;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  }
-  .stv3-info-panel.is-visible { display: block; }
-  .stv3-info-meta {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #CBB59C;
-    margin-bottom: 6px;
-  }
-  .stv3-info-title {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #FFFFFF;
-    line-height: 1.3;
-  }
-  .stv3-info-context {
-    font-size: 12px;
-    color: #AF6025;
-    margin-bottom: 8px;
-    font-style: italic;
-  }
-  .stv3-info-status {
-    font-size: 11.5px;
-    color: #808080;
-    font-style: italic;
-  }
-  .stv3-info-status.is-done {
-    color: #6BE3A4;
-    font-weight: 700;
-    font-style: normal;
-  }
-
-  /* Zoom controls + Next button — PoE atlas style */
-  .stv3-zoom-controls {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    z-index: 5;
-  }
-  .stv3-zoom-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    background: rgba(20, 14, 10, 0.92);
-    border: 1px solid #5C4F42;
-    color: #CBB59C;
-    cursor: pointer;
-    font-size: 16px;
-    font-family: inherit;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    backdrop-filter: blur(8px);
-  }
-  .stv3-zoom-btn:hover {
-    background: #1F1612;
-    border-color: #CBB59C;
-    color: #FFFFFF;
-  }
-  .stv3-next-btn {
-    position: absolute;
-    bottom: 14px;
-    left: 14px;
-    z-index: 6;
-    background: rgba(18, 12, 8, 0.94);
-    border: 1px solid #CBB59C;
-    color: #CBB59C;
-    border-radius: 4px;
-    padding: 9px 16px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    backdrop-filter: blur(10px);
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.22s ease;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.5), inset 0 0 8px rgba(203, 181, 156, 0.08);
-  }
-  .stv3-next-btn:hover {
-    background: rgba(203, 181, 156, 0.16);
-    color: #FFFFFF;
-    border-color: #FFD89E;
-    box-shadow: 0 6px 22px rgba(203, 181, 156, 0.28), inset 0 0 10px rgba(255, 216, 158, 0.18);
-  }
-
-  .stv3-hint {
-    margin-top: 10px;
-    font-size: 11px;
-    color: var(--text-tertiary);
-    text-align: center;
-    font-style: italic;
-    letter-spacing: 0.04em;
-  }
-
-  .stv3-next-halo {
-    fill: none;
-    stroke: var(--day-color);
-    pointer-events: none;
-    filter: drop-shadow(0 0 14px var(--day-color)) drop-shadow(0 0 4px var(--day-color));
-    animation: stv3-next-halo-pulse 1.05s ease-in-out infinite;
-  }
-  @keyframes stv3-next-halo-pulse {
-    0%, 100% { r: 22; opacity: 0.95; stroke-width: 3; }
-    50%      { r: 44; opacity: 0.20; stroke-width: 1; }
-  }
-
-  @media (max-width: 480px) {
-    .stv3-title { font-size: 22px; }
-    .stv3-canvas-wrap { height: 68vh; }
-    .stv3-info-panel { width: calc(100% - 28px); right: 14px; left: 14px; }
   }
 
   /* Auth gate (Clerk) */
@@ -3352,7 +3108,6 @@
   <button class="tab-btn" data-tab="portal" type="button">Portal</button>
   <button class="tab-btn" data-tab="skilltree" type="button">Checklist</button>
   <button class="tab-btn" data-tab="skilltree-v2" type="button">Skilltree</button>
-  <button class="tab-btn" data-tab="skilltree-v3" type="button">Skilltree v2</button>
 </nav>
 
 <div class="tab-panel is-active" data-tab="dashboard">
@@ -3561,16 +3316,6 @@
     <div class="stv2-hint">Drag to pan · Scroll to zoom · Click a node to toggle</div>
   </div>
 </div><!-- /tab-panel skilltree-v2 -->
-
-<div class="tab-panel" data-tab="skilltree-v3">
-  <div class="section">
-    <div class="section-title">Skilltree v2 · Path of Pathing</div>
-    <div class="stv3-module-tabs" id="stv3ModuleTabs"></div>
-    <div class="stv3-header" id="stv3Header"></div>
-    <div class="stv3-canvas-wrap" id="stv3CanvasWrap"></div>
-    <div class="stv3-hint">Drag to pan · Scroll to zoom · Click a node to allocate</div>
-  </div>
-</div><!-- /tab-panel skilltree-v3 -->
 
 <div class="cal-modal-bg" id="portalModalBg" style="display:none;">
   <div class="cal-modal portal-modal" role="dialog" aria-modal="true">
@@ -6252,11 +5997,28 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     stv2State.nodes = [];
     stv2State.lines = [];
 
-    // HUB
+    // HUB (bigger + always-visible label)
     const hubData = { type: 'hub', x: 0, y: 0, color: '#FFD89E', label: module.name, meta: 'CENTRO' };
-    const hubEl = stv2CreateNode(hubData, 46);
+    const HUB_R = 54;
+    const hubEl = stv2CreateNode(hubData, HUB_R);
     nodesG.appendChild(hubEl);
     stv2State.nodes.push({ ...hubData, el: hubEl });
+
+    const hubLabel = document.createElementNS(SVG_NS, 'text');
+    hubLabel.setAttribute('x', '0');
+    hubLabel.setAttribute('y', HUB_R + 60);
+    hubLabel.setAttribute('class', 'stv2-hub-label');
+    hubLabel.textContent = module.name;
+    nodesG.appendChild(hubLabel);
+
+    if (module.subtitle) {
+      const hubSub = document.createElementNS(SVG_NS, 'text');
+      hubSub.setAttribute('x', '0');
+      hubSub.setAttribute('y', HUB_R + 86);
+      hubSub.setAttribute('class', 'stv2-hub-sublabel');
+      hubSub.textContent = module.subtitle;
+      nodesG.appendChild(hubSub);
+    }
 
     const N = module.chapters.length;
     module.chapters.forEach((ch, chIdx) => {
@@ -6269,9 +6031,31 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
         type: 'chapter', x: chX, y: chY, color: ch.color, chIdx,
         label: ch.name, meta: ch.subtitle || 'CAPÍTULO'
       };
-      const chEl = stv2CreateNode(chData, 28);
+      const CH_R = 28;
+      const chEl = stv2CreateNode(chData, CH_R);
       nodesG.appendChild(chEl);
       stv2State.nodes.push({ ...chData, el: chEl });
+
+      // Always-visible chapter label (positioned outward from hub)
+      const labelOffset = CH_R + 32;
+      const outwardMult = (chR + labelOffset) / chR;
+      const labelX = chX * outwardMult;
+      const labelY = chY * outwardMult;
+      const chLbl = document.createElementNS(SVG_NS, 'text');
+      chLbl.setAttribute('x', labelX);
+      chLbl.setAttribute('y', labelY);
+      chLbl.setAttribute('class', 'stv2-chapter-label');
+      chLbl.style.setProperty('--day-color', ch.color);
+      chLbl.textContent = ch.name.toUpperCase();
+      nodesG.appendChild(chLbl);
+      if (ch.subtitle) {
+        const chSub = document.createElementNS(SVG_NS, 'text');
+        chSub.setAttribute('x', labelX);
+        chSub.setAttribute('y', labelY + 22);
+        chSub.setAttribute('class', 'stv2-chapter-sublabel');
+        chSub.textContent = ch.subtitle;
+        nodesG.appendChild(chSub);
+      }
 
       const hubLine = stv2CreateLine(0, 0, chX, chY, ch.color, 0.05 + (Math.hypot(chX, chY) / 1100) * 0.55);
       linesG.appendChild(hubLine);
@@ -6791,646 +6575,6 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     }
   }
 
-  // ─── Skilltree v3 (Path of Pathing style) ─────────────────────────
-  const STV3_DEFAULT_VIEWBOX = { x: -1500, y: -1500, w: 3000, h: 3000 };
-  let stv3State = {
-    moduleId: SKILLTREE_MODULES[0].id,
-    nodes: [],
-    lines: [],
-    viewBox: { ...STV3_DEFAULT_VIEWBOX }
-  };
-
-  function stv3DiamondPoints(r) {
-    return '0,' + (-r) + ' ' + r + ',0 0,' + r + ' ' + (-r) + ',0';
-  }
-  function stv3OctagonPoints(r) {
-    const pts = [];
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * 2 * Math.PI - Math.PI / 8;
-      pts.push((r * Math.cos(a)).toFixed(1) + ',' + (r * Math.sin(a)).toFixed(1));
-    }
-    return pts.join(' ');
-  }
-  function stv3StarPoints(rOuter, rInner, num) {
-    const pts = [];
-    const total = num * 2;
-    for (let i = 0; i < total; i++) {
-      const a = (i / total) * 2 * Math.PI - Math.PI / 2;
-      const r = i % 2 === 0 ? rOuter : rInner;
-      pts.push((r * Math.cos(a)).toFixed(1) + ',' + (r * Math.sin(a)).toFixed(1));
-    }
-    return pts.join(' ');
-  }
-
-  function stv3NodeIsLit(node, state, module) {
-    if (node.type === 'hub') {
-      for (const k in state) if (state[k]) return true;
-      return false;
-    }
-    if (node.type === 'task') return !!state[node.taskId];
-    if (node.type === 'subgroup') return computeSubgroupStats(module, node.chIdx, node.sgIdx, state).complete;
-    if (node.type === 'chapter') return computeChapterStats(module, node.chIdx, state).complete;
-    return false;
-  }
-  function stv3LineIsLit(line, state, module) {
-    if (line.toType === 'chapter') return computeChapterStats(module, line.toChIdx, state).complete;
-    if (line.toType === 'subgroup') return computeSubgroupStats(module, line.toChIdx, line.toSgIdx, state).complete;
-    if (line.toType === 'task') return !!state[stTaskId(module.id, line.toChIdx, line.toSgIdx, line.toTIdx)];
-    return false;
-  }
-  function stv3RefreshLitState() {
-    const module = SKILLTREE_MODULES.find(m => m.id === stv3State.moduleId) || SKILLTREE_MODULES[0];
-    const state = getSkilltreeState();
-    for (const n of stv3State.nodes) n.el.classList.toggle('is-done', stv3NodeIsLit(n, state, module));
-    for (const ln of stv3State.lines) ln.el.classList.toggle('is-lit', stv3LineIsLit(ln, state, module));
-    let total = 0, done = 0;
-    module.chapters.forEach((c, i) => {
-      const s = computeChapterStats(module, i, state);
-      total += s.total; done += s.done;
-    });
-    const pctEl = document.querySelector('.stv3-progress-text');
-    if (pctEl) {
-      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-      pctEl.textContent = done + ' / ' + total + ' · ' + pct + '%';
-    }
-    stv3UpdateNextButton();
-  }
-
-  function stv3CreateNode(data, r) {
-    const g = document.createElementNS(SVG_NS, 'g');
-    g.setAttribute('class', 'stv3-node stv3-node-' + data.type);
-    g.setAttribute('transform', 'translate(' + data.x + ',' + data.y + ')');
-    g.style.setProperty('--day-color', data.color);
-    if (data.taskId) g.dataset.taskId = data.taskId;
-    if (data.chIdx !== undefined) g.dataset.chIdx = data.chIdx;
-    if (data.sgIdx !== undefined) g.dataset.sgIdx = data.sgIdx;
-    if (data.tIdx !== undefined) g.dataset.tIdx = data.tIdx;
-
-    // Decorative outer frame for notable nodes (PoE jewel framing)
-    if (data.type === 'chapter') {
-      const frame = document.createElementNS(SVG_NS, 'polygon');
-      frame.setAttribute('points', stv3OctagonPoints(r * 1.45));
-      frame.setAttribute('class', 'stv3-node-frame');
-      g.appendChild(frame);
-    } else if (data.type === 'subgroup') {
-      const frame = document.createElementNS(SVG_NS, 'polygon');
-      frame.setAttribute('points', stv3DiamondPoints(r * 1.55));
-      frame.setAttribute('class', 'stv3-node-frame');
-      g.appendChild(frame);
-    } else if (data.type === 'hub') {
-      const frame = document.createElementNS(SVG_NS, 'polygon');
-      frame.setAttribute('points', stv3StarPoints(r * 1.35, r * 0.72, 8));
-      frame.setAttribute('class', 'stv3-node-frame');
-      g.appendChild(frame);
-    }
-
-    let shape;
-    if (data.type === 'task') {
-      shape = document.createElementNS(SVG_NS, 'circle');
-      shape.setAttribute('r', r);
-    } else if (data.type === 'subgroup') {
-      shape = document.createElementNS(SVG_NS, 'polygon');
-      shape.setAttribute('points', stv3DiamondPoints(r));
-    } else if (data.type === 'chapter') {
-      shape = document.createElementNS(SVG_NS, 'polygon');
-      shape.setAttribute('points', stv3OctagonPoints(r));
-    } else if (data.type === 'hub') {
-      shape = document.createElementNS(SVG_NS, 'polygon');
-      shape.setAttribute('points', stv3StarPoints(r, r * 0.5, 8));
-    }
-    shape.setAttribute('class', 'stv3-node-shape');
-    g.appendChild(shape);
-
-    if (data.type !== 'task') {
-      let inner;
-      if (data.type === 'chapter') {
-        inner = document.createElementNS(SVG_NS, 'polygon');
-        inner.setAttribute('points', stv3OctagonPoints(r * 0.45));
-      } else if (data.type === 'subgroup') {
-        inner = document.createElementNS(SVG_NS, 'polygon');
-        inner.setAttribute('points', stv3DiamondPoints(r * 0.42));
-      } else if (data.type === 'hub') {
-        inner = document.createElementNS(SVG_NS, 'circle');
-        inner.setAttribute('r', r * 0.32);
-      }
-      inner.setAttribute('class', 'stv3-node-inner');
-      g.appendChild(inner);
-    }
-    return g;
-  }
-  function stv3CreateLine(x1, y1, x2, y2, color) {
-    const line = document.createElementNS(SVG_NS, 'line');
-    line.setAttribute('x1', x1);
-    line.setAttribute('y1', y1);
-    line.setAttribute('x2', x2);
-    line.setAttribute('y2', y2);
-    line.setAttribute('class', 'stv3-line');
-    line.style.setProperty('--day-color', color);
-    return line;
-  }
-
-  function renderSkilltreeV3() {
-    const wrap = document.getElementById('stv3CanvasWrap');
-    const headerEl = document.getElementById('stv3Header');
-    const tabsEl = document.getElementById('stv3ModuleTabs');
-    if (!wrap || !headerEl || !tabsEl) return;
-
-    const module = SKILLTREE_MODULES.find(m => m.id === stv3State.moduleId) || SKILLTREE_MODULES[0];
-    const state = getSkilltreeState();
-
-    tabsEl.innerHTML = '';
-    SKILLTREE_MODULES.forEach(m => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'st-module-tab' + (m.id === stv3State.moduleId ? ' is-active' : '');
-      btn.innerHTML = '<span class="st-module-tab-icon">' + m.icon + '</span><span class="st-module-tab-name">' + m.name + '</span>';
-      btn.addEventListener('click', () => {
-        stv3State.moduleId = m.id;
-        stv3State.viewBox = { ...STV3_DEFAULT_VIEWBOX };
-        renderSkilltreeV3();
-      });
-      tabsEl.appendChild(btn);
-    });
-    SKILLTREE_LOCKED_MODULES.forEach(m => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'st-module-tab is-locked';
-      btn.disabled = true;
-      btn.innerHTML = '<span class="st-module-tab-icon">' + m.icon + '</span><span class="st-module-tab-name">' + m.name + '</span>';
-      tabsEl.appendChild(btn);
-    });
-
-    let totalTasks = 0, doneTasks = 0;
-    module.chapters.forEach((c, i) => {
-      const s = computeChapterStats(module, i, state);
-      totalTasks += s.total; doneTasks += s.done;
-    });
-    const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
-    headerEl.innerHTML =
-      '<div class="stv3-title">' + module.name + '</div>' +
-      '<div class="stv3-subtitle">' + module.subtitle + '</div>' +
-      '<div class="stv3-progress-text">' + doneTasks + ' / ' + totalTasks + ' · ' + pct + '%</div>';
-
-    wrap.innerHTML =
-      '<svg id="stv3Svg" xmlns="http://www.w3.org/2000/svg" viewBox="' +
-        stv3State.viewBox.x + ' ' + stv3State.viewBox.y + ' ' +
-        stv3State.viewBox.w + ' ' + stv3State.viewBox.h + '" preserveAspectRatio="xMidYMid meet">' +
-        '<g id="stv3Stars"></g>' +
-        '<g id="stv3LinesG"></g>' +
-        '<g id="stv3NodesG"></g>' +
-      '</svg>' +
-      '<div class="stv3-info-panel" id="stv3InfoPanel">' +
-        '<div class="stv3-info-meta"></div>' +
-        '<div class="stv3-info-title"></div>' +
-        '<div class="stv3-info-context"></div>' +
-        '<div class="stv3-info-status"></div>' +
-      '</div>' +
-      '<div class="stv3-zoom-controls">' +
-        '<button class="stv3-zoom-btn" id="stv3ZoomIn" type="button" title="Zoom in">+</button>' +
-        '<button class="stv3-zoom-btn" id="stv3ZoomOut" type="button" title="Zoom out">−</button>' +
-        '<button class="stv3-zoom-btn" id="stv3ZoomFit" type="button" title="Fit">⊙</button>' +
-      '</div>' +
-      '<button class="stv3-next-btn" id="stv3NextBtn" type="button">→ Next task</button>';
-
-    const svg = document.getElementById('stv3Svg');
-    const starsG = document.getElementById('stv3Stars');
-    const linesG = document.getElementById('stv3LinesG');
-    const nodesG = document.getElementById('stv3NodesG');
-
-    // Sparse atlas stars (warm-tinted like PoE atlas backdrop)
-    for (let i = 0; i < 140; i++) {
-      const star = document.createElementNS(SVG_NS, 'circle');
-      const a = Math.random() * 2 * Math.PI;
-      const rad = 250 + Math.pow(Math.random(), 0.55) * 1300;
-      star.setAttribute('cx', rad * Math.cos(a));
-      star.setAttribute('cy', rad * Math.sin(a));
-      star.setAttribute('r', 0.4 + Math.random() * 1.1);
-      // Mix white-ish and warm beige to match PoE atlas tone
-      const useWarm = Math.random() < 0.4;
-      const color = useWarm
-        ? 'rgba(203, 181, 156, ' + (0.20 + Math.random() * 0.30) + ')'
-        : 'rgba(255, 255, 255, ' + (0.15 + Math.random() * 0.32) + ')';
-      star.setAttribute('fill', color);
-      starsG.appendChild(star);
-    }
-
-    stv3State.nodes = [];
-    stv3State.lines = [];
-
-    // HUB (8-point star)
-    const hubData = { type: 'hub', x: 0, y: 0, color: '#FFD89E', label: module.name, meta: 'CORE', context: 'Module entry' };
-    const hubEl = stv3CreateNode(hubData, 38);
-    nodesG.appendChild(hubEl);
-    stv3State.nodes.push({ ...hubData, el: hubEl });
-
-    const N = module.chapters.length;
-    module.chapters.forEach((ch, chIdx) => {
-      const chAngle = (chIdx / N) * 2 * Math.PI - Math.PI / 2;
-      const chR = 440;
-      const chX = chR * Math.cos(chAngle);
-      const chY = chR * Math.sin(chAngle);
-
-      const chData = {
-        type: 'chapter', x: chX, y: chY, color: ch.color, chIdx,
-        label: ch.name, meta: 'NOTABLE · CAPÍTULO', context: ch.subtitle || ''
-      };
-      const chEl = stv3CreateNode(chData, 24);
-      nodesG.appendChild(chEl);
-      stv3State.nodes.push({ ...chData, el: chEl });
-
-      const hubLine = stv3CreateLine(0, 0, chX, chY, ch.color);
-      linesG.appendChild(hubLine);
-      stv3State.lines.push({ el: hubLine, fromType: 'hub', toType: 'chapter', toChIdx: chIdx, color: ch.color });
-
-      const wedgeSpread = (2 * Math.PI / N) * 0.92;
-      const numSg = ch.subgroups.length;
-
-      ch.subgroups.forEach((sg, sgIdx) => {
-        const sgAngle = chAngle + stv2FanOffset(sgIdx, numSg, wedgeSpread);
-        const orbitOffset = (sgIdx % 3) * 145;
-        const sgR = 320 + orbitOffset;
-        const sgX = chX + sgR * Math.cos(sgAngle);
-        const sgY = chY + sgR * Math.sin(sgAngle);
-
-        const sgData = {
-          type: 'subgroup', x: sgX, y: sgY, color: ch.color, chIdx, sgIdx,
-          label: sg.name || ch.name, meta: 'NOTABLE · VÍDEO', context: ch.name
-        };
-        const sgEl = stv3CreateNode(sgData, 16);
-        nodesG.appendChild(sgEl);
-        stv3State.nodes.push({ ...sgData, el: sgEl });
-
-        const sgLine = stv3CreateLine(chX, chY, sgX, sgY, ch.color);
-        linesG.appendChild(sgLine);
-        stv3State.lines.push({ el: sgLine, fromType: 'chapter', toType: 'subgroup', toChIdx: chIdx, toSgIdx: sgIdx, color: ch.color });
-
-        const taskWedge = 135 * Math.PI / 180;
-        const tNum = sg.tasks.length;
-        sg.tasks.forEach((taskText, tIdx) => {
-          const tAngle = sgAngle + stv2FanOffset(tIdx, tNum, taskWedge);
-          const tR = 160;
-          const tX = sgX + tR * Math.cos(tAngle);
-          const tY = sgY + tR * Math.sin(tAngle);
-
-          const taskId = stTaskId(module.id, chIdx, sgIdx, tIdx);
-          const tData = {
-            type: 'task', x: tX, y: tY, color: ch.color,
-            chIdx, sgIdx, tIdx, taskId,
-            label: taskText,
-            meta: 'SKILL',
-            context: ch.name + ' · ' + (sg.name || '')
-          };
-          const tEl = stv3CreateNode(tData, 11);
-          nodesG.appendChild(tEl);
-          stv3State.nodes.push({ ...tData, el: tEl });
-
-          const tLine = stv3CreateLine(sgX, sgY, tX, tY, ch.color);
-          linesG.appendChild(tLine);
-          stv3State.lines.push({ el: tLine, fromType: 'subgroup', toType: 'task', toChIdx: chIdx, toSgIdx: sgIdx, toTIdx: tIdx, color: ch.color });
-        });
-      });
-    });
-
-    stv3RefreshLitState();
-    stv3WireInteractions(svg, wrap);
-  }
-
-  function stv3UpdateViewBox(svg) {
-    svg.setAttribute('viewBox',
-      stv3State.viewBox.x + ' ' + stv3State.viewBox.y + ' ' +
-      stv3State.viewBox.w + ' ' + stv3State.viewBox.h);
-  }
-  let stv3ZoomTarget = null;
-  let stv3ZoomAnimating = false;
-  function stv3SmoothZoom(factor, anchorSvgX, anchorSvgY, svg) {
-    const baseV = stv3ZoomTarget || stv3State.viewBox;
-    const newW = Math.max(500, Math.min(4500, baseV.w * factor));
-    const newH = newW * (baseV.h / baseV.w);
-    const rX = (anchorSvgX - baseV.x) / baseV.w;
-    const rY = (anchorSvgY - baseV.y) / baseV.h;
-    stv3ZoomTarget = {
-      x: anchorSvgX - rX * newW,
-      y: anchorSvgY - rY * newH,
-      w: newW, h: newH
-    };
-    if (!stv3ZoomAnimating) {
-      stv3ZoomAnimating = true;
-      const step = () => {
-        if (!stv3ZoomTarget) { stv3ZoomAnimating = false; return; }
-        const v = stv3State.viewBox;
-        const t = stv3ZoomTarget;
-        v.x += (t.x - v.x) * 0.22;
-        v.y += (t.y - v.y) * 0.22;
-        v.w += (t.w - v.w) * 0.22;
-        v.h += (t.h - v.h) * 0.22;
-        stv3UpdateViewBox(svg);
-        if (Math.abs(t.w - v.w) > 0.5 || Math.abs(t.x - v.x) > 0.5 || Math.abs(t.y - v.y) > 0.5) {
-          requestAnimationFrame(step);
-        } else {
-          v.x = t.x; v.y = t.y; v.w = t.w; v.h = t.h;
-          stv3UpdateViewBox(svg);
-          stv3ZoomTarget = null;
-          stv3ZoomAnimating = false;
-        }
-      };
-      requestAnimationFrame(step);
-    }
-  }
-  function stv3ScreenToSvg(svg, clientX, clientY) {
-    const rect = svg.getBoundingClientRect();
-    return {
-      x: stv3State.viewBox.x + ((clientX - rect.left) / rect.width) * stv3State.viewBox.w,
-      y: stv3State.viewBox.y + ((clientY - rect.top) / rect.height) * stv3State.viewBox.h
-    };
-  }
-
-  function stv3FindNextTask() {
-    const module = SKILLTREE_MODULES.find(m => m.id === stv3State.moduleId) || SKILLTREE_MODULES[0];
-    const state = getSkilltreeState();
-    for (let chIdx = 0; chIdx < module.chapters.length; chIdx++) {
-      const ch = module.chapters[chIdx];
-      for (let sgIdx = 0; sgIdx < ch.subgroups.length; sgIdx++) {
-        const sg = ch.subgroups[sgIdx];
-        for (let tIdx = 0; tIdx < sg.tasks.length; tIdx++) {
-          const tid = stTaskId(module.id, chIdx, sgIdx, tIdx);
-          if (!state[tid]) return { chIdx, sgIdx, tIdx, taskId: tid };
-        }
-      }
-    }
-    return null;
-  }
-  function stv3UpdateNextButton() {
-    const btn = document.getElementById('stv3NextBtn');
-    if (!btn) return;
-    btn.style.display = stv3FindNextTask() ? '' : 'none';
-  }
-  function stv3HighlightNode(node) {
-    const svg = document.getElementById('stv3Svg');
-    if (!svg) return;
-    svg.querySelectorAll('.stv3-next-halo').forEach(el => el.remove());
-    const halo = document.createElementNS(SVG_NS, 'circle');
-    halo.setAttribute('cx', node.x);
-    halo.setAttribute('cy', node.y);
-    halo.setAttribute('r', '22');
-    halo.setAttribute('class', 'stv3-next-halo');
-    halo.style.setProperty('--day-color', node.color);
-    svg.appendChild(halo);
-    setTimeout(() => halo.remove(), 4500);
-  }
-  function stv3JumpToNext(svg) {
-    const next = stv3FindNextTask();
-    if (!next) return;
-    const node = stv3State.nodes.find(n => n.taskId === next.taskId);
-    if (!node) return;
-    const tw = 1100;
-    stv3ZoomTarget = { x: node.x - tw/2, y: node.y - tw/2, w: tw, h: tw };
-    if (!stv3ZoomAnimating) {
-      stv3ZoomAnimating = true;
-      const step = () => {
-        if (!stv3ZoomTarget) { stv3ZoomAnimating = false; return; }
-        const v = stv3State.viewBox, t = stv3ZoomTarget;
-        v.x += (t.x - v.x) * 0.16;
-        v.y += (t.y - v.y) * 0.16;
-        v.w += (t.w - v.w) * 0.16;
-        v.h += (t.h - v.h) * 0.16;
-        stv3UpdateViewBox(svg);
-        if (Math.abs(t.w - v.w) > 0.5 || Math.abs(t.x - v.x) > 0.5) requestAnimationFrame(step);
-        else { v.x = t.x; v.y = t.y; v.w = t.w; v.h = t.h; stv3UpdateViewBox(svg); stv3ZoomTarget = null; stv3ZoomAnimating = false; }
-      };
-      requestAnimationFrame(step);
-    }
-    stv3HighlightNode(node);
-    chime('pop');
-    if (navigator.vibrate) navigator.vibrate(10);
-  }
-
-  function stv3ShowInfo(nodeData) {
-    const panel = document.getElementById('stv3InfoPanel');
-    if (!panel) return;
-    const module = SKILLTREE_MODULES.find(m => m.id === stv3State.moduleId) || SKILLTREE_MODULES[0];
-    const state = getSkilltreeState();
-    panel.querySelector('.stv3-info-meta').textContent = nodeData.meta || '';
-    panel.querySelector('.stv3-info-title').textContent = nodeData.label;
-    panel.querySelector('.stv3-info-context').textContent = nodeData.context || '';
-    const status = panel.querySelector('.stv3-info-status');
-    const lit = stv3NodeIsLit(nodeData, state, module);
-    if (nodeData.type === 'task') {
-      status.textContent = lit ? '✓ Allocated' : '— click to allocate';
-    } else {
-      const s = nodeData.type === 'chapter'
-        ? computeChapterStats(module, nodeData.chIdx, state)
-        : nodeData.type === 'subgroup'
-          ? computeSubgroupStats(module, nodeData.chIdx, nodeData.sgIdx, state)
-          : null;
-      status.textContent = s ? s.done + ' / ' + s.total + ' allocated' : '';
-    }
-    status.classList.toggle('is-done', lit);
-    panel.style.setProperty('--day-color', nodeData.color);
-    panel.classList.add('is-visible');
-  }
-  function stv3HideInfo() {
-    const panel = document.getElementById('stv3InfoPanel');
-    if (panel) panel.classList.remove('is-visible');
-  }
-
-  function stv3WireInteractions(svg, wrap) {
-    let isPanning = false, panStart = null;
-    svg.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      if (e.target.closest('.stv3-node')) return;
-      isPanning = true;
-      wrap.classList.add('is-panning');
-      panStart = { cx: e.clientX, cy: e.clientY, vx: stv3State.viewBox.x, vy: stv3State.viewBox.y };
-    });
-    document.addEventListener('mousemove', (e) => {
-      if (!isPanning) return;
-      const rect = svg.getBoundingClientRect();
-      const sx = stv3State.viewBox.w / rect.width;
-      const sy = stv3State.viewBox.h / rect.height;
-      stv3State.viewBox.x = panStart.vx - (e.clientX - panStart.cx) * sx;
-      stv3State.viewBox.y = panStart.vy - (e.clientY - panStart.cy) * sy;
-      stv3UpdateViewBox(svg);
-    });
-    document.addEventListener('mouseup', () => {
-      if (isPanning) { isPanning = false; wrap.classList.remove('is-panning'); }
-    });
-
-    svg.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const p = stv3ScreenToSvg(svg, e.clientX, e.clientY);
-      stv3SmoothZoom(e.deltaY > 0 ? 1.18 : 0.85, p.x, p.y, svg);
-    }, { passive: false });
-
-    // Touch
-    let tStart = null, pStart = null;
-    svg.addEventListener('touchstart', (e) => {
-      if (e.target.closest('.stv3-node') && e.touches.length === 1) return;
-      if (e.touches.length === 1) {
-        tStart = { cx: e.touches[0].clientX, cy: e.touches[0].clientY, vx: stv3State.viewBox.x, vy: stv3State.viewBox.y };
-      } else if (e.touches.length === 2) {
-        tStart = null;
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        pStart = { dist: Math.hypot(dx, dy), vw: stv3State.viewBox.w };
-      }
-    }, { passive: false });
-    svg.addEventListener('touchmove', (e) => {
-      if (tStart && e.touches.length === 1) {
-        e.preventDefault();
-        const rect = svg.getBoundingClientRect();
-        const sx = stv3State.viewBox.w / rect.width;
-        const sy = stv3State.viewBox.h / rect.height;
-        stv3State.viewBox.x = tStart.vx - (e.touches[0].clientX - tStart.cx) * sx;
-        stv3State.viewBox.y = tStart.vy - (e.touches[0].clientY - tStart.cy) * sy;
-        stv3UpdateViewBox(svg);
-      } else if (pStart && e.touches.length === 2) {
-        e.preventDefault();
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const d = Math.hypot(dx, dy);
-        const factor = pStart.dist / d;
-        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-        const p = stv3ScreenToSvg(svg, midX, midY);
-        const newW = Math.max(500, Math.min(4500, pStart.vw * factor));
-        const v = stv3State.viewBox;
-        const newH = newW * (v.h / v.w);
-        const rX = (p.x - v.x) / v.w, rY = (p.y - v.y) / v.h;
-        v.x = p.x - rX * newW; v.y = p.y - rY * newH; v.w = newW; v.h = newH;
-        stv3UpdateViewBox(svg);
-      }
-    }, { passive: false });
-    svg.addEventListener('touchend', (e) => {
-      if (e.touches.length === 0) { tStart = null; pStart = null; }
-    });
-
-    // Hover info panel
-    svg.addEventListener('mouseover', (e) => {
-      const nodeEl = e.target.closest('.stv3-node');
-      if (!nodeEl) return;
-      const data = stv3State.nodes.find(n => n.el === nodeEl);
-      if (data) stv3ShowInfo(data);
-    });
-    svg.addEventListener('mouseout', (e) => {
-      const nodeEl = e.target.closest('.stv3-node');
-      if (!nodeEl) return;
-      // Only hide if leaving to non-node area
-      const next = e.relatedTarget;
-      if (next && next.closest && next.closest('.stv3-node')) return;
-      stv3HideInfo();
-    });
-
-    svg.addEventListener('click', (e) => {
-      const nodeEl = e.target.closest('.stv3-node-task');
-      if (!nodeEl) return;
-      stv3OnTaskClick(nodeEl);
-    });
-
-    document.getElementById('stv3ZoomIn').addEventListener('click', () => {
-      const c = stv3State.viewBox;
-      stv3SmoothZoom(0.78, c.x + c.w / 2, c.y + c.h / 2, svg);
-    });
-    document.getElementById('stv3ZoomOut').addEventListener('click', () => {
-      const c = stv3State.viewBox;
-      stv3SmoothZoom(1.28, c.x + c.w / 2, c.y + c.h / 2, svg);
-    });
-    document.getElementById('stv3ZoomFit').addEventListener('click', () => {
-      stv3ZoomTarget = { ...STV3_DEFAULT_VIEWBOX };
-      if (!stv3ZoomAnimating) {
-        stv3ZoomAnimating = true;
-        const step = () => {
-          if (!stv3ZoomTarget) { stv3ZoomAnimating = false; return; }
-          const v = stv3State.viewBox, t = stv3ZoomTarget;
-          v.x += (t.x - v.x) * 0.18;
-          v.y += (t.y - v.y) * 0.18;
-          v.w += (t.w - v.w) * 0.18;
-          v.h += (t.h - v.h) * 0.18;
-          stv3UpdateViewBox(svg);
-          if (Math.abs(t.w - v.w) > 0.5 || Math.abs(t.x - v.x) > 0.5) requestAnimationFrame(step);
-          else { v.x = t.x; v.y = t.y; v.w = t.w; v.h = t.h; stv3UpdateViewBox(svg); stv3ZoomTarget = null; stv3ZoomAnimating = false; }
-        };
-        requestAnimationFrame(step);
-      }
-    });
-    const nb = document.getElementById('stv3NextBtn');
-    if (nb) nb.addEventListener('click', () => stv3JumpToNext(svg));
-  }
-
-  function stv3OnTaskClick(nodeEl) {
-    const module = SKILLTREE_MODULES.find(m => m.id === stv3State.moduleId) || SKILLTREE_MODULES[0];
-    const taskId = nodeEl.dataset.taskId;
-    if (!taskId) return;
-    const chIdx = parseInt(nodeEl.dataset.chIdx, 10);
-    const sgIdx = parseInt(nodeEl.dataset.sgIdx, 10);
-    const tIdx = parseInt(nodeEl.dataset.tIdx, 10);
-    const ch = module.chapters[chIdx];
-
-    const stateBefore = getSkilltreeState();
-    const wasDone = !!stateBefore[taskId];
-    const nowDone = !wasDone;
-    setSkilltreeTask(taskId, nowDone);
-    const state = getSkilltreeState();
-    stv3RefreshLitState();
-
-    const r = nodeEl.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
-
-    if (!nowDone) {
-      if (navigator.vibrate) navigator.vibrate(6);
-      return;
-    }
-
-    burstAt(cx, cy, { count: 18, spread: 70, sizeMin: 4, sizeMax: 9, colors: [ch.color, '#FFFFFF', ch.color, '#FFD89E'] });
-    chime('check');
-    if (navigator.vibrate) navigator.vibrate([10, 26, 12]);
-
-    const sgNow = computeSubgroupStats(module, chIdx, sgIdx, state);
-    const sgBefore = computeSubgroupStats(module, chIdx, sgIdx, stateBefore);
-    if (sgNow.complete && !sgBefore.complete) {
-      setTimeout(() => {
-        chime('pop');
-        const sgNode = stv3State.nodes.find(n => n.type === 'subgroup' && n.chIdx === chIdx && n.sgIdx === sgIdx);
-        if (sgNode) {
-          const sr = sgNode.el.getBoundingClientRect();
-          burstAt(sr.left + sr.width / 2, sr.top + sr.height / 2, {
-            count: 14, spread: 70, colors: [ch.color, '#FFFFFF']
-          });
-        }
-      }, 140);
-    }
-    const chNow = computeChapterStats(module, chIdx, state);
-    const chBefore = computeChapterStats(module, chIdx, stateBefore);
-    if (chNow.complete && !chBefore.complete) {
-      setTimeout(() => {
-        chime('celebration');
-        if (navigator.vibrate) navigator.vibrate([12, 40, 30, 60, 50]);
-        const chNode = stv3State.nodes.find(n => n.type === 'chapter' && n.chIdx === chIdx);
-        if (chNode) {
-          const cr = chNode.el.getBoundingClientRect();
-          spawnConfetti(cr, { count: 40, colors: [ch.color, '#FFFFFF', ch.color, '#FFD89E'] });
-        }
-      }, 240);
-    }
-    let oldTotal = 0, oldDone = 0, newTotal = 0, newDone = 0;
-    module.chapters.forEach((c, i) => {
-      const a = computeChapterStats(module, i, stateBefore);
-      const b = computeChapterStats(module, i, state);
-      oldTotal += a.total; oldDone += a.done;
-      newTotal += b.total; newDone += b.done;
-    });
-    if (newDone === newTotal && oldDone < oldTotal) {
-      setTimeout(() => {
-        chime('finale');
-        spawnConfetti(
-          { left: 0, top: -20, width: window.innerWidth, height: window.innerHeight * 0.5 },
-          { count: 90, colors: ['#F2C063','#FFD89E','#FFE4B0','#FFFFFF','#FFC857','#FF9F1C','#6BE3A4','#6BA8E3','#B89BE9','#FF8E72'] }
-        );
-        if (navigator.vibrate) navigator.vibrate([20, 60, 40, 60, 60, 80, 100]);
-      }, 420);
-    }
-  }
-
   // ─── Tabs ─────────────────────────────────────────────────────────
   function setActiveTab(name) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('is-active', b.dataset.tab === name));
@@ -7444,8 +6588,6 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
       renderSkilltree();
     } else if (name === 'skilltree-v2') {
       renderSkilltreeV2();
-    } else if (name === 'skilltree-v3') {
-      renderSkilltreeV3();
     }
   }
   document.querySelectorAll('.tab-btn').forEach(b => {
