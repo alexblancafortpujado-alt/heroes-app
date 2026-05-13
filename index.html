@@ -2517,21 +2517,25 @@
   }
 
   .stv2-line {
-    stroke: rgba(255,255,255,0.16);
-    stroke-width: 1.5;
+    stroke: rgba(255,255,255,0.22);
+    stroke-width: 1.8;
     fill: none;
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.10));
     transition: stroke 0.45s ease, stroke-width 0.45s ease, opacity 0.45s ease, filter 0.45s ease;
   }
   .stv2-line.is-lit {
     stroke: var(--day-color);
-    stroke-width: 2.4;
-    opacity: 0.92;
-    filter: drop-shadow(0 0 6px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
+    stroke-width: 3.2;
+    opacity: 0.95;
+    filter:
+      drop-shadow(0 0 18px var(--day-color))
+      drop-shadow(0 0 8px var(--day-color))
+      drop-shadow(0 0 3px var(--day-color));
     stroke-dasharray: 4 22;
     animation: stv2-line-flow 5.5s linear infinite, stv2-line-breathe 4.5s ease-in-out infinite;
   }
   @keyframes stv2-line-breathe {
-    0%, 100% { opacity: 0.80; }
+    0%, 100% { opacity: 0.82; }
     50% { opacity: 1; }
   }
   @keyframes stv2-line-flow {
@@ -2563,20 +2567,26 @@
   .stv2-node { cursor: pointer; }
   .stv2-node-glow {
     fill: var(--day-color);
-    opacity: 0.10;
+    opacity: 0.22;
     pointer-events: none;
     transition: opacity 0.5s ease;
   }
   .stv2-node-bg {
     fill: #2C2C38;
-    stroke: rgba(255,255,255,0.50);
+    stroke: rgba(255,255,255,0.55);
     stroke-width: 2;
     transform-origin: center;
     transform-box: fill-box;
     transition: stroke 0.3s ease, fill 0.4s ease, stroke-width 0.3s ease,
                 transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
                 filter 0.45s ease;
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.12));
+    filter:
+      drop-shadow(0 0 8px rgba(255,255,255,0.18))
+      drop-shadow(0 0 3px var(--day-color));
+  }
+  .stv2-node-chapter .stv2-node-glow,
+  .stv2-node-hub .stv2-node-glow {
+    opacity: 0.32;
   }
   .stv2-node-inner {
     fill: rgba(255,255,255,0.22);
@@ -2669,16 +2679,45 @@
     opacity: 0.5;
   }
 
-  /* Click ripple */
+  /* Click ripples — two layers for dopamine */
   .stv2-ripple {
     fill: none;
-    stroke-width: 2;
+    stroke-width: 3;
     pointer-events: none;
-    animation: stv2-ripple-anim 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: stv2-ripple-anim 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    filter: drop-shadow(0 0 8px var(--day-color, #FFFFFF));
   }
   @keyframes stv2-ripple-anim {
-    0%   { r: 8;  opacity: 0.9; stroke-width: 3; }
-    100% { r: 70; opacity: 0;   stroke-width: 0.4; }
+    0%   { r: 10; opacity: 0.95; stroke-width: 4; }
+    100% { r: 110; opacity: 0;   stroke-width: 0.4; }
+  }
+  .stv2-ripple-inner {
+    fill: var(--day-color, #FFFFFF);
+    pointer-events: none;
+    animation: stv2-ripple-inner-anim 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    filter: drop-shadow(0 0 14px var(--day-color));
+  }
+  @keyframes stv2-ripple-inner-anim {
+    0%   { r: 6;  opacity: 0.85; }
+    100% { r: 38; opacity: 0; }
+  }
+
+  /* Node flash on click — temporary brightness pump */
+  .stv2-node.is-just-clicked .stv2-node-bg {
+    animation: stv2-node-flash 0.6s ease-out;
+  }
+  @keyframes stv2-node-flash {
+    0%   { transform: scale(1); filter: drop-shadow(0 0 8px rgba(255,255,255,0.18)) drop-shadow(0 0 3px var(--day-color)); }
+    35%  { transform: scale(1.55); filter: drop-shadow(0 0 32px var(--day-color)) drop-shadow(0 0 14px var(--day-color)) drop-shadow(0 0 4px #FFFFFF); }
+    100% { transform: scale(1); }
+  }
+  .stv2-node.is-just-clicked .stv2-node-glow {
+    animation: stv2-node-glow-pop 0.6s ease-out;
+  }
+  @keyframes stv2-node-glow-pop {
+    0%   { opacity: 0.22; transform: scale(1); }
+    35%  { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0.55; transform: scale(1); }
   }
 
   /* Star twinkle for select stars */
@@ -2789,54 +2828,59 @@
     text-transform: none;
   }
 
-  /* Always-visible labels under chapters + hub */
-  .stv2-chapter-label, .stv2-hub-label, .stv2-chapter-sublabel {
+  /* Always-visible labels under chapters + hub — minimalist sans-serif */
+  .stv2-chapter-label, .stv2-hub-label,
+  .stv2-chapter-sublabel, .stv2-hub-sublabel {
     pointer-events: none;
-    font-family: Georgia, 'Cinzel', 'Times New Roman', serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
     text-anchor: middle;
     paint-order: stroke;
     transition: filter 0.35s ease;
   }
   .stv2-chapter-label {
     fill: var(--day-color);
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    stroke: rgba(0,0,0,0.95);
-    stroke-width: 6px;
-    filter: drop-shadow(0 0 6px rgba(0,0,0,0.95)) drop-shadow(0 0 4px var(--day-color));
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    stroke: rgba(0,0,0,0.92);
+    stroke-width: 4px;
+    filter:
+      drop-shadow(0 0 8px rgba(0,0,0,1))
+      drop-shadow(0 0 10px var(--day-color))
+      drop-shadow(0 0 3px var(--day-color));
   }
   .stv2-chapter-sublabel {
-    fill: rgba(255,255,255,0.55);
-    font-size: 12px;
-    font-style: italic;
-    letter-spacing: 0.05em;
+    fill: rgba(255,255,255,0.40);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.10em;
     stroke: rgba(0,0,0,0.95);
-    stroke-width: 4px;
+    stroke-width: 3px;
     filter: drop-shadow(0 0 4px rgba(0,0,0,0.98));
   }
   .stv2-hub-label {
-    fill: #FFD89E;
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
+    fill: #FFE8C0;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
-    stroke: rgba(0,0,0,0.98);
-    stroke-width: 7px;
-    filter: drop-shadow(0 0 10px rgba(0,0,0,1)) drop-shadow(0 0 6px rgba(255,216,158,0.6));
+    stroke: rgba(0,0,0,0.95);
+    stroke-width: 5px;
+    filter:
+      drop-shadow(0 0 14px rgba(0,0,0,1))
+      drop-shadow(0 0 18px rgba(255,216,158,0.55))
+      drop-shadow(0 0 4px rgba(255,216,158,0.8));
   }
   .stv2-hub-sublabel {
-    fill: rgba(255,216,158,0.7);
-    font-size: 13px;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-style: italic;
-    letter-spacing: 0.10em;
-    text-anchor: middle;
-    pointer-events: none;
+    fill: rgba(255,216,158,0.55);
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     stroke: rgba(0,0,0,0.98);
-    stroke-width: 5px;
-    paint-order: stroke;
-    filter: drop-shadow(0 0 5px rgba(0,0,0,1));
+    stroke-width: 4px;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,1));
   }
 
   .stv2-next-halo {
@@ -5764,7 +5808,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
 
   // ─── Skilltree v2 (Gate of Fates) ─────────────────────────────────
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const STV2_DEFAULT_VIEWBOX = { x: -1500, y: -1500, w: 3000, h: 3000 };
+  const STV2_DEFAULT_VIEWBOX = { x: -1700, y: -1700, w: 3400, h: 3400 };
   let stv2State = {
     moduleId: SKILLTREE_MODULES[0].id,
     nodes: [],
@@ -5841,7 +5885,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     wrap.setAttribute('class', 'stv2-node-spawn-wrap');
 
     const glow = document.createElementNS(SVG_NS, 'circle');
-    glow.setAttribute('r', r * 1.9);
+    glow.setAttribute('r', r * 2.5);
     glow.setAttribute('class', 'stv2-node-glow');
     wrap.appendChild(glow);
 
@@ -5951,9 +5995,9 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
         stv2State.viewBox.x + ' ' + stv2State.viewBox.y + ' ' +
         stv2State.viewBox.w + ' ' + stv2State.viewBox.h + '" preserveAspectRatio="xMidYMid meet">' +
         '<g id="stv2Stars" class="stv2-stars"></g>' +
-        '<circle class="stv2-ring" cx="0" cy="0" r="420"/>' +
-        '<circle class="stv2-ring" cx="0" cy="0" r="780"/>' +
-        '<circle class="stv2-ring" cx="0" cy="0" r="1180"/>' +
+        '<circle class="stv2-ring" cx="0" cy="0" r="500"/>' +
+        '<circle class="stv2-ring" cx="0" cy="0" r="880"/>' +
+        '<circle class="stv2-ring" cx="0" cy="0" r="1320"/>' +
         '<g id="stv2LinesG"></g>' +
         '<g id="stv2NodesG"></g>' +
         '<g id="stv2RippleG"></g>' +
@@ -6023,7 +6067,7 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     const N = module.chapters.length;
     module.chapters.forEach((ch, chIdx) => {
       const chAngle = (chIdx / N) * 2 * Math.PI - Math.PI / 2;
-      const chR = 440;
+      const chR = 520;
       const chX = chR * Math.cos(chAngle);
       const chY = chR * Math.sin(chAngle);
 
@@ -6066,9 +6110,9 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
 
       ch.subgroups.forEach((sg, sgIdx) => {
         const sgAngle = chAngle + stv2FanOffset(sgIdx, numSg, wedgeSpread);
-        // Three orbits, well separated, so crowded chapters (Día 1) get full breathing room
-        const orbitOffset = (sgIdx % 3) * 145; // 0 / 145 / 290
-        const sgR = 320 + orbitOffset;
+        // Three orbits, more widely spread so crowded chapters (Día 1) breathe
+        const orbitOffset = (sgIdx % 3) * 175; // 0 / 175 / 350
+        const sgR = 360 + orbitOffset;
         const sgX = chX + sgR * Math.cos(sgAngle);
         const sgY = chY + sgR * Math.sin(sgAngle);
 
@@ -6084,12 +6128,12 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
         linesG.appendChild(sgLine);
         stv2State.lines.push({ el: sgLine, fromType: 'chapter', toType: 'subgroup', toChIdx: chIdx, toSgIdx: sgIdx, color: ch.color });
 
-        // Tasks: narrower outward cone so they don't bleed into neighbor subgroups
-        const taskWedge = 135 * Math.PI / 180;
+        // Tasks: narrower outward cone, pushed further out for clear separation
+        const taskWedge = 130 * Math.PI / 180;
         const tNum = sg.tasks.length;
         sg.tasks.forEach((taskText, tIdx) => {
           const tAngle = sgAngle + stv2FanOffset(tIdx, tNum, taskWedge);
-          const tR = 160;
+          const tR = 190;
           const tX = sgX + tR * Math.cos(tAngle);
           const tY = sgY + tR * Math.sin(tAngle);
 
@@ -6495,27 +6539,43 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
       return;
     }
 
-    // SVG ripple at node position
+    // SVG ripples (outer ring + inner flash disc) + node bg flash
     const rippleG = document.getElementById('stv2RippleG');
     if (rippleG) {
       const mTr = nodeEl.getAttribute('transform').match(/translate\(([\-\d.]+)[ ,]+([\-\d.]+)\)/);
       if (mTr) {
         const rx = parseFloat(mTr[1]);
         const ry = parseFloat(mTr[2]);
+        // Outer expanding ring
         const ripple = document.createElementNS(SVG_NS, 'circle');
         ripple.setAttribute('cx', rx);
         ripple.setAttribute('cy', ry);
-        ripple.setAttribute('r', '8');
+        ripple.setAttribute('r', '10');
         ripple.setAttribute('stroke', ch.color);
         ripple.setAttribute('class', 'stv2-ripple');
+        ripple.style.setProperty('--day-color', ch.color);
         rippleG.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 800);
+        // Inner bright disc that fades fast
+        const inner = document.createElementNS(SVG_NS, 'circle');
+        inner.setAttribute('cx', rx);
+        inner.setAttribute('cy', ry);
+        inner.setAttribute('r', '6');
+        inner.setAttribute('class', 'stv2-ripple-inner');
+        inner.style.setProperty('--day-color', ch.color);
+        rippleG.appendChild(inner);
+        setTimeout(() => { ripple.remove(); inner.remove(); }, 950);
       }
     }
+    // Node bg flash class
+    nodeEl.classList.add('is-just-clicked');
+    setTimeout(() => nodeEl.classList.remove('is-just-clicked'), 620);
 
-    burstAt(cx, cy, { count: 22, spread: 80, sizeMin: 5, sizeMax: 11, colors: [ch.color, '#FFFFFF', ch.color, '#FFD89E'] });
+    burstAt(cx, cy, {
+      count: 38, spread: 110, sizeMin: 5, sizeMax: 13,
+      colors: [ch.color, '#FFFFFF', ch.color, '#FFD89E', ch.color]
+    });
     chime('check');
-    if (navigator.vibrate) navigator.vibrate([10, 28, 14]);
+    if (navigator.vibrate) navigator.vibrate([14, 30, 18, 40, 22]);
 
     // Subgroup just completed?
     const sgNow = computeSubgroupStats(module, chIdx, sgIdx, state);
