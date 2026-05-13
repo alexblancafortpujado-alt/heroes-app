@@ -1793,11 +1793,14 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: auto auto;
-    gap: 14px;
-    padding: 18px;
+    gap: 12px;
+    padding: 14px;
     border-radius: 16px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .pv2-board .pv2-slot[data-row="top"] { aspect-ratio: 340 / 453; }
   .pv2-board .pv2-slot[data-row="bot"] { aspect-ratio: 340 / 639; }
@@ -1859,6 +1862,13 @@
   .pv2-slot.has-img {
     border: 1px solid rgba(255,255,255,0.08);
     background: #0a0a0e;
+    cursor: grab;
+  }
+  .pv2-slot.has-img.is-panning {
+    cursor: grabbing;
+  }
+  .pv2-slot.has-img.is-panning img {
+    transition: none;
   }
   .pv2-slot.is-drag-over {
     border: 2px dashed rgba(107,227,164,0.7);
@@ -5373,26 +5383,42 @@
 
   // ─── Portal v2 — Notion-style mood board ─────────────────────────
   const PORTAL_V2_KEY = 'portal_v2_data';
+  const EMPTY_SLOT = { url: '', x: 50, y: 50 };
+
+  function normalizeSlot(v) {
+    if (typeof v === 'string') return { url: v, x: 50, y: 50 };
+    if (v && typeof v === 'object') {
+      return {
+        url: typeof v.url === 'string' ? v.url : '',
+        x: typeof v.x === 'number' ? v.x : 50,
+        y: typeof v.y === 'number' ? v.y : 50
+      };
+    }
+    return { url: '', x: 50, y: 50 };
+  }
+  function normalizeSlotArray(arr, len) {
+    const out = [];
+    for (let i = 0; i < len; i++) out.push(normalizeSlot(arr && arr[i]));
+    return out;
+  }
 
   function getPortalV2Data() {
     const data = storeGet(PORTAL_V2_KEY) || {};
     return {
-      inspiration: Array.isArray(data.inspiration) && data.inspiration.length === 8
-        ? data.inspiration.slice(0, 8)
-        : new Array(8).fill(''),
+      inspiration: normalizeSlotArray(data.inspiration, 8),
       beliefs: typeof data.beliefs === 'string' ? data.beliefs : '',
-      slides: Array.isArray(data.slides) && data.slides.length === 6
-        ? data.slides.map(s => Array.isArray(s) && s.length === 4 ? s.slice(0, 4) : ['', '', '', ''])
-        : Array.from({ length: 6 }, () => ['', '', '', '']),
+      slides: Array.from({ length: 6 }, (_, i) =>
+        normalizeSlotArray(Array.isArray(data.slides) ? data.slides[i] : null, 4)),
       portalText: typeof data.portalText === 'string' ? data.portalText : '',
-      antislides: Array.isArray(data.antislides) && data.antislides.length === 6
-        ? data.antislides.map(s => Array.isArray(s) && s.length === 4 ? s.slice(0, 4) : ['', '', '', ''])
-        : Array.from({ length: 6 }, () => ['', '', '', '']),
+      antislides: Array.from({ length: 6 }, (_, i) =>
+        normalizeSlotArray(Array.isArray(data.antislides) ? data.antislides[i] : null, 4)),
       antiportalText: typeof data.antiportalText === 'string' ? data.antiportalText : ''
     };
   }
 
   function setPortalV2Data(data) { storeSet(PORTAL_V2_KEY, data); }
+
+  function clampPct(n) { return Math.max(0, Math.min(100, n)); }
 
   function extractDroppedUrl(e) {
     const types = Array.from(e.dataTransfer.types || []);
@@ -5419,14 +5445,15 @@
     return slot;
   }
 
-  function applyPv2SlotImage(slot, url) {
+  function applyPv2SlotImage(slot, slotData) {
     const existing = slot.querySelector('img');
     if (existing) existing.remove();
-    if (url) {
+    if (slotData && slotData.url) {
       const img = document.createElement('img');
-      img.src = url;
+      img.src = slotData.url;
       img.alt = '';
       img.draggable = false;
+      img.style.objectPosition = (slotData.x ?? 50) + '% ' + (slotData.y ?? 50) + '%';
       slot.classList.add('has-img');
       slot.appendChild(img);
     } else {
@@ -5434,23 +5461,75 @@
     }
   }
 
-  function wirePv2Slot(slot, onSet) {
-    slot.addEventListener('click', (e) => {
-      if (e.target.closest('img') && slot.classList.contains('has-img')) {
-        // Already has image — click to replace
+  function wirePv2Slot(slot, getData, setData) {
+    let panState = null;
+    let suppressClickUntil = 0;
+
+    slot.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      const current = getData();
+      if (!current.url) return; // only pan when image is present
+      const img = slot.querySelector('img');
+      if (!img) return;
+      e.preventDefault();
+      const rect = slot.getBoundingClientRect();
+      panState = {
+        startX: e.clientX,
+        startY: e.clientY,
+        origX: current.x ?? 50,
+        origY: current.y ?? 50,
+        curX: current.x ?? 50,
+        curY: current.y ?? 50,
+        moved: false,
+        img,
+        rect
+      };
+      slot.classList.add('is-panning');
+      document.addEventListener('mousemove', onPanMove);
+      document.addEventListener('mouseup', onPanUp);
+    });
+
+    function onPanMove(e) {
+      if (!panState) return;
+      const dx = e.clientX - panState.startX;
+      const dy = e.clientY - panState.startY;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) panState.moved = true;
+      // Dragging the image right should reveal more of the LEFT side,
+      // so decrease object-position-x.
+      panState.curX = clampPct(panState.origX - (dx / panState.rect.width) * 100);
+      panState.curY = clampPct(panState.origY - (dy / panState.rect.height) * 100);
+      panState.img.style.objectPosition = panState.curX + '% ' + panState.curY + '%';
+    }
+
+    function onPanUp() {
+      document.removeEventListener('mousemove', onPanMove);
+      document.removeEventListener('mouseup', onPanUp);
+      slot.classList.remove('is-panning');
+      if (panState && panState.moved) {
+        const current = getData();
+        setData({ url: current.url, x: panState.curX, y: panState.curY });
+        suppressClickUntil = Date.now() + 200;
       }
+      panState = null;
+    }
+
+    slot.addEventListener('click', (e) => {
+      if (Date.now() < suppressClickUntil) return;
+      const current = getData();
+      if (current.url) return; // click on filled slot does nothing (use drop, right-click, or drag to pan)
       const url = prompt('Image URL (Pinterest etc):');
       if (url === null) return;
       const trimmed = url.trim();
-      if (trimmed === '') { onSet(''); return; }
+      if (trimmed === '') return;
       if (!/^https?:\/\//.test(trimmed)) { alert('URL must start with http:// or https://'); return; }
-      onSet(trimmed);
+      setData({ url: trimmed, x: 50, y: 50 });
       const r = slot.getBoundingClientRect();
       if (typeof burstAt === 'function') {
         burstAt(r.left + r.width / 2, r.top + r.height / 2, { count: 10, spread: 60, colors: ['#6BE3A4', '#FFFFFF', '#FFD89E'] });
       }
       if (typeof chime === 'function') chime('pop');
     });
+
     slot.addEventListener('dragover', (e) => {
       e.preventDefault();
       slot.classList.add('is-drag-over');
@@ -5461,7 +5540,7 @@
       slot.classList.remove('is-drag-over');
       const url = extractDroppedUrl(e);
       if (!url) return;
-      onSet(url);
+      setData({ url, x: 50, y: 50 });
       const r = slot.getBoundingClientRect();
       if (typeof burstAt === 'function') {
         burstAt(r.left + r.width / 2, r.top + r.height / 2, { count: 14, spread: 80, colors: ['#6BE3A4', '#FFFFFF', '#FFD89E'] });
@@ -5471,7 +5550,7 @@
     slot.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       if (!slot.classList.contains('has-img')) return;
-      if (confirm('Remove this image?')) onSet('');
+      if (confirm('Remove this image?')) setData({ url: '', x: 50, y: 50 });
     });
   }
 
@@ -5494,39 +5573,27 @@
     const boardEl = document.getElementById('pv2BoardInspiration');
     if (boardEl && !boardEl.dataset.rendered) {
       boardEl.innerHTML = '';
-      for (let i = 0; i < 4; i++) {
-        const slot = makePv2Slot('top', '+ image');
-        applyPv2SlotImage(slot, data.inspiration[i] || '');
+      for (let i = 0; i < 8; i++) {
+        const slot = makePv2Slot(i < 4 ? 'top' : 'bot', '+ image');
         const idx = i;
-        wirePv2Slot(slot, (url) => {
-          const d = getPortalV2Data();
-          d.inspiration[idx] = url;
-          setPortalV2Data(d);
-          applyPv2SlotImage(slot, url);
-        });
-        boardEl.appendChild(slot);
-      }
-      for (let i = 4; i < 8; i++) {
-        const slot = makePv2Slot('bot', '+ image');
-        applyPv2SlotImage(slot, data.inspiration[i] || '');
-        const idx = i;
-        wirePv2Slot(slot, (url) => {
-          const d = getPortalV2Data();
-          d.inspiration[idx] = url;
-          setPortalV2Data(d);
-          applyPv2SlotImage(slot, url);
-        });
+        applyPv2SlotImage(slot, data.inspiration[idx]);
+        wirePv2Slot(slot,
+          () => getPortalV2Data().inspiration[idx],
+          (newSlot) => {
+            const d = getPortalV2Data();
+            d.inspiration[idx] = newSlot;
+            setPortalV2Data(d);
+            applyPv2SlotImage(slot, newSlot);
+          }
+        );
         boardEl.appendChild(slot);
       }
       boardEl.dataset.rendered = '1';
     }
 
-    // 6 slides
     renderPv2SlidesGrid('pv2Slides', 'slides', data.slides);
-    // 6 anti-slides
     renderPv2SlidesGrid('pv2Antislides', 'antislides', data.antislides);
 
-    // Textareas
     setupPv2Textarea(document.getElementById('pv2Beliefs'),
       () => getPortalV2Data().beliefs,
       (v) => { const d = getPortalV2Data(); d.beliefs = v; setPortalV2Data(d); });
@@ -5551,14 +5618,17 @@
       slide.appendChild(label);
       for (let i = 0; i < 4; i++) {
         const slot = makePv2Slot('', '+');
-        applyPv2SlotImage(slot, (slidesData[s] && slidesData[s][i]) || '');
         const sIdx = s, iIdx = i;
-        wirePv2Slot(slot, (url) => {
-          const d = getPortalV2Data();
-          d[dataKey][sIdx][iIdx] = url;
-          setPortalV2Data(d);
-          applyPv2SlotImage(slot, url);
-        });
+        applyPv2SlotImage(slot, slidesData[sIdx][iIdx]);
+        wirePv2Slot(slot,
+          () => getPortalV2Data()[dataKey][sIdx][iIdx],
+          (newSlot) => {
+            const d = getPortalV2Data();
+            d[dataKey][sIdx][iIdx] = newSlot;
+            setPortalV2Data(d);
+            applyPv2SlotImage(slot, newSlot);
+          }
+        );
         slide.appendChild(slot);
       }
       grid.appendChild(slide);
