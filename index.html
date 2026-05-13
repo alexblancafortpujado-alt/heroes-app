@@ -2892,14 +2892,14 @@
     width: 100%;
     height: 78vh;
     min-height: 520px;
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     background:
-      radial-gradient(ellipse at center, #16161E 0%, #08080C 75%);
-    border: 1px solid rgba(255,255,255,0.10);
+      radial-gradient(ellipse at center, #11151F 0%, #06080F 78%);
+    border: 1px solid #5C4F42;
     cursor: grab;
     user-select: none;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.55), inset 0 0 120px rgba(0,0,0,0.4);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.65), inset 0 0 140px rgba(0,0,0,0.55);
     touch-action: none;
   }
   .stv3-canvas-wrap.is-panning { cursor: grabbing; }
@@ -2914,123 +2914,149 @@
   }
 
   .stv3-line {
-    stroke: rgba(255,255,255,0.16);
-    stroke-width: 1.5;
+    stroke: #3D332B;
+    stroke-width: 1.9;
     fill: none;
     transition: stroke 0.35s ease, stroke-width 0.35s ease, filter 0.35s ease;
   }
   .stv3-line.is-lit {
     stroke: var(--day-color);
-    stroke-width: 2.4;
-    filter: drop-shadow(0 0 5px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
+    stroke-width: 2.7;
+    filter: drop-shadow(0 0 6px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
   }
 
   .stv3-node { cursor: pointer; }
+  .stv3-node-frame {
+    fill: none;
+    stroke: rgba(107, 92, 79, 0.55);
+    stroke-width: 1.5;
+    pointer-events: none;
+    transition: stroke 0.3s ease, filter 0.35s ease, stroke-width 0.3s ease;
+  }
+  .stv3-node.is-done .stv3-node-frame {
+    stroke: #CBB59C;
+    stroke-width: 2;
+    filter: drop-shadow(0 0 6px var(--day-color));
+  }
+  .stv3-node:hover .stv3-node-frame {
+    stroke: #CBB59C;
+    stroke-width: 2;
+  }
   .stv3-node-shape {
-    fill: #1A1A24;
-    stroke: rgba(255,255,255,0.55);
+    fill: #1B130E;
+    stroke: #6B5C4F;
     stroke-width: 2;
     transform-origin: center;
     transform-box: fill-box;
     transition: fill 0.3s ease, stroke 0.3s ease, stroke-width 0.25s ease,
                 transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
                 filter 0.35s ease;
-    filter: drop-shadow(0 0 4px rgba(255,255,255,0.10));
+    filter: drop-shadow(0 0 3px rgba(203, 181, 156, 0.08));
   }
   .stv3-node-inner {
-    fill: rgba(255,255,255,0.65);
+    fill: #5C4F42;
     pointer-events: none;
     transform-origin: center;
     transform-box: fill-box;
     transition: fill 0.3s ease, transform 0.22s ease;
   }
   .stv3-node:hover .stv3-node-shape {
-    stroke: var(--day-color);
+    stroke: #CBB59C;
     stroke-width: 2.6;
-    transform: scale(1.30);
-    filter: drop-shadow(0 0 10px var(--day-color));
+    transform: scale(1.28);
+    filter: drop-shadow(0 0 12px rgba(203, 181, 156, 0.50));
   }
-  .stv3-node:hover .stv3-node-inner { transform: scale(1.20); }
+  .stv3-node:hover .stv3-node-inner { transform: scale(1.20); fill: #CBB59C; }
   .stv3-node.is-done .stv3-node-shape {
     fill: var(--day-color);
-    stroke: var(--day-color);
+    stroke: #CBB59C;
     filter: drop-shadow(0 0 12px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
   }
   .stv3-node-task.is-done .stv3-node-shape {
-    filter: drop-shadow(0 0 8px var(--day-color));
+    filter: drop-shadow(0 0 8px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
   }
   .stv3-node-subgroup.is-done .stv3-node-shape {
-    filter: drop-shadow(0 0 14px var(--day-color)) drop-shadow(0 0 4px var(--day-color));
+    filter: drop-shadow(0 0 16px var(--day-color)) drop-shadow(0 0 4px var(--day-color));
   }
   .stv3-node-chapter.is-done .stv3-node-shape {
-    filter: drop-shadow(0 0 20px var(--day-color)) drop-shadow(0 0 6px var(--day-color));
+    filter: drop-shadow(0 0 22px var(--day-color)) drop-shadow(0 0 6px var(--day-color));
   }
   .stv3-node.is-done .stv3-node-inner {
-    fill: rgba(15, 15, 22, 0.95);
+    fill: #1A140E;
+  }
+  .stv3-node-hub .stv3-node-frame {
+    stroke: rgba(255, 216, 158, 0.45);
+    stroke-width: 1.8;
   }
   .stv3-node-hub .stv3-node-shape {
-    fill: rgba(40, 28, 12, 0.97);
+    fill: #2A1C0A;
     stroke: #FFD89E;
-    stroke-width: 2.4;
-    filter: drop-shadow(0 0 16px rgba(255,216,158,0.6)) drop-shadow(0 0 4px #FFD89E);
+    stroke-width: 2.6;
+    filter: drop-shadow(0 0 16px rgba(255,216,158,0.55)) drop-shadow(0 0 4px #FFD89E);
   }
   .stv3-node-hub.is-done .stv3-node-shape {
     fill: #FFD89E;
-    filter: drop-shadow(0 0 26px #FFD89E) drop-shadow(0 0 8px #FFD89E);
+    filter: drop-shadow(0 0 28px #FFD89E) drop-shadow(0 0 8px #FFD89E);
+  }
+  .stv3-node-hub.is-done .stv3-node-frame {
+    stroke: #FFD89E;
+    filter: drop-shadow(0 0 12px #FFD89E);
   }
 
-  /* Info panel (bottom-right of canvas, PoP-style) */
+  /* Info panel (bottom-right, PoE atlas-style) */
   .stv3-info-panel {
     position: absolute;
     bottom: 14px;
     right: 14px;
-    width: 300px;
-    background: rgba(8, 8, 14, 0.96);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-left: 3px solid var(--day-color, rgba(255,255,255,0.3));
-    border-radius: 10px;
+    width: 320px;
+    background: rgba(8, 6, 5, 0.95);
+    border: 1px solid #CBB59C;
+    border-left: 4px solid var(--day-color, #CBB59C);
+    border-radius: 4px;
     padding: 14px 16px;
     z-index: 4;
-    color: var(--text-primary);
-    line-height: 1.45;
+    color: #FFFFFF;
+    line-height: 1.5;
     backdrop-filter: blur(10px);
     display: none;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 18px rgba(203, 181, 156, 0.08);
     pointer-events: none;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
   .stv3-info-panel.is-visible { display: block; }
   .stv3-info-meta {
     font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.16em;
+    font-weight: 700;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--day-color, var(--text-tertiary));
-    margin-bottom: 8px;
+    color: #CBB59C;
+    margin-bottom: 6px;
   }
   .stv3-info-title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     margin-bottom: 8px;
-    color: var(--text-primary);
+    color: #FFFFFF;
+    line-height: 1.3;
   }
   .stv3-info-context {
-    font-size: 11px;
-    color: var(--text-tertiary);
+    font-size: 12px;
+    color: #AF6025;
     margin-bottom: 8px;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-style: italic;
   }
   .stv3-info-status {
-    font-size: 11px;
-    color: var(--text-tertiary);
+    font-size: 11.5px;
+    color: #808080;
     font-style: italic;
   }
   .stv3-info-status.is-done {
-    color: var(--day-color);
+    color: #6BE3A4;
     font-weight: 700;
     font-style: normal;
   }
 
-  /* Zoom controls + Next button (reuse v2 styling tweaked) */
+  /* Zoom controls + Next button — PoE atlas style */
   .stv3-zoom-controls {
     position: absolute;
     top: 14px;
@@ -3043,10 +3069,10 @@
   .stv3-zoom-btn {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
-    background: rgba(20, 20, 28, 0.88);
-    border: 1px solid rgba(255,255,255,0.14);
-    color: var(--text-primary);
+    border-radius: 4px;
+    background: rgba(20, 14, 10, 0.92);
+    border: 1px solid #5C4F42;
+    color: #CBB59C;
     cursor: pointer;
     font-size: 16px;
     font-family: inherit;
@@ -3054,27 +3080,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     backdrop-filter: blur(8px);
   }
   .stv3-zoom-btn:hover {
-    background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.30);
+    background: #1F1612;
+    border-color: #CBB59C;
+    color: #FFFFFF;
   }
   .stv3-next-btn {
     position: absolute;
     bottom: 14px;
     left: 14px;
     z-index: 6;
-    background: rgba(20, 20, 28, 0.92);
-    border: 1px solid rgba(255,216,158,0.5);
-    color: #FFE8C0;
-    border-radius: 10px;
-    padding: 9px 14px;
+    background: rgba(18, 12, 8, 0.94);
+    border: 1px solid #CBB59C;
+    color: #CBB59C;
+    border-radius: 4px;
+    padding: 9px 16px;
     cursor: pointer;
     font-family: inherit;
     font-size: 11.5px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     backdrop-filter: blur(10px);
@@ -3082,13 +3109,13 @@
     align-items: center;
     gap: 10px;
     transition: all 0.22s ease;
-    box-shadow: 0 0 18px rgba(255,216,158,0.16);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5), inset 0 0 8px rgba(203, 181, 156, 0.08);
   }
   .stv3-next-btn:hover {
-    background: rgba(255,216,158,0.18);
+    background: rgba(203, 181, 156, 0.16);
     color: #FFFFFF;
-    border-color: rgba(255,216,158,0.85);
-    box-shadow: 0 0 24px rgba(255,216,158,0.40);
+    border-color: #FFD89E;
+    box-shadow: 0 6px 22px rgba(203, 181, 156, 0.28), inset 0 0 10px rgba(255, 216, 158, 0.18);
   }
 
   .stv3-hint {
@@ -6839,6 +6866,24 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     if (data.sgIdx !== undefined) g.dataset.sgIdx = data.sgIdx;
     if (data.tIdx !== undefined) g.dataset.tIdx = data.tIdx;
 
+    // Decorative outer frame for notable nodes (PoE jewel framing)
+    if (data.type === 'chapter') {
+      const frame = document.createElementNS(SVG_NS, 'polygon');
+      frame.setAttribute('points', stv3OctagonPoints(r * 1.45));
+      frame.setAttribute('class', 'stv3-node-frame');
+      g.appendChild(frame);
+    } else if (data.type === 'subgroup') {
+      const frame = document.createElementNS(SVG_NS, 'polygon');
+      frame.setAttribute('points', stv3DiamondPoints(r * 1.55));
+      frame.setAttribute('class', 'stv3-node-frame');
+      g.appendChild(frame);
+    } else if (data.type === 'hub') {
+      const frame = document.createElementNS(SVG_NS, 'polygon');
+      frame.setAttribute('points', stv3StarPoints(r * 1.35, r * 0.72, 8));
+      frame.setAttribute('class', 'stv3-node-frame');
+      g.appendChild(frame);
+    }
+
     let shape;
     if (data.type === 'task') {
       shape = document.createElementNS(SVG_NS, 'circle');
@@ -6952,15 +6997,20 @@ Right-click any image on Pinterest and choose &quot;Copy image address&quot;."><
     const linesG = document.getElementById('stv3LinesG');
     const nodesG = document.getElementById('stv3NodesG');
 
-    // Simple stars — less noise than v2's nebula
-    for (let i = 0; i < 220; i++) {
+    // Sparse atlas stars (warm-tinted like PoE atlas backdrop)
+    for (let i = 0; i < 140; i++) {
       const star = document.createElementNS(SVG_NS, 'circle');
       const a = Math.random() * 2 * Math.PI;
-      const rad = 200 + Math.pow(Math.random(), 0.6) * 1300;
+      const rad = 250 + Math.pow(Math.random(), 0.55) * 1300;
       star.setAttribute('cx', rad * Math.cos(a));
       star.setAttribute('cy', rad * Math.sin(a));
-      star.setAttribute('r', 0.4 + Math.random() * 1.2);
-      star.setAttribute('fill', 'rgba(255,255,255,' + (0.20 + Math.random() * 0.40) + ')');
+      star.setAttribute('r', 0.4 + Math.random() * 1.1);
+      // Mix white-ish and warm beige to match PoE atlas tone
+      const useWarm = Math.random() < 0.4;
+      const color = useWarm
+        ? 'rgba(203, 181, 156, ' + (0.20 + Math.random() * 0.30) + ')'
+        : 'rgba(255, 255, 255, ' + (0.15 + Math.random() * 0.32) + ')';
+      star.setAttribute('fill', color);
       starsG.appendChild(star);
     }
 
