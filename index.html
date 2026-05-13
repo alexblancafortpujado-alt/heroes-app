@@ -1900,7 +1900,7 @@
   .pv2-slot.has-img {
     border: 1px solid rgba(255,255,255,0.08);
     background: #0a0a0e;
-    cursor: grab;
+    cursor: zoom-in;
   }
   .pv2-slot.has-img.is-panning {
     cursor: grabbing;
@@ -1956,6 +1956,90 @@
   .pv2-textarea::placeholder {
     color: var(--text-tertiary);
     font-weight: 400;
+  }
+
+  /* Portal v2 — image lightbox */
+  .pv2-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.94);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pv2-lightbox-in 0.18s ease-out;
+    cursor: zoom-out;
+  }
+  @keyframes pv2-lightbox-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  .pv2-lightbox-stage {
+    width: 92vw;
+    height: 88vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: grab;
+  }
+  .pv2-lightbox-stage.is-zoomed { cursor: grab; }
+  .pv2-lightbox-stage.is-panning { cursor: grabbing; }
+  .pv2-lightbox-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+    transform-origin: center center;
+    transition: transform 0.18s ease;
+    will-change: transform;
+  }
+  .pv2-lightbox-stage.is-panning .pv2-lightbox-img { transition: none; }
+  .pv2-lightbox-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    z-index: 1;
+  }
+  .pv2-lightbox-close:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.45);
+  }
+  .pv2-lightbox-hint {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    pointer-events: none;
+    user-select: none;
+  }
+  .pv2-lightbox-zoom {
+    position: absolute;
+    bottom: 18px;
+    right: 22px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.55);
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+    user-select: none;
   }
 
   /* ─── Boss Fight ─────────────────────────────────────────────── */
@@ -4425,6 +4509,15 @@
   </div>
 </div>
 
+<div class="pv2-lightbox" id="pv2Lightbox" style="display:none;" role="dialog" aria-modal="true">
+  <button class="pv2-lightbox-close" id="pv2LightboxClose" type="button" aria-label="Cerrar">Cerrar ✕</button>
+  <div class="pv2-lightbox-stage" id="pv2LightboxStage">
+    <img class="pv2-lightbox-img" id="pv2LightboxImg" alt="" draggable="false" />
+  </div>
+  <div class="pv2-lightbox-hint">Scroll para zoom · Arrastra para mover · Esc para cerrar</div>
+  <div class="pv2-lightbox-zoom" id="pv2LightboxZoom">100%</div>
+</div>
+
 
 <script>
   // ─── Anthropic API key (paste yours to enable Polish) ─────────────
@@ -6283,6 +6376,113 @@
 
   function clampPct(n) { return Math.max(0, Math.min(100, n)); }
 
+  // ─── Portal v2 lightbox ──────────────────────────────────────────
+  let _pv2LbZoom = 1;
+  let _pv2LbX = 0;
+  let _pv2LbY = 0;
+  let _pv2LbWired = false;
+
+  function _pv2LbApply() {
+    const img = document.getElementById('pv2LightboxImg');
+    const stage = document.getElementById('pv2LightboxStage');
+    const zoomEl = document.getElementById('pv2LightboxZoom');
+    if (!img) return;
+    img.style.transform = 'translate(' + _pv2LbX + 'px, ' + _pv2LbY + 'px) scale(' + _pv2LbZoom + ')';
+    if (stage) stage.classList.toggle('is-zoomed', _pv2LbZoom > 1.01);
+    if (zoomEl) zoomEl.textContent = Math.round(_pv2LbZoom * 100) + '%';
+  }
+
+  function openPv2Lightbox(url) {
+    if (!url) return;
+    setupPv2Lightbox();
+    const lb = document.getElementById('pv2Lightbox');
+    const img = document.getElementById('pv2LightboxImg');
+    if (!lb || !img) return;
+    img.src = url;
+    _pv2LbZoom = 1;
+    _pv2LbX = 0;
+    _pv2LbY = 0;
+    _pv2LbApply();
+    lb.style.display = '';
+  }
+
+  function closePv2Lightbox() {
+    const lb = document.getElementById('pv2Lightbox');
+    if (!lb) return;
+    lb.style.display = 'none';
+    const img = document.getElementById('pv2LightboxImg');
+    if (img) img.removeAttribute('src');
+  }
+
+  function setupPv2Lightbox() {
+    if (_pv2LbWired) return;
+    const lb = document.getElementById('pv2Lightbox');
+    const stage = document.getElementById('pv2LightboxStage');
+    const closeBtn = document.getElementById('pv2LightboxClose');
+    if (!lb || !stage) return;
+    _pv2LbWired = true;
+
+    closeBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closePv2Lightbox();
+    });
+
+    lb.addEventListener('click', (e) => {
+      if (e.target === lb) closePv2Lightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (lb.style.display === 'none') return;
+      if (e.key === 'Escape') { e.preventDefault(); closePv2Lightbox(); }
+      else if (e.key === '+' || e.key === '=') {
+        _pv2LbZoom = Math.min(8, _pv2LbZoom * 1.2);
+        _pv2LbApply();
+      }
+      else if (e.key === '-' || e.key === '_') {
+        const prev = _pv2LbZoom;
+        _pv2LbZoom = Math.max(0.5, _pv2LbZoom / 1.2);
+        if (_pv2LbZoom <= 1.01) { _pv2LbX = 0; _pv2LbY = 0; }
+        _pv2LbApply();
+      }
+      else if (e.key === '0') {
+        _pv2LbZoom = 1; _pv2LbX = 0; _pv2LbY = 0;
+        _pv2LbApply();
+      }
+    });
+
+    stage.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+      const prev = _pv2LbZoom;
+      _pv2LbZoom = Math.max(0.5, Math.min(8, _pv2LbZoom * factor));
+      if (_pv2LbZoom <= 1.01) { _pv2LbX = 0; _pv2LbY = 0; }
+      _pv2LbApply();
+    }, { passive: false });
+
+    let pan = null;
+    stage.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      if (_pv2LbZoom <= 1.01) return;
+      e.preventDefault();
+      pan = { sx: e.clientX, sy: e.clientY, ox: _pv2LbX, oy: _pv2LbY };
+      stage.classList.add('is-panning');
+      document.addEventListener('mousemove', onLbPanMove);
+      document.addEventListener('mouseup', onLbPanUp);
+    });
+    function onLbPanMove(e) {
+      if (!pan) return;
+      _pv2LbX = pan.ox + (e.clientX - pan.sx);
+      _pv2LbY = pan.oy + (e.clientY - pan.sy);
+      _pv2LbApply();
+    }
+    function onLbPanUp() {
+      pan = null;
+      stage.classList.remove('is-panning');
+      document.removeEventListener('mousemove', onLbPanMove);
+      document.removeEventListener('mouseup', onLbPanUp);
+    }
+  }
+
   function extractDroppedUrl(e) {
     const types = Array.from(e.dataTransfer.types || []);
     let url = '';
@@ -6379,7 +6579,10 @@
     slot.addEventListener('click', (e) => {
       if (Date.now() < suppressClickUntil) return;
       const current = getData();
-      if (current.url) return; // click on filled slot does nothing (use drop, right-click, or drag to pan)
+      if (current.url) {
+        openPv2Lightbox(current.url);
+        return;
+      }
       const url = prompt('Image URL (Pinterest etc):');
       if (url === null) return;
       const trimmed = url.trim();
