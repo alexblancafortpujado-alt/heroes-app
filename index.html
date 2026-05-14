@@ -2379,6 +2379,27 @@
     filter: drop-shadow(0 0 30px rgba(255,60,80,0.25));
   }
   .boss-visual svg { width: 100%; height: 100%; display: block; }
+  .boss-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    animation: boss-float 5s ease-in-out infinite;
+    transition: filter 0.6s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .boss-stage.damage-1 .boss-visual img { filter: brightness(0.96); }
+  .boss-stage.damage-2 .boss-visual img { filter: brightness(0.88) saturate(0.85); }
+  .boss-stage.damage-3 .boss-visual img { filter: brightness(0.78) saturate(0.7); }
+  .boss-stage.damage-4 .boss-visual img { filter: brightness(0.65) saturate(0.5); }
+  .boss-stage.damage-5 .boss-visual img {
+    filter: brightness(0.45) saturate(0.3) blur(0.5px);
+    animation: boss-float 1.2s ease-in-out infinite, boss-shudder 2.4s ease-in-out infinite;
+  }
 
   /* Boss intrinsic animations */
   @keyframes boss-float {
@@ -5552,75 +5573,7 @@
           <div class="boss-fx-layer" id="bossFxLayer"></div>
           <div class="boss-defeat-banner" id="bossDefeatBanner"><div class="boss-defeat-banner-text">Boss Defeated</div></div>
           <div class="boss-visual" id="bossVisual">
-            <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient id="bAura" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#ff3050" stop-opacity="0.7"/>
-                  <stop offset="40%" stop-color="#a00020" stop-opacity="0.35"/>
-                  <stop offset="100%" stop-color="#000" stop-opacity="0"/>
-                </radialGradient>
-                <linearGradient id="bBody" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stop-color="#3a1235"/>
-                  <stop offset="40%" stop-color="#1a0512"/>
-                  <stop offset="100%" stop-color="#060305"/>
-                </linearGradient>
-                <radialGradient id="bEye" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#ffffff"/>
-                  <stop offset="25%" stop-color="#ffd0d8"/>
-                  <stop offset="60%" stop-color="#ff3050"/>
-                  <stop offset="100%" stop-color="#8a0020"/>
-                </radialGradient>
-                <radialGradient id="bCore" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#fff"/>
-                  <stop offset="35%" stop-color="#ff8090"/>
-                  <stop offset="100%" stop-color="#a00020" stop-opacity="0"/>
-                </radialGradient>
-                <filter id="bGlow" x="-100%" y="-100%" width="300%" height="300%">
-                  <feGaussianBlur stdDeviation="5"/>
-                  <feMerge>
-                    <feMergeNode/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
-
-              <circle class="b-aura" cx="200" cy="200" r="180" fill="url(#bAura)"/>
-
-              <g class="b-ring b-ring-1">
-                <circle cx="200" cy="200" r="172" fill="none" stroke="rgba(255,60,90,0.28)" stroke-width="1" stroke-dasharray="2 8"/>
-              </g>
-              <g class="b-ring b-ring-2">
-                <circle cx="200" cy="200" r="158" fill="none" stroke="rgba(255,60,90,0.2)" stroke-width="0.8" stroke-dasharray="1 5"/>
-              </g>
-
-              <path class="b-body"
-                d="M 200 70 Q 140 85 110 160 Q 90 240 100 320 Q 110 348 145 348 L 255 348 Q 290 348 300 320 Q 310 240 290 160 Q 260 85 200 70 Z"
-                fill="url(#bBody)" stroke="rgba(255,80,100,0.45)" stroke-width="1.5"/>
-
-              <ellipse cx="200" cy="175" rx="62" ry="55" fill="#000"/>
-
-              <g class="b-eyes" filter="url(#bGlow)">
-                <ellipse cx="178" cy="178" rx="13" ry="7" fill="url(#bEye)"/>
-                <ellipse cx="222" cy="178" rx="13" ry="7" fill="url(#bEye)"/>
-              </g>
-              <g class="b-eyes-bright">
-                <ellipse cx="178" cy="178" rx="5" ry="2.5" fill="#fff5f6"/>
-                <ellipse cx="222" cy="178" rx="5" ry="2.5" fill="#fff5f6"/>
-              </g>
-
-              <g class="b-core-wrap">
-                <circle cx="200" cy="280" r="22" fill="url(#bCore)" opacity="0.6"/>
-                <circle cx="200" cy="280" r="8" fill="url(#bEye)"/>
-              </g>
-
-              <g class="b-cracks">
-                <path class="b-crack b-crack-1" d="M 200 70 Q 195 110 210 150 L 200 200" fill="none" stroke="#ff3050" stroke-width="1.4" stroke-linecap="round"/>
-                <path class="b-crack b-crack-2" d="M 105 230 Q 140 250 150 280 L 175 305" fill="none" stroke="#ff3050" stroke-width="1.4" stroke-linecap="round"/>
-                <path class="b-crack b-crack-3" d="M 295 230 Q 265 255 250 290 L 230 308" fill="none" stroke="#ff3050" stroke-width="1.4" stroke-linecap="round"/>
-                <path class="b-crack b-crack-4" d="M 145 348 L 170 310 L 200 330 L 230 310 L 255 348" fill="none" stroke="#ff3050" stroke-width="1.4" stroke-linecap="round"/>
-                <path class="b-crack b-crack-5" d="M 115 160 L 145 185 L 135 225" fill="none" stroke="#ff3050" stroke-width="1.4" stroke-linecap="round"/>
-              </g>
-            </svg>
+            <img src="boss-cuello-de-botella.png" alt="Boss" draggable="false" />
           </div>
         </div>
 
