@@ -4886,6 +4886,35 @@
   @keyframes admin-spin {
     to { transform: rotate(360deg); }
   }
+  .admin-reset-boss-btn {
+    padding: 4px 10px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,60,80,0.10);
+    border: 1px solid rgba(255,60,80,0.30);
+    color: rgba(255,140,160,0.95);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s ease;
+  }
+  .admin-reset-boss-btn:hover {
+    background: rgba(255,60,80,0.18);
+    color: #fff;
+    border-color: rgba(255,80,100,0.55);
+  }
+  .admin-reset-boss-btn.is-flash {
+    background: rgba(107,227,164,0.18);
+    border-color: rgba(107,227,164,0.55);
+    color: #6BE3A4;
+  }
 
   .admin-body { display: flex; flex-direction: column; gap: 12px; }
   .admin-empty, .admin-error {
@@ -5626,6 +5655,7 @@
       <div class="admin-meta-row">
         <span class="admin-count" id="adminCount">— students</span>
         <span class="admin-refresh-time" id="adminRefreshTime">never</span>
+        <button class="admin-reset-boss-btn" id="adminResetBossBtn" type="button" title="Reset your Boss Fight state (lets you fight again)">⚔ Reset boss</button>
         <button class="admin-refresh-btn" id="adminRefreshBtn" type="button" title="Refresh">⟳</button>
       </div>
     </div>
@@ -10459,6 +10489,27 @@
   function setupAdminControls() {
     const btn = document.getElementById('adminRefreshBtn');
     if (btn) btn.addEventListener('click', loadAdminData);
+    const resetBtn = document.getElementById('adminResetBossBtn');
+    if (resetBtn && !resetBtn.dataset.wired) {
+      resetBtn.dataset.wired = '1';
+      resetBtn.addEventListener('click', () => {
+        if (!confirm('¿Reiniciar tu estado de Boss Fight? Borra trofeos y cooldowns para que puedas volver a pelear.')) return;
+        Object.keys(MODULE_EXAMS).forEach(id => storeDelete(ME_PREFIX + id));
+        // If we are inside an exam/result view, kick back to checklist
+        _examAnswers = null;
+        _examResult = null;
+        _examScene = null;
+        _stView = 'checklist';
+        renderSkilltree();
+        resetBtn.classList.add('is-flash');
+        const orig = resetBtn.textContent;
+        resetBtn.textContent = '✓ Reset';
+        setTimeout(() => {
+          resetBtn.classList.remove('is-flash');
+          resetBtn.textContent = orig;
+        }, 1400);
+      });
+    }
   }
 
   function revealAdminTabIfNeeded() {
