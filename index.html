@@ -1789,6 +1789,42 @@
     color: var(--text-tertiary);
     margin-bottom: 14px;
   }
+  .pv2-eyebrow-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .pv2-eyebrow-row .pv2-eyebrow { margin-bottom: 0; flex: 1; }
+  .pv2-mood-export-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.14);
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .pv2-mood-export-btn:hover {
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.32);
+    background: rgba(255,255,255,0.04);
+  }
+  .pv2-mood-export-btn:disabled,
+  .pv2-mood-export-btn.is-success {
+    color: #6BE3A4;
+    border-color: rgba(107,227,164,0.45);
+    background: rgba(107,227,164,0.06);
+    cursor: default;
+  }
   /* Inspiration board: 1920×1080 ratio (16:9). Two rows.
      Top row: 4 cells, each 340×453 (aspect 340/453 ≈ 0.7505).
      Bottom row: 4 cells, each 340×639 (aspect 340/639 ≈ 0.5321). */
@@ -4438,7 +4474,10 @@
     <div class="section-title">Portal</div>
 
     <div class="pv2-block">
-      <div class="pv2-eyebrow">— Mood board</div>
+      <div class="pv2-eyebrow-row">
+        <div class="pv2-eyebrow">— Mood board</div>
+        <button class="pv2-mood-export-btn" id="pv2MoodExportBtn" type="button">Descargar PNG</button>
+      </div>
       <div class="pv2-board" id="pv2BoardInspiration"></div>
     </div>
 
@@ -6931,7 +6970,153 @@
     _pv2WrapAndAttachExpand(ta, label);
   }
 
+  // ─── Mood board PNG export ───────────────────────────────────────
+  function _loadImageForCanvas(url) {
+    return new Promise((resolve) => {
+      if (!url) { resolve(null); return; }
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  }
+
+  async function downloadMoodboardPng(sourceBtn) {
+    const data = getPortalV2Data();
+    const slots = data.inspiration;
+
+    const W = 1600;
+    const PAD = 24;
+    const GAP = 12;
+    const COLS = 4;
+    const cellW = (W - PAD * 2 - GAP * (COLS - 1)) / COLS;
+    const TOP_ASPECT = 340 / 453;
+    const BOT_ASPECT = 340 / 639;
+    const topH = cellW / TOP_ASPECT;
+    const botH = cellW / BOT_ASPECT;
+    const H = Math.round(PAD + topH + GAP + botH + PAD);
+
+    if (sourceBtn) {
+      if (!sourceBtn.dataset.originalLabel) sourceBtn.dataset.originalLabel = sourceBtn.textContent;
+      sourceBtn.textContent = 'Generando…';
+      sourceBtn.disabled = true;
+    }
+
+    try {
+      const imgs = await Promise.all(slots.map(s => _loadImageForCanvas(s && s.url)));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext('2d');
+
+      // Background — match the board frame
+      ctx.fillStyle = '#0e0a13';
+      ctx.fillRect(0, 0, W, H);
+
+      let missing = 0;
+      for (let i = 0; i < 8; i++) {
+        const isTop = i < 4;
+        const col = i % 4;
+        const x = PAD + col * (cellW + GAP);
+        const y = isTop ? PAD : PAD + topH + GAP;
+        const w = cellW;
+        const h = isTop ? topH : botH;
+
+        // Slot bg + border
+        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        ctx.fillRect(x, y, w, h);
+
+        const slot = slots[i] || {};
+        const img = imgs[i];
+        if (img) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(x, y, w, h);
+          ctx.clip();
+
+          // Cover-fit math
+          const iw = img.naturalWidth || img.width;
+          const ih = img.naturalHeight || img.height;
+          const naturalRatio = iw / ih;
+          const slotRatio = w / h;
+          let coverW, coverH;
+          if (naturalRatio > slotRatio) {
+            coverH = h;
+            coverW = h * naturalRatio;
+          } else {
+            coverW = w;
+            coverH = w / naturalRatio;
+          }
+
+          const zoom = slot.zoom || 1;
+          const drawW = coverW * zoom;
+          const drawH = coverH * zoom;
+          const cx = x + w / 2 + ((slot.panX || 0) / 100) * w;
+          const cy = y + h / 2 + ((slot.panY || 0) / 100) * h;
+          ctx.drawImage(img, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+
+          ctx.restore();
+        } else if (slot.url) {
+          missing++;
+        }
+      }
+
+      let dataUrl;
+      try {
+        dataUrl = canvas.toDataURL('image/png');
+      } catch (e) {
+        console.error('[moodboard] toDataURL failed (probably tainted):', e);
+        alert('No se pudo exportar — alguna imagen bloquea CORS. Si pasa esto, intenta volver a soltar la imagen problemática desde Pinterest.');
+        if (sourceBtn) {
+          sourceBtn.textContent = sourceBtn.dataset.originalLabel || 'Descargar PNG';
+          sourceBtn.disabled = false;
+        }
+        return;
+      }
+
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'moodboard-' + new Date().toISOString().slice(0, 10) + '.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      if (sourceBtn) {
+        const success = missing > 0
+          ? '✓ Descargado (' + missing + ' imagen' + (missing === 1 ? '' : 'es') + ' sin CORS)'
+          : '✓ PNG descargado';
+        sourceBtn.textContent = success;
+        sourceBtn.classList.add('is-success');
+        setTimeout(() => {
+          sourceBtn.textContent = sourceBtn.dataset.originalLabel || 'Descargar PNG';
+          sourceBtn.classList.remove('is-success');
+          sourceBtn.disabled = false;
+        }, 2400);
+      }
+      if (typeof chime === 'function') chime('pop');
+    } catch (e) {
+      console.error('[moodboard] export failed', e);
+      if (sourceBtn) {
+        sourceBtn.textContent = sourceBtn.dataset.originalLabel || 'Descargar PNG';
+        sourceBtn.disabled = false;
+      }
+      alert('No se pudo generar el PNG. Revisa la consola.');
+    }
+  }
+
+  let _pv2MoodExportWired = false;
+  function setupMoodExport() {
+    if (_pv2MoodExportWired) return;
+    const btn = document.getElementById('pv2MoodExportBtn');
+    if (!btn) return;
+    _pv2MoodExportWired = true;
+    btn.addEventListener('click', () => downloadMoodboardPng(btn));
+  }
+
   function renderPortalV2() {
+    setupMoodExport();
     const data = getPortalV2Data();
 
     // Inspiration board: 4 top (340×453) + 4 bottom (340×639)
