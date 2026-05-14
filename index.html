@@ -2810,6 +2810,7 @@
     gap: 4px;
     align-items: center;
   }
+  .boss-trophy-resurrect,
   .boss-trophy-export,
   .boss-trophy-del {
     background: transparent;
@@ -2822,6 +2823,11 @@
     font-family: inherit;
     border-radius: 6px;
     transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .boss-trophy-resurrect:hover {
+    color: #F2C063;
+    border-color: rgba(242,192,99,0.45);
+    background: rgba(242,192,99,0.08);
   }
   .boss-trophy-export:hover {
     color: #6BE3A4;
@@ -9249,6 +9255,29 @@
       const actions = document.createElement('div');
       actions.className = 'boss-trophy-actions';
 
+      const res = document.createElement('button');
+      res.className = 'boss-trophy-resurrect';
+      res.type = 'button';
+      res.textContent = '↺';
+      res.title = 'Resucitar (seguir luchando)';
+      res.setAttribute('aria-label', 'Resucitar a ' + b.name);
+      res.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const d = getBossData();
+        if (d.active) {
+          alert('Ya tienes un boss activo: "' + d.active.name + '". Derrótalo o bórralo antes de resucitar otro.');
+          return;
+        }
+        if (!confirm('¿Resucitar a "' + b.name + '"? Volverá como boss activo con todos sus apuntes.')) return;
+        const restored = Object.assign({}, b);
+        delete restored.defeatedAt;
+        d.active = restored;
+        d.defeated = (d.defeated || []).filter(x => x.id !== b.id);
+        setBossData(d);
+        renderBossFight();
+        if (typeof chime === 'function') chime('pop');
+      });
+
       const exp = document.createElement('button');
       exp.className = 'boss-trophy-export';
       exp.type = 'button';
@@ -9275,6 +9304,7 @@
         renderBossGraveyard(d.defeated);
       });
 
+      actions.appendChild(res);
       actions.appendChild(exp);
       actions.appendChild(del);
 
