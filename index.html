@@ -8415,48 +8415,209 @@
       moduleId: 'modo-creativo',
       title: 'Boss Final · Modo Creativo',
       maxWrong: 3,
+      numToAsk: 20, // sampled randomly from the pool each attempt
       cooldownMs: 60 * 60 * 1000, // 1 hour
       questions: [
-        { q: '¿Cuál es la función real de la dopamina?',
-          options: ['Generar placer tras una recompensa', 'Mantener equilibrio emocional', 'Impulsar la acción hacia una recompensa anticipada', 'Reducir el estrés'], answer: 2 },
-        { q: '¿Por qué las actividades de gratificación instantánea son un "préstamo dopaminérgico"?',
-          options: ['Elevan dopamina sin esfuerzo', 'Producen picos que luego reducen la línea base', 'Sustituyen motivación por placer', 'Inhiben dopamina futura'], answer: 1 },
-        { q: 'En Modo Creativo, vivir bien implica:',
-          options: ['Evitar bajadas emocionales', 'Maximizar picos', 'Estabilizar una dopamina orientada al futuro', 'Eliminar gratificación instantánea'], answer: 2 },
-        { q: 'La diferencia entre Mike y Mark se explica por:',
-          options: ['Talento y voluntad', 'Consciencia y genética', 'Acumulación sostenida de gratificación tardía', 'Capacidad intelectual'], answer: 2 },
-        { q: '¿Por qué Mark tolera mejor tareas difíciles?',
-          options: ['Dopamina más rápida', 'Sin resistencia emocional', 'Dopamina base más alta', 'Evita tareas'], answer: 2 },
-        { q: 'Un objetivo rígido es problemático porque:',
-          options: ['Reduce motivación', 'Es una apuesta desde la ignorancia del presente', 'Limita creatividad', 'Genera dependencia'], answer: 1 },
-        { q: '¿Qué define mejor un constraint?',
-          options: ['Marco que guía decisiones sin definir resultado', 'Límite temporal', 'Plan rígido', 'Visualización futura'], answer: 0 },
-        { q: 'La metáfora del jazz explica que:',
-          options: ['Improvisación > planificación', 'Talento espontáneo', 'Evitar error', 'La vida responde mejor a límites que a guiones'], answer: 3 },
-        { q: 'El cuello de botella es:',
-          options: ['Peores resultados', 'Hábito difícil', 'Factor que bloquea el progreso global', 'Creencia antigua'], answer: 2 },
-        { q: '¿Por qué mejorar un poco en todo es ineficaz?',
-          options: ['Dispersa energía en lo no crítico', 'Sobrecarga cognitiva', 'Refuerza procrastinación', 'Impide especialización'], answer: 0 },
-        { q: 'Las creencias cambian cuando:',
-          options: ['Se repiten', 'Se entienden', 'Se actúa y se obtiene evidencia vivida', 'Se visualizan'], answer: 2 },
-        { q: 'En las balanzas mágicas pesa más:',
-          options: ['Visualizar', 'Entender', 'Escuchar otros', 'Actuar alineado con presencia'], answer: 3 },
-        { q: 'Error común al cambiar creencias:',
-          options: ['No definir opuesta', 'Falta motivación', 'Creencia ambiciosa', 'No exponerse a experiencias reales'], answer: 3 },
-        { q: 'La latencia es:',
-          options: ['Adaptación cerebral', 'Desfase entre identidad interna y resultados externos', 'Resistencia inicial', 'Periodo de duda'], answer: 1 },
-        { q: 'El jugador infinito:',
-          options: ['Busca ganar', 'Evita error', 'Usa el error como información', 'Defiende creencias'], answer: 2 },
-        { q: 'La realidad objetiva:',
-          options: ['No existe', 'Inaccesible', 'Existe, pero la experiencia es subjetiva', 'Depende del consenso'], answer: 2 },
-        { q: 'El filtro de la realidad es:',
-          options: ['Entorno', 'Lenguaje', 'Emociones', 'Creencias'], answer: 3 },
-        { q: 'El cuadrado y el círculo ilustran que:',
-          options: ['Percepción errónea', 'Realidad cambia', 'El objeto no cambia, cambia la interpretación', 'Verdad relativa'], answer: 2 },
-        { q: 'La vida ideal:',
-          options: ['Fantasía', 'Estándar de validación de creencias', 'Ajustarse al presente', 'Independiente'], answer: 1 },
-        { q: 'Secuencia del cambio profundo:',
-          options: ['Consciencia → creencias → decisiones → vida', 'Motivación → disciplina → hábitos → éxito', 'Acción → creencia → identidad → resultados', 'Objetivos → planificación → ejecución → logro'], answer: 0 },
+        { q: 'Según el módulo "Abre Tu Mente", ¿cuál es el nivel más alto del videojuego de la vida?',
+          options: ['Vivir según los impulsos del momento', 'Vivir para aprender y tomar decisiones lógicas', 'Controlar las creencias para controlar el subconsciente', 'Acumular conocimiento sobre la realidad objetiva'], answer: 2 },
+        { q: '¿Cuál es la frase de Miguel Ángel que cita Alex como base de su metáfora favorita?',
+          options: ['"Para esculpir, debes morir y renacer"', '"La escultura ya está en la roca, él solo tiene que quitar lo que sobra"', '"El arte verdadero es destruir lo bello para crear lo perfecto"', '"Una escultura nace de mil errores"'], answer: 1 },
+        { q: '¿Cuántos errores principales identifica Alex en la metáfora del escultor?',
+          options: ['Tres', 'Cuatro', 'Cinco', 'Siete'], answer: 2 },
+        { q: '¿Cuál NO es uno de los errores del escultor mencionados por Alex?',
+          options: ['No saber que tienes influencia sobre la roca', 'No tener claro la escultura que vas a crear', 'Tener miedo de picar', 'No tener suficiente dinero para comprar buenas herramientas'], answer: 3 },
+        { q: 'El peor dolor que puede sentir un humano según el módulo "Escultura" es:',
+          options: ['Perder a un ser querido', 'El fracaso económico', 'Vivir una vida que no deseas porque has actuado desde los impulsos y no desde la estrategia', 'La soledad prolongada'], answer: 2 },
+        { q: '¿Cuál es el quinto y último error del escultor?',
+          options: ['No tener un mentor', 'No tener la herramienta correcta', 'No ser constante: un día picas mucho y al siguiente nada', 'No celebrar los avances'], answer: 2 },
+        { q: 'Según la "Ley Causal", ¿qué es la base de todo, incluyendo el universo y la humanidad?',
+          options: ['La energía y la materia', 'Las leyes de la física cuántica', 'Una secuencia infinita de causas y efectos', 'El tiempo lineal'], answer: 2 },
+        { q: 'En el ejemplo de la ley causal de Alex, después de entrenar (causa) el efecto es estar sucio. ¿Cuál es la siguiente causa que cambia el estado?',
+          options: ['Comer', 'Descansar', 'Ducharse', 'Cambiarse de ropa'], answer: 2 },
+        { q: 'Según "Ingeniería Inversa", para construir un físico excelente, los inputs diarios son:',
+          options: ['Solo entrenar duro cada día', 'Entrenar, dormir bien y comer mucho', 'Suplementos y entrenamiento personalizado', 'Genética favorable y constancia'], answer: 1 },
+        { q: 'Lo realmente difícil de aplicar la ingeniería inversa NO es:',
+          options: ['Volverse adicto a los inputs correctos', 'Determinar cuáles son los inputs (eso es relativamente fácil)', 'Ser consistente a largo plazo', 'Superar la resistencia interna'], answer: 1 },
+        { q: 'Según el módulo "Slides", ¿cuántas slides debes escribir?',
+          options: ['3', '6', '10', 'Tantas como áreas de tu vida'], answer: 1 },
+        { q: '¿Cuál NO es una de las 6 slides mencionadas?',
+          options: ['Cómo te miras a ti mismo', 'Tu pareja', 'Tu propósito', 'Tu nivel de ingresos exacto'], answer: 3 },
+        { q: 'Según Alex, un "recuerdo del futuro" es:',
+          options: ['Una predicción basada en datos', 'Una slide: un momento futuro escrito con conexión emocional', 'Un sueño recurrente que se repite', 'Una visualización guiada por un coach'], answer: 1 },
+        { q: '¿De quién toma Alex el concepto de "slide" y "Reality Transurfing"?',
+          options: ['David Goggins', 'Tony Robbins', 'Padim', 'Robert Kiyosaki'], answer: 2 },
+        { q: 'Según "Teoría del Portal", ¿qué representa el portal?',
+          options: ['Una metáfora de la muerte y renacimiento personal', 'Tu vida ideal del futuro que puedes invocar cerrando los ojos', 'La puerta entre el consciente y el subconsciente', 'Una técnica de meditación trascendental'], answer: 1 },
+        { q: 'Cuando tomas una decisión incorrecta durante el día, según el módulo del portal:',
+          options: ['El portal se cierra temporalmente', 'El portal empieza a desaparecer y se muestra el antiportal, la vida que no deseas', 'Pierdes acceso al portal por 24 horas', 'Se reinicia toda tu visualización'], answer: 1 },
+        { q: 'En la metáfora del portal, ¿qué pasa si tomas la decisión correcta alineada con tu vida ideal?',
+          options: ['Recibes una recompensa material inmediata', 'El portal brilla y muestra la vida que deseas', 'Otras personas notan tu cambio', 'Se desbloquea un nuevo nivel automáticamente'], answer: 1 },
+        { q: 'Según Alex, para que las slides funcionen es clave:',
+          options: ['Compartirlas en redes sociales', 'Leerlas cada día y crear conexión emocional profunda con ellas', 'Olvidarlas para no obsesionarse', 'Reescribirlas semanalmente con cambios'], answer: 1 },
+        { q: 'Según "Creencias", ¿qué determina cómo percibimos el mundo?',
+          options: ['Nuestros sentidos físicos', 'La realidad objetiva', 'Nuestras creencias, que filtran la realidad', 'Nuestra educación'], answer: 2 },
+        { q: 'En la metáfora del surfero según Alex:',
+          options: ['Las olas representan el dinero que llega', 'No puedes controlar las olas, solo cómo reaccionas a ellas', 'Las olas representan tus emociones', 'Solo los mejores surferos eligen las olas'], answer: 1 },
+        { q: '¿Cuál es la cadena causal según el módulo "Creencias"?',
+          options: ['Vida → Pensamientos → Decisiones → Resultados', 'Creencias → Decisiones → Acciones → Vida', 'Emociones → Acciones → Resultados → Vida', 'Educación → Habilidades → Acciones → Vida'], answer: 1 },
+        { q: 'Según "Creencias", ¿cuál es el problema fundamental de la mayoría?',
+          options: ['No saber lo que tienen que hacer', 'Saber lo que deben hacer, pero ser incapaces de hacerlo', 'Falta de tiempo para implementar cambios', 'Falta de recursos económicos'], answer: 1 },
+        { q: 'Según "Balanzas Mágicas", ¿cómo se crean las creencias?',
+          options: ['A través de la repetición consciente', 'A través de las experiencias positivas o negativas que vivimos', 'Heredadas genéticamente', 'Por imitación de figuras de autoridad'], answer: 1 },
+        { q: '¿Qué le pasó a Alex la primera vez que surfeó?',
+          options: ['Le encantó desde el primer momento', 'Pagó la tabla, se reventó el dedo y creó creencias muy negativas', 'Surfeó tan bien que sus amigos se quedaron atrás', 'No pudo entrar al agua por las olas grandes'], answer: 1 },
+        { q: 'Tras su mala experiencia inicial con el surf, ¿qué hizo Alex?',
+          options: ['Tomó clases con un profesional', 'Se forzó a surfear cada día sin parar', 'Empezó a ver vídeos, hablar con amigos surferos y forzar creencias positivas en la balanza', 'Lo dejó durante varios años hasta tener mejor actitud'], answer: 2 },
+        { q: '¿Cuál fue el problema sobre el sueño que Alex solucionó cambiando creencias?',
+          options: ['Pensaba que dormir poco era productivo', 'No tomaba el sol por la mañana; creó creencias positivas sobre el sol matutino', 'Bebía café demasiado tarde', 'Veía el móvil antes de dormir'], answer: 1 },
+        { q: 'Según Alex, ¿por qué se mudó a Lisboa 4-5 meses?',
+          options: ['Por trabajo en una empresa portuguesa', 'Porque tenía surf al lado tras haber desarrollado creencias positivas fuertes sobre el surf', 'Por motivos fiscales', 'Por relaciones personales'], answer: 1 },
+        { q: 'Según "Ciclos Negativos", "fake it till you make it" significa:',
+          options: ['Mentir hasta que te crean los demás', 'Adquirir las creencias de tu versión ideal hasta que eres tu versión ideal', 'Fingir éxito para atraer oportunidades', 'Disimular tus debilidades hasta convertirlas en fortalezas'], answer: 1 },
+        { q: '¿Por qué la manifestación tradicional ("sueño lo que quiero y el universo me lo da") es "fake" según Alex?',
+          options: ['Porque el universo no existe', 'Porque es la que más se vende al parecer más fácil pero ignora las acciones', 'Porque solo funciona para gente religiosa', 'Porque requiere muchísimo tiempo'], answer: 1 },
+        { q: 'En la historia de Mike el cocinero, ¿qué desencadenó su creencia limitante?',
+          options: ['Quemar varias comidas seguidas', 'Las comparaciones con su hermana', 'Cocinó galletas con sal en vez de azúcar y su madre las criticó', 'Su padre era chef profesional'], answer: 2 },
+        { q: '¿Cómo afecta una creencia negativa al desempeño?',
+          options: ['No afecta si tienes habilidad técnica suficiente', 'Va sin ganas, lo hace peor, lo cual crea más creencias negativas en bucle', 'Solo afecta en tareas creativas', 'Afecta únicamente al estado de ánimo'], answer: 1 },
+        { q: '¿Por qué es tan difícil dejar el FAP según el ejemplo de Alex?',
+          options: ['Por adicción física pura', 'Llevas años creando piedras positivas en la balanza; no se cambian con cuatro vídeos', 'Por la presión social', 'Porque la sociedad lo normaliza'], answer: 1 },
+        { q: 'Según "Abre Tu Mente", ¿por qué nuestro cerebro resiste cambiar creencias?',
+          options: ['Porque cambiarlas requiere reprogramar todo el paradigma', 'Porque las creencias son fijas desde la infancia', 'Porque sin creencias no podríamos sobrevivir', 'Porque las creencias nuevas siempre son falsas'], answer: 0 },
+        { q: 'Según Alex, ¿por qué la gente defiende creencias limitantes como "el FAP no está tan mal"?',
+          options: ['Por presión social', 'Por falta de información', 'Porque el cerebro no quiere dolor y crea creencias falsas para protegerte', 'Por hábito puramente físico'], answer: 2 },
+        { q: 'Lo más difícil de cambiar una creencia limitante es:',
+          options: ['Cambiarla una vez la has descubierto', 'Encontrar mentores', 'Descubrirla, porque crees que es cierta', 'Aplicarla en el día a día'], answer: 2 },
+        { q: '¿Qué crea seguridad y por eso la gente defiende sus creencias actuales?',
+          options: ['El reconocimiento social', 'La sensación de que todo está bien (incluso cuando es falsa)', 'Las certezas religiosas', 'La estabilidad económica'], answer: 1 },
+        { q: 'Según "Ama El Villano", ¿por qué Mario Galaxy ya no le divierte a Alex de adulto?',
+          options: ['Porque los gráficos son anticuados', 'Porque se ha vuelto un juego muy fácil para él', 'Porque ya se sabe todos los trucos', 'Porque no tiene tiempo'], answer: 1 },
+        { q: '¿Qué problema tienen los antidepresivos según "Ama El Villano"?',
+          options: ['Generan adicción física', 'No funcionan a largo plazo', 'Al quitar la tristeza, también quitan la felicidad porque no valoras los momentos', 'Cuestan demasiado al sistema sanitario'], answer: 2 },
+        { q: 'Según "Ama El Villano", ¿qué crea la luz?',
+          options: ['La luz se crea a sí misma', 'La oscuridad', 'La fuerza de voluntad', 'El esfuerzo continuo'], answer: 1 },
+        { q: 'Según el módulo "Ángel Diablo", la "fricción límbica" es:',
+          options: ['La tensión entre lógica y emoción en cualquier decisión', 'La lucha entre la parte más antigua del cerebro (gratificación instantánea) y la frontal (gratificación tardía)', 'El rozamiento mental que causa fatiga al pensar mucho', 'La resistencia neurológica al aprendizaje rápido'], answer: 1 },
+        { q: '¿Cuál es la paradoja del diablo interno?',
+          options: ['Que es totalmente irracional', 'Que solo aparece cuando estás cansado', 'Que te conoce mejor que nadie porque eres tú, y por eso te sabe seducir', 'Que desaparece con la edad'], answer: 2 },
+        { q: 'Alex menciona un personaje real que ha dominado al diablo interno mejor que nadie. ¿Quién?',
+          options: ['Elon Musk', 'David Goggins', 'Cristiano Ronaldo', 'Steve Jobs'], answer: 1 },
+        { q: 'Alex se corrió una maratón:',
+          options: ['Después de un año de entrenamiento', 'Con un grupo de amigos profesionales', 'Sin haber entrenado en su vida, solo para ver al diablo de cara', 'Como parte de un reto benéfico'], answer: 2 },
+        { q: 'En el ejercicio de la plancha del módulo, ¿quién acaba ganando?',
+          options: ['Los que paran cuando Alex les dice que paren', 'Los que siguen haciendo la plancha incluso cuando Alex les dice que paren', 'Los que duran un tiempo determinado', 'Los que paran apenas sienten dolor'], answer: 1 },
+        { q: '¿Qué emoción acompaña la "resistencia" cuando aparece?',
+          options: ['Tristeza', 'Una voz interna que te dice "no lo hagas", "estás cómodo", "no hace falta"', 'Confusión mental', 'Hambre y sed'], answer: 1 },
+        { q: '¿Qué señal indica que estás progresando según "Ángel Diablo"?',
+          options: ['Que no sientes resistencia', 'Que aparece la resistencia/el diablo cada día', 'Que tus amigos te admiran', 'Que ves resultados externos rápidamente'], answer: 1 },
+        { q: 'Según "Calidad Placer", "lo barato sale caro" significa:',
+          options: ['Las cosas baratas terminan rompiéndose', 'La gratificación instantánea es barata en el momento pero te hace sentir como el culo después', 'Hay que invertir más para tener mejores experiencias', 'Los placeres caros son siempre los mejores'], answer: 1 },
+        { q: '¿Qué tipo de placer representa "mirarte al espejo y amar tu físico"?',
+          options: ['Un placer de baja calidad pero socialmente aceptado', 'Un placer narcisista', 'Un placer de alta calidad', 'Un placer comparativo'], answer: 2 },
+        { q: 'Para una vida feliz según "Calidad Placer", ¿qué debes buscar?',
+          options: ['Lo fácil', 'Lo difícil', 'Lo equilibrado', 'Lo divertido'], answer: 1 },
+        { q: 'Si quieres una vida infeliz, ¿qué debes buscar?',
+          options: ['Lo difícil', 'Lo caro', 'Lo fácil', 'Lo intenso'], answer: 2 },
+        { q: 'Según "Calidad Placer", ¿cuál es el cuello de botella "mastocho" de los jóvenes?',
+          options: ['Falta de claridad sobre objetivos', 'Falta de dinero para empezar', 'No amar lo suficiente la gratificación tardía', 'Pereza pura'], answer: 2 },
+        { q: 'Según "Problem Solver", la calidad de tu vida está determinada por:',
+          options: ['La cantidad de dinero que ganas', 'La calidad de tus problemas', 'La cantidad de placeres que disfrutas', 'Tu nivel de educación formal'], answer: 1 },
+        { q: '¿Cómo se aumenta la calidad de los problemas?',
+          options: ['Evitándolos hasta que se resuelvan solos', 'Pagando para que otros los resuelvan', 'Solucionándolos uno tras otro', 'Comparándolos con problemas peores'], answer: 2 },
+        { q: 'En la escalera de problemas del físico, ¿cuál es el orden correcto?',
+          options: ['Skinny → Cut → Bulking → Atractivo', 'Te llaman flaco → mala dieta → engordando con grasa → cut → atractivo (querer más tamaño)', 'Gordo → ejercicio → musculoso → magro → estético', 'Inseguro → motivación → entrenamiento → resultados → mantenimiento'], answer: 1 },
+        { q: 'Según "Problem Solver", ¿qué hace la mayoría con sus problemas?',
+          options: ['Los analiza con ayuda profesional', 'Se droga, juega videojuegos y hace cualquier cosa para evadirlos', 'Los soluciona pero a un ritmo lento', 'Los acepta y aprende a vivir con ellos'], answer: 1 },
+        { q: '"Vivir en modo creativo" significa según Alex:',
+          options: ['Trabajar exclusivamente en industrias creativas', 'Vivir con abundancia, libertad y problemas de alta calidad', 'Tener un negocio creativo exitoso', 'Pasar la vida haciendo arte'], answer: 1 },
+        { q: 'Según "Simio Ángel", ¿qué dos cosas nos motivan a actuar?',
+          options: ['Dinero y reconocimiento', 'Miedo y esperanza', 'Deseos y dolores', 'Genética y educación'], answer: 2 },
+        { q: '¿Qué es desear desde el "simio"?',
+          options: ['Desear cosas materiales y sencillas', 'Desear desde el ego, la validación y para demostrar a los demás', 'Desear instintivamente sin lógica', 'Desear placeres carnales únicamente'], answer: 1 },
+        { q: 'Cuando Alex hace dopamine detox, sus deseos cambian. ¿En qué dirección?',
+          options: ['De materialistas a deseos de fama', 'De deseos del simio (más músculo, super coches, demostrar) a deseos del ángel (estar en paz, agradecer, presente)', 'De deseos sociales a espirituales puros', 'De corto plazo a largo plazo'], answer: 1 },
+        { q: 'Desear a la mujer TikTok que todos persiguen es desear desde:',
+          options: ['El ángel/alma porque es naturalmente atractiva', 'El simio/ego, porque quieres demostrar lo mucho que molas', 'El corazón porque te genera emoción', 'La lógica porque es objetivamente apta'], answer: 1 },
+        { q: 'Según "Selección Natural", ¿por qué nos atraen los culos como humanos?',
+          options: ['Por condicionamiento cultural moderno', 'Porque implican fertilidad, aptitud y mayor probabilidad de hijos sanos', 'Porque son rasgos estéticos universales', 'Por influencia de las redes sociales'], answer: 1 },
+        { q: 'En la metáfora de los ratones de Darwin, ¿qué pasaba con los ratones más oscuros en la playa de arena blanca?',
+          options: ['Eran más fuertes y dominaban', 'Las águilas los veían más fácilmente, morían más y se reproducían menos', 'Migraban a otras zonas con éxito', 'Se camuflaban mejor que los claros'], answer: 1 },
+        { q: '¿En qué playa los ratones oscuros tenían ventaja evolutiva?',
+          options: ['En cualquier playa', 'En la playa de arena negra', 'En la playa de arena blanca', 'Solo donde había depredadores aéreos'], answer: 1 },
+        { q: 'En la época de Darwin, ¿por qué la diosa Venus tenía un cuerpo con grasita?',
+          options: ['Era el estilo artístico de la época', 'Porque había escasez de comida; tener grasita implicaba alta clase y aptitud', 'Porque los pintores no sabían pintar cuerpos delgados', 'Por motivos religiosos'], answer: 1 },
+        { q: 'Según Alex, ¿qué porcentaje aproximado de la realidad real percibimos?',
+          options: ['Toda la realidad si prestamos atención', 'Solo una pequeña porción, lo más necesario para sobrevivir', 'Aproximadamente la mitad', 'Depende del nivel de conciencia'], answer: 1 },
+        { q: '¿Qué quiere decir Alex con "no vemos la realidad real"?',
+          options: ['Que vivimos en una simulación tipo Matrix', 'Que percibimos solo una porción pequeña procesada por sentidos limitados y filtrada por creencias', 'Que nuestros recuerdos son falsos', 'Que la ciencia no ha podido medirlo todo'], answer: 1 },
+        { q: 'Según "Apalancamiento", la metáfora de las mariposas explica que:',
+          options: ['El dinero es bonito pero efímero', 'Hay dos formas de ganar dinero: perseguir mariposas (pico y pala) o construir un jardín que las atraiga', 'El dinero requiere paciencia como observar mariposas', 'Los emprendedores deben coleccionar oportunidades como mariposas'], answer: 1 },
+        { q: 'Si cobras 10 euros la hora y se te caen 100 euros al suelo, ¿qué acabas de perder?',
+          options: ['100 euros de tu cuenta bancaria', 'Una hora de tu vida', '10 horas de tu vida', 'Una semana de productividad'], answer: 2 },
+        { q: 'En el ejemplo de Alex, una persona que gana 1800 euros al mes y paga 1000 de piso, ¿cuántas horas dedica solo a pagar el piso?',
+          options: ['50 horas', '80 horas', '100 horas', '180 horas'], answer: 2 },
+        { q: 'Según "Apalancamiento", el modo historia/supervivencia incluye:',
+          options: ['Estudiar, ir a la universidad, trabajar, jubilarte a los 80', 'Comprar y vender activos digitales', 'Aprender de forma autodidacta', 'Mudarte a otro país'], answer: 0 },
+        { q: '¿Qué representa "jugar a Rankeds" en la metáfora de Alex?',
+          options: ['La lotería y juegos de azar', 'El emprendimiento, donde hay rangos y es competitivo', 'Trabajar en startups tech', 'Invertir en criptomonedas'], answer: 1 },
+        { q: 'Si elevas tu leverage a 100 euros/hora, ¿cuántas horas necesitas para pagar un piso de 1000 euros?',
+          options: ['5 horas', '10 horas', '20 horas', '100 horas'], answer: 1 },
+        { q: 'Según "Tiempo Dinero", ¿cuál es la relación entre tiempo y dinero?',
+          options: ['Son recursos completamente separados', 'El tiempo genera dinero, y el dinero genera tiempo', 'Solo importa el dinero, el tiempo es gratis', 'El dinero es más valioso que el tiempo'], answer: 1 },
+        { q: '¿Cuál es la diferencia entre "ricos de dinero" y "nuevos ricos"?',
+          options: ['El método de inversión', 'Los de dinero ganan medio millón trabajando 12h/día; los nuevos ricos ganan menos trabajando 4h/día', 'La industria', 'La edad'], answer: 1 },
+        { q: 'En la metáfora MMORPG sobre el dinero, ¿qué representa el "equipamiento"?',
+          options: ['Los activos físicos y propiedades', 'Las habilidades de combate', 'El conocimiento y las creencias rotas que vas adquiriendo', 'Los contactos y la red profesional'], answer: 2 },
+        { q: 'En el MMORPG de la vida, los "bosses" representan:',
+          options: ['Las personas que te oprimen', 'Tus problemas; cuántos has matado determina tu nivel', 'Los mentores que debes superar', 'Las metas financieras'], answer: 1 },
+        { q: 'Lo más "chetado" del dinero según Alex es:',
+          options: ['Permite tener experiencias únicas', 'Te da poder sobre otros', 'Puedes comprar equipamiento (conocimiento) para solucionar problemas más rápido', 'Te permite jubilarte joven'], answer: 2 },
+        { q: 'Según "El Protocolo 1K", el camino emprendedor de Alex empezó con:',
+          options: ['Vender en eBay', 'El Fortnite', 'Un curso de programación', 'Un trabajo en una tienda de informática'], answer: 1 },
+        { q: '¿Qué mentalidad descubrió Alex con el Fortnite?',
+          options: ['Que ganar requiere suerte', 'Que si conoces el juego y desarrollas mecánicas, es físicamente imposible no ganar cada partida', 'Que jugar en equipo es mejor', 'Que la velocidad supera a la estrategia'], answer: 1 },
+        { q: '¿Con cuántos años se sacó Alex un máster universitario de emprendimiento de eSports?',
+          options: ['15 años', '17 años', '19 años', '21 años'], answer: 1 },
+        { q: 'En la gráfica del Protocolo 1K, los dos ejes son:',
+          options: ['Tiempo invertido vs dinero generado', 'Qué tan famoso eres en el nicho vs qué tan experto eres', 'Edad vs experiencia laboral', 'Habilidades técnicas vs habilidades sociales'], answer: 1 },
+        { q: 'Según el Protocolo 1K, ¿cuál es el primer paso?',
+          options: ['Crear contenido en redes', 'Desarrollar una habilidad de forma profunda y mejorar la productividad', 'Lanzar un infoproducto', 'Conseguir tu primer cliente'], answer: 1 },
+        { q: '¿Cuál es el "golden point" de leverage que Alex marca como objetivo?',
+          options: ['50 euros por hora', '100 euros por hora', '500 euros por hora', '1000 euros por hora'], answer: 1 },
+        { q: 'El ex editor camarero de Alex pasó de 10 euros/hora a aproximadamente:',
+          options: ['50 euros la hora', '100 euros la hora (vídeos de 500 euros en 5 horas)', '200 euros la hora inmediatamente', '1000 euros la hora en un año'], answer: 1 },
+        { q: 'Cada vídeo del canal "Alex Di Lorenzo" genera aproximadamente:',
+          options: ['500 euros', '1.000 euros', '5.000 euros', '10.000 euros'], answer: 2 },
+        { q: 'Según "Friki a Nuevo Rico", ¿qué dos cosas son las más importantes inicialmente para aportar valor?',
+          options: ['Carisma y persuasión', 'Desarrollar habilidades/conocimiento y mejorar la productividad', 'Networking y marca personal', 'Dinero inicial y suerte'], answer: 1 },
+        { q: 'Una marca personal exitosa, según Alex, puede llegar a:',
+          options: ['Difícil de cuantificar', 'Impactar 10.000 personas con un vídeo de 5 min; si pagan 1€ cada una, son 10.000€ en 5 min', 'Aproximadamente 1000 euros la hora siempre', 'Solo personas ya famosas lo logran'], answer: 1 },
+        { q: '¿Qué porcentaje del negocio le dan los infoproductores a Alex en su consultoría?',
+          options: ['25%', '33%', '50%', '75%'], answer: 2 },
+        { q: '¿Cuál es el rol principal de Giros Academy para Alex personalmente?',
+          options: ['Es su mayor fuente de ingresos', 'Es su passion project del que saca conocimiento, A-players y reinvierte todo', 'Es su negocio principal', 'Es una academia de afiliados'], answer: 1 },
+        { q: '¿Quién es Gonchal?',
+          options: ['Su socio principal en la consultoría', 'Un editor profesional contratado externamente', 'Un estudiante de Giros Academy de 16 años, camarógrafo, que viajará con ellos a Sri Lanka y Tailandia', 'Un mentor de marketing digital'], answer: 2 },
+        { q: '¿Cuánto genera Alex aproximadamente al mes?',
+          options: ['5.000 a 10.000 euros', '20.000 a 50.000 euros', '100.000 a 200.000 euros', 'Más de 500.000 euros'], answer: 1 },
+        { q: '¿Por qué Alex no extrae dinero de Giros Academy?',
+          options: ['Por motivos fiscales', 'Porque todo se reinvierte para mejorar el producto', 'Porque tiene socios que se llevan todo', 'Porque está en pérdidas'], answer: 1 },
+        { q: '¿Cuántas veces se ha rehecho el curso Modo Creativo según Alex?',
+          options: ['5 veces', '8 veces', '13 veces', '20 veces'], answer: 2 },
+        { q: 'La idea central de todo Modo Creativo se podría resumir como:',
+          options: ['Trabaja duro y verás resultados', 'Alinea tus creencias con las de tu yo ideal para invocar la vida que deseas, viviendo en bucles positivos de solución de problemas', 'El dinero es la solución a casi todos los problemas', 'Acumular experiencias hace que la vida valga la pena'], answer: 1 },
+        { q: 'Según Alex, si una persona tiene creencias positivas sobre ir al gimnasio:',
+          options: ['Conseguirá mejores resultados físicos automáticamente', 'Cuando tenga la decisión de ir o no, tomará la decisión de ir', 'Necesitará menos descanso', 'Encontrará los ejercicios más fáciles'], answer: 1 },
+        { q: 'Según "Ingeniería Inversa", muchas acciones las tomamos desde:',
+          options: ['Decisiones racionales y conscientes', 'El subconsciente, por eso hay que reprogramarlo', 'Imitación de otros', 'Hábitos heredados de la infancia'], answer: 1 },
+        { q: 'Una buena creencia que Alex recomienda adquirir es:',
+          options: ['Que el dinero siempre llega cuando lo necesitas', 'Que la vida se basa en creencias y que tienes creencias limitantes que debes descubrir', 'Que tu intuición siempre tiene razón', 'Que la suerte explica el éxito de los demás'], answer: 1 },
+        { q: 'Según "Abre Tu Mente", ¿qué hace Alex con cada fallo que comete?',
+          options: ['Intenta repetir lo mismo más rápido', 'Lo olvida para no obsesionarse', 'Intenta entender qué creencias limitantes lo causaron y reemplazarlas', 'Pide feedback a otros'], answer: 2 },
+        { q: 'En la lógica de Alex, los problemas son:',
+          options: ['Algo malo que hay que evitar', 'Un castigo del universo por no actuar bien', 'La forma de descubrir creencias limitantes, mejorar y subir la calidad de tu vida', 'Una distracción del verdadero propósito'], answer: 2 },
+        { q: 'Según el conjunto del curso, ¿en qué se diferencia tu yo actual de tu yo ideal?',
+          options: ['En la cantidad de dinero ganado', 'En la fuerza de voluntad', 'En las creencias: tu yo ideal tiene creencias diferentes que generan acciones diferentes, que invocan una vida diferente', 'En la suerte y las oportunidades recibidas'], answer: 2 },
       ]
     }
   };
@@ -8878,17 +9039,30 @@
     headerEl.appendChild(cta);
   }
 
+  function _sampleQuestions(pool, n) {
+    const arr = pool.slice();
+    const take = Math.min(n, arr.length);
+    // Partial Fisher-Yates: shuffle just the first `take` slots
+    for (let i = 0; i < take; i++) {
+      const j = i + Math.floor(Math.random() * (arr.length - i));
+      const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr.slice(0, take);
+  }
+
   function _startExam(moduleId) {
     const exam = MODULE_EXAMS[moduleId];
     if (!exam) return;
     const status = moduleExamCanAttempt(moduleId);
     if (!status.ok) return;
+    const numToAsk = exam.numToAsk || exam.questions.length;
     _examAnswers = {
       moduleId,
       qIdx: 0,
       answers: [],
       wrongs: 0,
-      locked: false
+      locked: false,
+      questions: _sampleQuestions(exam.questions, numToAsk)
     };
     _stView = 'exam';
     renderSkilltree();
@@ -8911,7 +9085,7 @@
 
   function _bossHpPctFor(data) {
     if (!data) return 100;
-    const total = MODULE_EXAMS[data.moduleId].questions.length;
+    const total = (data.questions && data.questions.length) || MODULE_EXAMS[data.moduleId].questions.length;
     return Math.max(0, 100 - Math.round((_examCorrectsSoFar(data) / total) * 100));
   }
 
@@ -9072,8 +9246,9 @@
     const data = _examAnswers;
     if (!data || !data.refs) return;
     const exam = MODULE_EXAMS[data.moduleId];
-    const total = exam.questions.length;
-    const q = exam.questions[data.qIdx];
+    const pool = data.questions || exam.questions;
+    const total = pool.length;
+    const q = pool[data.qIdx];
 
     data.refs.qCounter.textContent = 'Pregunta ' + (data.qIdx + 1) + ' / ' + total;
     data.refs.qProgressFill.style.width = ((data.qIdx / total) * 100) + '%';
@@ -9113,7 +9288,8 @@
     if (!data || data.locked || !data.refs) return;
     data.locked = true;
     const exam = MODULE_EXAMS[data.moduleId];
-    const q = exam.questions[data.qIdx];
+    const pool = data.questions || exam.questions;
+    const q = pool[data.qIdx];
     const correctIdx = q.answer;
     const isCorrect = optIdx === correctIdx;
     data.answers.push({ qIdx: data.qIdx, picked: optIdx, correct: isCorrect });
@@ -9144,7 +9320,7 @@
 
     const delay = isCorrect ? 950 : 1500;
     setTimeout(() => {
-      const total = exam.questions.length;
+      const total = pool.length;
       const playerDead = data.wrongs > exam.maxWrong;
       const bossDead = _examCorrectsSoFar(data) >= total;
       if (playerDead) {
@@ -9269,7 +9445,7 @@
     const data = _examAnswers;
     if (!data) return;
     const exam = MODULE_EXAMS[data.moduleId];
-    const total = exam.questions.length;
+    const total = (data.questions && data.questions.length) || exam.questions.length;
     const state = getModuleExamState(data.moduleId);
     state.attempts.push({
       ts: Date.now(),
