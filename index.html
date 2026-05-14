@@ -6971,31 +6971,53 @@
   }
 
   // ─── Mood board PNG export ───────────────────────────────────────
-  function _proxiedImageUrl(url) {
-    // images.weserv.nl is a free CORS-friendly image proxy. Pinterest's
-    // CDN does not send Access-Control-Allow-Origin so crossOrigin loads
-    // fail; routing through weserv adds the headers.
+  // Several free CORS proxies; we try them in order.
+  function _proxyCandidates(url) {
     const stripped = String(url).replace(/^https?:\/\//i, '');
-    return 'https://images.weserv.nl/?url=' + encodeURIComponent(stripped);
+    return [
+      'https://images.weserv.nl/?url=' + encodeURIComponent(stripped),
+      'https://corsproxy.io/?' + encodeURIComponent(url),
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+    ];
+  }
+
+  async function _fetchImageBlob(url) {
+    const candidates = _proxyCandidates(url);
+    for (const candidate of candidates) {
+      try {
+        const res = await fetch(candidate, { mode: 'cors' });
+        if (!res.ok) {
+          console.warn('[moodboard] proxy not ok', candidate, res.status);
+          continue;
+        }
+        const blob = await res.blob();
+        if (blob && blob.size > 0) return blob;
+      } catch (e) {
+        console.warn('[moodboard] proxy failed', candidate, e);
+      }
+    }
+    // Last resort: direct fetch (works only if origin sends CORS)
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (res.ok) return await res.blob();
+    } catch (e) { /* swallow */ }
+    return null;
   }
 
   function _loadImageForCanvas(url) {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       if (!url) { resolve(null); return; }
-      // Try via the proxy first (covers Pinterest, Instagram, most CDNs).
-      const proxied = new Image();
-      proxied.crossOrigin = 'anonymous';
-      proxied.onload = () => resolve(proxied);
-      proxied.onerror = () => {
-        // Fallback: direct load with CORS — works for hosts that already
-        // serve the right headers.
-        const direct = new Image();
-        direct.crossOrigin = 'anonymous';
-        direct.onload = () => resolve(direct);
-        direct.onerror = () => resolve(null);
-        direct.src = url;
-      };
-      proxied.src = _proxiedImageUrl(url);
+      const blob = await _fetchImageBlob(url);
+      if (!blob) {
+        console.warn('[moodboard] all proxies failed for', url);
+        resolve(null);
+        return;
+      }
+      const blobUrl = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(blobUrl); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(null); };
+      img.src = blobUrl;
     });
   }
 
