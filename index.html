@@ -3286,6 +3286,312 @@
     .rank-widget-eyebrow { font-size: 10px; letter-spacing: 0.32em; }
   }
 
+  /* Clickable hint on the rank widget */
+  .rank-widget {
+    cursor: pointer;
+    transition: transform 0.25s ease, filter 0.25s ease;
+  }
+  .rank-widget:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+  }
+  .rank-widget-cta {
+    position: absolute;
+    bottom: 14px; right: 18px;
+    z-index: 3;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .rank-widget:hover .rank-widget-cta { color: #fff; text-shadow: 0 0 10px var(--rank-glow); }
+
+  /* ─── Rank tree modal ──────────────────────────────────────────── */
+  .rank-tree-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4,2,8,0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9990;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .rank-tree-overlay.is-visible { opacity: 1; }
+  .rank-tree-modal {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    margin: auto;
+    border-radius: 22px;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(242,192,99,0.12), transparent 60%),
+      linear-gradient(180deg, #0c0a14 0%, #07060c 100%);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 80px rgba(255,255,255,0.04);
+    padding: 36px 28px 32px;
+    transform: translateY(16px) scale(0.985);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .rank-tree-overlay.is-visible .rank-tree-modal { transform: translateY(0) scale(1); }
+  .rank-tree-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-secondary);
+    font-size: 22px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s ease, color 0.2s ease;
+    z-index: 4;
+  }
+  .rank-tree-close:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+  .rank-tree-header { text-align: center; margin-bottom: 28px; }
+  .rank-tree-eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.36em;
+    color: rgba(242,192,99,0.85);
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-shadow: 0 0 14px rgba(242,192,99,0.4);
+  }
+  .rank-tree-title {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.015em;
+    color: #fff;
+    margin-bottom: 4px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.6);
+  }
+  .rank-tree-sub {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+  }
+
+  .rank-tree-body { position: relative; }
+
+  .rank-tree-tier {
+    --tier-glow: rgba(255,255,255,0.30);
+    position: relative;
+    padding: 18px 14px;
+    border-radius: 16px;
+    background:
+      radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--tier-glow) 40%, transparent) 0%, transparent 70%),
+      rgba(255,255,255,0.025);
+    border: 1px solid color-mix(in srgb, var(--tier-glow) 50%, rgba(255,255,255,0.08));
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 0;
+    box-shadow: 0 0 28px color-mix(in srgb, var(--tier-glow) 28%, transparent);
+    transition: filter 0.3s ease;
+  }
+  .rank-tree-tier.is-locked {
+    filter: grayscale(0.6) brightness(0.55);
+    --tier-glow: rgba(255,255,255,0.10);
+  }
+  .rank-tree-tier.is-current {
+    box-shadow:
+      0 0 36px color-mix(in srgb, var(--tier-glow) 90%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--tier-glow) 80%, white 20%);
+    animation: tier-current-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes tier-current-pulse {
+    0%, 100% { box-shadow: 0 0 36px color-mix(in srgb, var(--tier-glow) 70%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--tier-glow) 80%, white 20%); }
+    50%      { box-shadow: 0 0 60px color-mix(in srgb, var(--tier-glow) 100%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--tier-glow) 100%, white 30%); }
+  }
+  .rank-tree-tier-emblem {
+    flex: 0 0 88px;
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 30%, rgba(255,255,255,0.20), rgba(255,255,255,0) 60%),
+      rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 24px rgba(0,0,0,0.7), 0 0 22px color-mix(in srgb, var(--tier-glow) 60%, transparent);
+  }
+  .rank-tree-tier-emblem img {
+    width: 76px; height: 76px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+  }
+  .rank-tree-tier-info { flex: 1; min-width: 0; }
+  .rank-tree-tier-name {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 4px;
+    text-shadow: 0 0 12px var(--tier-glow);
+  }
+  .rank-tree-tier-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.02em;
+  }
+  .rank-tree-tier-badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--tier-glow) 22%, rgba(0,0,0,0.4));
+    color: color-mix(in srgb, var(--tier-glow) 60%, white 40%);
+    border: 1px solid color-mix(in srgb, var(--tier-glow) 50%, rgba(255,255,255,0.1));
+    white-space: nowrap;
+  }
+  .rank-tree-tier.is-locked .rank-tree-tier-badge {
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  /* Per-tier glows in the tree */
+  .rank-tree-tier[data-rank="base"]       { --tier-glow: rgba(180,180,180,0.40); }
+  .rank-tree-tier[data-rank="esmeralda"]  { --tier-glow: rgba(80,235,160,0.55); }
+  .rank-tree-tier[data-rank="azurita"]    { --tier-glow: rgba(96,165,250,0.55); }
+  .rank-tree-tier[data-rank="amatista"]   { --tier-glow: rgba(192,132,252,0.55); }
+  .rank-tree-tier[data-rank="ruby"]       { --tier-glow: rgba(255,90,110,0.60); }
+  .rank-tree-tier[data-rank="superheroe"] { --tier-glow: rgba(251,191,36,0.70); }
+
+  /* Bridge between two ranks */
+  .rank-tree-bridge {
+    position: relative;
+    padding: 16px 0 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .rank-tree-bridge-line {
+    width: 2px;
+    height: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+    margin-bottom: 10px;
+  }
+  .rank-tree-bridge-label {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .rank-tree-bridge-courses {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  .rank-tree-course {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px 7px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .rank-tree-course:hover:not(.is-locked) {
+    background: rgba(255,255,255,0.10);
+    border-color: rgba(255,255,255,0.25);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .rank-tree-course-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .rank-tree-course.is-defeated {
+    background: rgba(242,192,99,0.16);
+    border-color: rgba(242,192,99,0.5);
+    color: #FFE4B0;
+    box-shadow: 0 0 12px rgba(242,192,99,0.25);
+  }
+  .rank-tree-course.is-defeated .rank-tree-course-icon {
+    background: rgba(242,192,99,0.3);
+  }
+  .rank-tree-course.is-defeated::after {
+    content: '✦';
+    color: #F2C063;
+    margin-left: 2px;
+    text-shadow: 0 0 6px rgba(242,192,99,0.7);
+  }
+  .rank-tree-course.is-locked {
+    opacity: 0.42;
+    cursor: not-allowed;
+    color: var(--text-tertiary);
+  }
+  .rank-tree-course.is-locked .rank-tree-course-icon { opacity: 0.5; }
+  .rank-tree-bridge-line.bottom {
+    margin: 4px 0 0;
+  }
+
+  .rank-tree-legend {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+  }
+  .rank-tree-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .rank-tree-legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .rank-tree-legend-dot.is-current  { background: #F2C063; box-shadow: 0 0 10px rgba(242,192,99,0.7); }
+  .rank-tree-legend-dot.is-achieved { background: rgba(255,255,255,0.5); }
+  .rank-tree-legend-dot.is-locked   { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); }
+
+  @media (max-width: 640px) {
+    .rank-tree-modal { padding: 26px 16px 22px; }
+    .rank-tree-tier-emblem { flex: 0 0 64px; width: 64px; height: 64px; }
+    .rank-tree-tier-emblem img { width: 54px; height: 54px; }
+    .rank-tree-tier-name { font-size: 16px; }
+    .rank-tree-title { font-size: 22px; }
+  }
+
   .st-module-tab-trophy {
     margin-left: 4px;
     font-size: 11px;
@@ -9272,13 +9578,25 @@
       '</div>' +
       '<div class="rank-widget-name"></div>' +
       '<div class="rank-widget-sub"></div>' +
-      nextHtml;
+      nextHtml +
+      '<div class="rank-widget-cta">↗ Ver árbol de rangos</div>';
 
     wrap.querySelector('.rank-widget-name').textContent = def.name;
     wrap.querySelector('.rank-widget-sub').textContent = def.subtitle;
     if (next) {
       wrap.querySelector('.rank-widget-progress-label').textContent = next.label;
       wrap.querySelector('.rank-widget-next strong').textContent = next.nextDef.name.replace(/^Rango\s+/, '');
+    }
+
+    // Make whole widget clickable (idempotent)
+    if (!wrap.dataset.clickWired) {
+      wrap.dataset.clickWired = '1';
+      wrap.setAttribute('role', 'button');
+      wrap.setAttribute('tabindex', '0');
+      wrap.addEventListener('click', () => openRankTreeModal());
+      wrap.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openRankTreeModal(); }
+      });
     }
 
     // Rank-up flash (only on actual change, not first paint)
@@ -9289,6 +9607,180 @@
       setTimeout(() => wrap.classList.remove('is-rank-up'), 1500);
     }
     _lastRenderedRank = rankId;
+  }
+
+  // ─── Rank tree modal ──────────────────────────────────────────────
+  // Tier definitions: each rank + the bridge of courses that unlocks
+  // the next rank. `kind`: 'single' (must beat that one), 'choice'
+  // (any one defeats unlocks), 'all' (need all defeated).
+  const RANK_TREE_TIERS = [
+    { rank: 'base',       bridge: { kind: 'single', moduleIds: ['modo-creativo'],   label: 'Mata al boss de Modo Creativo' } },
+    { rank: 'esmeralda',  bridge: { kind: 'choice', moduleIds: null /* tier 2 */,   label: 'Mata cualquier curso del Camino Esmeralda' } },
+    { rank: 'azurita',    bridge: { kind: 'choice', moduleIds: null /* tier 3 */,   label: 'Mata cualquier curso del Camino Azurita' } },
+    { rank: 'amatista',   bridge: { kind: 'all',    moduleIds: null /* all 9 */,    label: 'Mata a los 9 jefes' } },
+    { rank: 'ruby',       bridge: { kind: 'single', moduleIds: ['umbra'],           label: 'Vence a Umbra (reto de 7 días)' } },
+    { rank: 'superheroe', bridge: null }
+  ];
+
+  function openRankTreeModal() {
+    // Avoid double-open
+    if (document.querySelector('.rank-tree-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'rank-tree-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'rank-tree-modal';
+    modal.innerHTML =
+      '<button class="rank-tree-close" type="button" aria-label="Cerrar">×</button>' +
+      '<div class="rank-tree-header">' +
+        '<div class="rank-tree-eyebrow">★ Heroes Academy ★</div>' +
+        '<div class="rank-tree-title">Árbol de rangos</div>' +
+        '<div class="rank-tree-sub">El camino de Aspirante a Superhéroe</div>' +
+      '</div>' +
+      '<div class="rank-tree-body" data-role="tree-body"></div>' +
+      '<div class="rank-tree-legend">' +
+        '<div class="rank-tree-legend-item"><span class="rank-tree-legend-dot is-current"></span>Tu rango actual</div>' +
+        '<div class="rank-tree-legend-item"><span class="rank-tree-legend-dot is-achieved"></span>Alcanzado</div>' +
+        '<div class="rank-tree-legend-item"><span class="rank-tree-legend-dot is-locked"></span>Bloqueado</div>' +
+      '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    _renderRankTreeBody(modal.querySelector('[data-role="tree-body"]'));
+
+    const close = () => {
+      overlay.classList.remove('is-visible');
+      setTimeout(() => overlay.remove(), 280);
+      document.removeEventListener('keydown', escHandler);
+    };
+    function escHandler(e) {
+      if (e.key === 'Escape') { e.preventDefault(); close(); }
+    }
+    modal.querySelector('.rank-tree-close').addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', escHandler);
+
+    requestAnimationFrame(() => overlay.classList.add('is-visible'));
+  }
+
+  function _renderRankTreeBody(container) {
+    const currentRank = computeUserRank();
+    const order = RANK_DEFS.map(r => r.id);
+    const currentIdx = order.indexOf(currentRank);
+    const isAchieved = (rankId) => order.indexOf(rankId) <= currentIdx;
+
+    container.innerHTML = '';
+
+    RANK_TREE_TIERS.forEach((t, i) => {
+      const def = RANK_DEFS.find(r => r.id === t.rank);
+      const achieved = isAchieved(t.rank);
+      const isCurrent = t.rank === currentRank;
+
+      const tier = document.createElement('div');
+      let cls = 'rank-tree-tier';
+      if (isCurrent) cls += ' is-current';
+      if (!achieved) cls += ' is-locked';
+      tier.className = cls;
+      tier.dataset.rank = t.rank;
+
+      const badgeText = isCurrent ? 'Tu rango' : (achieved ? '✦ Alcanzado' : 'Bloqueado');
+      tier.innerHTML =
+        '<div class="rank-tree-tier-emblem">' +
+          '<img src="' + def.img + '" alt="" draggable="false" />' +
+        '</div>' +
+        '<div class="rank-tree-tier-info">' +
+          '<div class="rank-tree-tier-name"></div>' +
+          '<div class="rank-tree-tier-sub"></div>' +
+        '</div>' +
+        '<div class="rank-tree-tier-badge">' + badgeText + '</div>';
+      tier.querySelector('.rank-tree-tier-name').textContent = def.name.replace(/^Rango\s+/, '');
+      tier.querySelector('.rank-tree-tier-sub').textContent = def.subtitle;
+
+      container.appendChild(tier);
+
+      // Bridge after this tier (unless it's the final rank)
+      if (t.bridge) {
+        container.appendChild(_buildRankTreeBridge(t.bridge));
+      }
+    });
+  }
+
+  function _buildRankTreeBridge(bridge) {
+    const wrap = document.createElement('div');
+    wrap.className = 'rank-tree-bridge';
+
+    const lineTop = document.createElement('div');
+    lineTop.className = 'rank-tree-bridge-line';
+    wrap.appendChild(lineTop);
+
+    const label = document.createElement('div');
+    label.className = 'rank-tree-bridge-label';
+    label.textContent = bridge.label;
+    wrap.appendChild(label);
+
+    const courses = document.createElement('div');
+    courses.className = 'rank-tree-bridge-courses';
+
+    // Resolve module IDs
+    let moduleIds = bridge.moduleIds;
+    if (!moduleIds) {
+      // Derive from bridge context using the order of tiers
+      const idx = RANK_TREE_TIERS.findIndex(x => x.bridge === bridge);
+      const fromRank = RANK_TREE_TIERS[idx].rank;
+      if (fromRank === 'esmeralda')      moduleIds = RANK_TIER_2_IDS.slice();
+      else if (fromRank === 'azurita')   moduleIds = RANK_TIER_3_IDS.slice();
+      else if (fromRank === 'amatista')  moduleIds = RANK_ALL_BOSS_IDS.slice();
+    }
+
+    moduleIds.forEach(mid => {
+      const m = SKILLTREE_MODULES.find(x => x.id === mid);
+      if (!m) return;
+      const unlocked = isModuleUnlocked(mid);
+      const defeated = _bossDefeated(mid);
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      let cls = 'rank-tree-course';
+      if (defeated) cls += ' is-defeated';
+      if (!unlocked && !defeated) cls += ' is-locked';
+      chip.className = cls;
+      const icon = unlocked ? (m.icon || '·') : '🔒';
+      chip.innerHTML =
+        '<span class="rank-tree-course-icon">' + icon + '</span>' +
+        '<span class="rank-tree-course-name"></span>';
+      chip.querySelector('.rank-tree-course-name').textContent = m.name;
+      if (unlocked || defeated) {
+        chip.title = defeated
+          ? m.name + ' · jefe derrotado'
+          : 'Ir a ' + m.name;
+        chip.addEventListener('click', () => {
+          stCurrentModuleId = mid;
+          // Close any open modal then re-render the checklist tab
+          const ov = document.querySelector('.rank-tree-overlay');
+          if (ov) {
+            ov.classList.remove('is-visible');
+            setTimeout(() => ov.remove(), 200);
+          }
+          _stView = 'checklist';
+          renderSkilltree();
+          // Scroll into view
+          const tabPanel = document.querySelector('[data-tab="skilltree"]');
+          if (tabPanel) tabPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      } else {
+        chip.disabled = true;
+        chip.title = _moduleUnlockHint(m);
+      }
+      courses.appendChild(chip);
+    });
+    wrap.appendChild(courses);
+
+    const lineBottom = document.createElement('div');
+    lineBottom.className = 'rank-tree-bridge-line bottom';
+    wrap.appendChild(lineBottom);
+
+    return wrap;
   }
 
   function computeChapterStats(module, chIdx, state) {
