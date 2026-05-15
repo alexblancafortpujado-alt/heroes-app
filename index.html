@@ -1000,39 +1000,6 @@
     margin-bottom: 14px;
   }
 
-  /* Habits — sleep shade (active in the 9h before wake-up) */
-  .tab-panel[data-tab="habits"] #habitList,
-  .tab-panel[data-tab="habits"] .gm-card,
-  .tab-panel[data-tab="habits"] .empty-state {
-    transition: filter 0.7s ease, opacity 0.7s ease;
-  }
-  .tab-panel[data-tab="habits"].is-sleeping #habitList,
-  .tab-panel[data-tab="habits"].is-sleeping .gm-card,
-  .tab-panel[data-tab="habits"].is-sleeping .empty-state {
-    filter: brightness(0.45) saturate(0.55);
-    opacity: 0.85;
-  }
-  .habits-sleep-banner {
-    margin: -4px 0 18px;
-    padding: 14px 18px;
-    border-radius: 12px;
-    background:
-      radial-gradient(ellipse at 12% 50%, rgba(140,120,220,0.18), transparent 60%),
-      linear-gradient(180deg, rgba(40,30,70,0.55), rgba(20,15,40,0.7));
-    border: 1px solid rgba(160,140,220,0.32);
-    color: #C8C2E0;
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    text-align: center;
-    font-weight: 600;
-    box-shadow: 0 0 28px rgba(80,60,160,0.18), inset 0 1px 0 rgba(255,255,255,0.04);
-    animation: sleep-banner-breathe 4s ease-in-out infinite;
-  }
-  @keyframes sleep-banner-breathe {
-    0%, 100% { box-shadow: 0 0 28px rgba(80,60,160,0.18), inset 0 1px 0 rgba(255,255,255,0.04); }
-    50%      { box-shadow: 0 0 44px rgba(110,90,220,0.32), inset 0 1px 0 rgba(255,255,255,0.04); }
-  }
-
   /* Reward chip under the habit name */
   .habit-reward-row {
     display: flex;
@@ -1629,6 +1596,38 @@
       );
     cursor: cell;
   }
+  /* Sleep band — auto-shaded 9h before wake-up */
+  .cal-sleep-band {
+    position: absolute;
+    left: 0; right: 0;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        rgba(0,0,0,0.42) 0,
+        rgba(0,0,0,0.42) 8px,
+        rgba(0,0,0,0.55) 8px,
+        rgba(0,0,0,0.55) 16px
+      );
+    box-shadow: inset 0 0 24px rgba(0,0,0,0.4);
+    z-index: 0;
+    pointer-events: none;
+    border-top: 1px solid rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+  }
+  .cal-sleep-band-label {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: rgba(180,170,210,0.55);
+    text-transform: uppercase;
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .cal-week-day-col .cal-sleep-band-label { display: none; }
+
   .cal-now-line {
     position: absolute;
     left: 0;
@@ -6986,35 +6985,6 @@
     const remH = SLEEP_HOUR - hours;
     const h = Math.floor(remH), m = Math.round((remH - h) * 60);
     remainEl.textContent = h + 'h ' + m + 'm awake time left';
-
-    applyHabitsSleepShade();
-  }
-
-  function applyHabitsSleepShade() {
-    const panel = document.querySelector('.tab-panel[data-tab="habits"]');
-    if (!panel) return;
-    const sleeping = isInSleepWindow();
-    panel.classList.toggle('is-sleeping', sleeping);
-
-    let banner = panel.querySelector('.habits-sleep-banner');
-    if (sleeping) {
-      const remH = hoursUntilWake();
-      const h = Math.floor(remH);
-      const m = Math.round((remH - h) * 60);
-      const wakeFmt = fmtWakeHour(getWakeHour());
-      const text = '💤 Modo nocturno · te despiertas a las ' + wakeFmt + ' (' + h + 'h ' + m + 'm)';
-      if (!banner) {
-        banner = document.createElement('div');
-        banner.className = 'habits-sleep-banner';
-        const section = panel.querySelector('.section');
-        const title = section && section.querySelector('.section-title');
-        if (title && title.nextSibling) section.insertBefore(banner, title.nextSibling);
-        else if (section) section.insertBefore(banner, section.firstChild);
-      }
-      banner.textContent = text;
-    } else if (banner) {
-      banner.remove();
-    }
   }
 
   function _promptForWakeHour() {
@@ -7047,6 +7017,7 @@
     }
     setWakeHour(parsed);
     updateDayBar();
+    if (typeof renderCalendar === 'function') renderCalendar();
   }
 
   function wireWakeHourEditor() {
@@ -8101,7 +8072,6 @@
       empty.style.display = 'none';
       habits.forEach((h, i) => list.appendChild(buildHabitCard(h, i)));
     }
-    if (typeof applyHabitsSleepShade === 'function') applyHabitsSleepShade();
   }
 
   document.getElementById('habitAddBtn').addEventListener('click', () => {
@@ -8346,9 +8316,46 @@
     }
   }
 
+  // Sleep bands: 9-hour window ending at the wake hour, mapped to
+  // minute ranges (top/height for absolute-positioned divs over the
+  // 1440px-tall calendar columns). Wraps midnight when needed.
+  function _calSleepBands(wakeHour) {
+    const w = (typeof wakeHour === 'number' ? wakeHour : getWakeHour());
+    const wakeMin = Math.round(w * 60);
+    const startMin = (wakeMin - 9 * 60 + 1440) % 1440;
+    if (startMin < wakeMin) {
+      return [{ top: startMin, height: wakeMin - startMin }];
+    }
+    return [
+      { top: 0,        height: wakeMin },
+      { top: startMin, height: 1440 - startMin }
+    ];
+  }
+  function _renderSleepBandsInto(col, opts) {
+    if (!col) return;
+    col.querySelectorAll('.cal-sleep-band').forEach(n => n.remove());
+    const bands = _calSleepBands();
+    const showLabel = !!(opts && opts.showLabel);
+    bands.forEach((b, i) => {
+      if (b.height <= 0) return;
+      const el = document.createElement('div');
+      el.className = 'cal-sleep-band';
+      el.style.top = b.top + 'px';
+      el.style.height = b.height + 'px';
+      if (showLabel && i === 0 && b.height >= 90) {
+        const lbl = document.createElement('span');
+        lbl.className = 'cal-sleep-band-label';
+        lbl.textContent = '💤 sleep';
+        el.appendChild(lbl);
+      }
+      col.appendChild(el);
+    });
+  }
+
   function renderDayView() {
     const col = document.getElementById('calEventsCol');
-    col.querySelectorAll('.cal-event, .cal-now-line').forEach(n => n.remove());
+    col.querySelectorAll('.cal-event, .cal-now-line, .cal-sleep-band').forEach(n => n.remove());
+    _renderSleepBandsInto(col, { showLabel: true });
     const events = getCalendarEvents(calCurrentDate).slice().sort((a, b) => a.startMin - b.startMin);
     for (const ev of events) col.appendChild(buildEventElement(ev, calCurrentDate));
     if (calCurrentDate === ymd(new Date())) {
@@ -8391,6 +8398,7 @@
       const col = document.createElement('div');
       col.className = 'cal-week-day-col' + (d === todayStr ? ' is-today' : '');
       col.dataset.date = d;
+      _renderSleepBandsInto(col);
       const events = getCalendarEvents(d).slice().sort((a, b) => a.startMin - b.startMin);
       for (const ev of events) col.appendChild(buildEventElement(ev, d));
       if (d === todayStr) {
