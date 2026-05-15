@@ -327,7 +327,34 @@
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     font-size: 11px;
     color: var(--text-tertiary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    margin-top: 6px;
   }
+  .day-ring-hours::before {
+    content: '⏰';
+    font-size: 11px;
+    opacity: 0.7;
+  }
+  .day-ring-hours::after {
+    content: '✎';
+    font-size: 10px;
+    opacity: 0.45;
+    margin-left: 2px;
+  }
+  .day-ring-hours:hover {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .day-ring-hours:hover::after { opacity: 1; }
 
   /* Section header */
   .section { margin-top: 4px; }
@@ -6237,7 +6264,7 @@
   <div class="day-ring-side">
     <div class="day-ring-status" id="ringStatus">😴 Still sleeping</div>
     <div class="day-ring-remaining" id="ringRemaining">—</div>
-    <div class="day-ring-hours">8:00 AM – 12:00 AM</div>
+    <div class="day-ring-hours" id="ringHours" role="button" tabindex="0" title="Click para cambiar tu hora de levantarte">8:00 AM – 12:00 AM</div>
   </div>
 </div>
 
@@ -6860,6 +6887,12 @@
     clockEl.textContent = fmtClock(now);
     clockEl.title = 'Click para cambiar la hora a la que te levantas (actualmente ' + fmtWakeHour(wakeHour) + ')';
 
+    const hoursEl = document.getElementById('ringHours');
+    if (hoursEl) {
+      hoursEl.textContent = fmtWakeHour(wakeHour) + ' – 12:00 AM';
+      hoursEl.title = 'Click para cambiar tu hora de levantarte (actualmente ' + fmtWakeHour(wakeHour) + ')';
+    }
+
     if (hours < wakeHour) {
       ringFill.style.strokeDashoffset = RING_C;
       ringFill.style.stroke = '#4D4B47';
@@ -6902,40 +6935,47 @@
     remainEl.textContent = h + 'h ' + m + 'm awake time left';
   }
 
+  function _promptForWakeHour() {
+    const cur = getWakeHour();
+    const curH = Math.floor(cur);
+    const curM = Math.round((cur - curH) * 60);
+    const curStr = curH + ':' + (curM < 10 ? '0' : '') + curM;
+    const v = prompt(
+      '¿A qué hora te levantas? (formato 24h, ej. 7 · 7:30 · 8:15)\n\n' +
+      'El día empieza a contar desde esa hora — afecta al porcentaje del día y al "until wake-up".',
+      curStr
+    );
+    if (v === null) return;
+    const cleaned = v.trim().replace(/[h\s]/gi, '');
+    let parsed = NaN;
+    if (cleaned.indexOf(':') >= 0) {
+      const [hs, ms] = cleaned.split(':');
+      const h = parseInt(hs, 10);
+      const m = parseInt(ms, 10);
+      if (isFinite(h) && isFinite(m) && h >= 0 && h < 24 && m >= 0 && m < 60) {
+        parsed = h + m / 60;
+      }
+    } else {
+      const n = parseFloat(cleaned);
+      if (isFinite(n) && n >= 0 && n < 24) parsed = n;
+    }
+    if (!isFinite(parsed)) {
+      alert('Hora no válida. Usa formato 24h, ej. 7 o 7:30.');
+      return;
+    }
+    setWakeHour(parsed);
+    updateDayBar();
+  }
+
   function wireWakeHourEditor() {
-    const clockEl = document.getElementById('ringClock');
-    if (!clockEl || clockEl.dataset.wired) return;
-    clockEl.dataset.wired = '1';
-    clockEl.addEventListener('click', () => {
-      const cur = getWakeHour();
-      const curH = Math.floor(cur);
-      const curM = Math.round((cur - curH) * 60);
-      const curStr = curH + ':' + (curM < 10 ? '0' : '') + curM;
-      const v = prompt(
-        '¿A qué hora te levantas? (formato 24h, ej. 7 · 7:30 · 8:15)\n\n' +
-        'El día empieza a contar desde esa hora — afecta al porcentaje del día y al "until wake-up".',
-        curStr
-      );
-      if (v === null) return;
-      const cleaned = v.trim().replace(/[h\s]/gi, '');
-      let parsed = NaN;
-      if (cleaned.indexOf(':') >= 0) {
-        const [hs, ms] = cleaned.split(':');
-        const h = parseInt(hs, 10);
-        const m = parseInt(ms, 10);
-        if (isFinite(h) && isFinite(m) && h >= 0 && h < 24 && m >= 0 && m < 60) {
-          parsed = h + m / 60;
-        }
-      } else {
-        const n = parseFloat(cleaned);
-        if (isFinite(n) && n >= 0 && n < 24) parsed = n;
-      }
-      if (!isFinite(parsed)) {
-        alert('Hora no válida. Usa formato 24h, ej. 7 o 7:30.');
-        return;
-      }
-      setWakeHour(parsed);
-      updateDayBar();
+    const targets = [document.getElementById('ringClock'), document.getElementById('ringHours')];
+    targets.forEach(el => {
+      if (!el || el.dataset.wakeWired) return;
+      el.dataset.wakeWired = '1';
+      el.addEventListener('click', _promptForWakeHour);
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _promptForWakeHour(); }
+      });
     });
   }
 
