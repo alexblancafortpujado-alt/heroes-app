@@ -5408,45 +5408,86 @@
     width: 100%;
     height: 78vh;
     min-height: 520px;
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    background: #07070A;
-    border: 1px solid rgba(255,255,255,0.06);
+    background:
+      radial-gradient(ellipse at 50% 50%, #0a0712 0%, #050308 70%, #020104 100%);
+    border: 1px solid rgba(180,160,120,0.18);
     cursor: grab;
     user-select: none;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.55), inset 0 0 80px rgba(0,0,0,0.5);
+    box-shadow:
+      0 18px 60px rgba(0,0,0,0.65),
+      inset 0 0 120px rgba(0,0,0,0.7),
+      inset 0 0 0 1px rgba(255,215,150,0.08);
     touch-action: none;
     isolation: isolate;
   }
+  /* Layer 1: rotating nebula clouds */
   .stv2-canvas-wrap::before {
     content: '';
     position: absolute;
-    inset: -10%;
+    inset: -15%;
     z-index: 0;
     pointer-events: none;
     background:
-      radial-gradient(circle at 28% 32%, rgba(107,168,227,0.16) 0%, transparent 35%),
-      radial-gradient(circle at 72% 68%, rgba(184,155,233,0.16) 0%, transparent 35%),
-      radial-gradient(circle at 62% 22%, rgba(255,142,114,0.12) 0%, transparent 30%),
-      radial-gradient(circle at 22% 78%, rgba(107,227,164,0.10) 0%, transparent 32%),
-      radial-gradient(circle at 50% 50%, rgba(255,216,158,0.07) 0%, transparent 28%);
-    filter: blur(28px);
-    animation: stv2-nebula-drift 38s ease-in-out infinite alternate;
+      radial-gradient(circle at 28% 32%, rgba(107,168,227,0.22) 0%, transparent 32%),
+      radial-gradient(circle at 72% 68%, rgba(184,155,233,0.22) 0%, transparent 32%),
+      radial-gradient(circle at 62% 22%, rgba(255,142,114,0.16) 0%, transparent 28%),
+      radial-gradient(circle at 22% 78%, rgba(107,227,164,0.16) 0%, transparent 30%),
+      radial-gradient(circle at 50% 50%, rgba(255,216,158,0.12) 0%, transparent 26%);
+    filter: blur(40px);
+    animation: stv2-nebula-drift 50s ease-in-out infinite alternate;
     will-change: transform;
   }
   @keyframes stv2-nebula-drift {
     0%   { transform: rotate(0deg) scale(1.0); }
-    50%  { transform: rotate(180deg) scale(1.08); }
+    50%  { transform: rotate(180deg) scale(1.10); }
     100% { transform: rotate(360deg) scale(1.0); }
   }
+  /* Layer 2: dark vignette from edges (and very subtle gold rim) */
   .stv2-canvas-wrap::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
     z-index: 3;
-    background: radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+    background:
+      radial-gradient(ellipse at center, transparent 48%, rgba(0,0,0,0.78) 100%),
+      radial-gradient(ellipse at center, transparent 92%, rgba(255,215,150,0.05) 100%);
   }
+  /* Cosmic dust grain (no requests, pure CSS) */
+  .stv2-canvas-wrap .stv2-dust {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 36px 36px, 80px 80px;
+    background-position: 0 0, 18px 22px;
+    opacity: 0.5;
+    mix-blend-mode: screen;
+  }
+  /* Corner ornaments — subtle gold brackets */
+  .stv2-corner {
+    position: absolute;
+    width: 60px; height: 60px;
+    pointer-events: none;
+    z-index: 4;
+    opacity: 0.55;
+  }
+  .stv2-corner::before, .stv2-corner::after {
+    content: '';
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(255,215,150,0.55), transparent);
+  }
+  .stv2-corner::before { top: 10px; left: 0; right: 0; height: 1px; }
+  .stv2-corner::after  { top: 0; left: 10px; bottom: 0; width: 1px; }
+  .stv2-corner.is-tl { top: 10px;    left: 10px; }
+  .stv2-corner.is-tr { top: 10px;    right: 10px; transform: scaleX(-1); }
+  .stv2-corner.is-bl { bottom: 10px; left: 10px;  transform: scaleY(-1); }
+  .stv2-corner.is-br { bottom: 10px; right: 10px; transform: scale(-1, -1); }
   .stv2-canvas-wrap.is-panning { cursor: grabbing; }
   .stv2-canvas-wrap svg {
     display: block;
@@ -5479,35 +5520,33 @@
 
   .stv2-ring {
     fill: none;
-    stroke: rgba(255,255,255,0.07);
+    stroke: rgba(255,215,150,0.08);
     stroke-width: 1;
-    stroke-dasharray: 4, 8;
+    stroke-dasharray: 2, 14;
   }
 
+  /* Unlit line: faint constellation thread */
   .stv2-line {
-    stroke: rgba(255,255,255,0.22);
-    stroke-width: 1.8;
+    stroke: rgba(255,255,255,0.14);
+    stroke-width: 1.4;
     fill: none;
-    filter: drop-shadow(0 0 3px rgba(255,255,255,0.10));
     transition: stroke 0.45s ease, stroke-width 0.45s ease, opacity 0.45s ease, filter 0.45s ease;
   }
+  /* Lit line: white-hot inner core with colored bloom halo */
   .stv2-line.is-lit {
-    stroke: var(--day-color);
-    stroke-width: 3.2;
-    opacity: 0.95;
+    stroke: #ffffff;
+    stroke-width: 2.2;
+    opacity: 1;
     filter:
-      drop-shadow(0 0 18px var(--day-color))
-      drop-shadow(0 0 8px var(--day-color))
-      drop-shadow(0 0 3px var(--day-color));
-    stroke-dasharray: 4 22;
-    animation: stv2-line-flow 5.5s linear infinite, stv2-line-breathe 4.5s ease-in-out infinite;
+      drop-shadow(0 0 1.5px #ffffff)
+      drop-shadow(0 0 6px var(--day-color))
+      drop-shadow(0 0 14px var(--day-color))
+      drop-shadow(0 0 26px color-mix(in srgb, var(--day-color) 70%, transparent));
+    animation: stv2-line-breathe 4.2s ease-in-out infinite;
   }
   @keyframes stv2-line-breathe {
-    0%, 100% { opacity: 0.82; }
-    50% { opacity: 1; }
-  }
-  @keyframes stv2-line-flow {
-    to { stroke-dashoffset: -260; }
+    0%, 100% { filter: drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 6px var(--day-color)) drop-shadow(0 0 14px var(--day-color)) drop-shadow(0 0 22px color-mix(in srgb, var(--day-color) 60%, transparent)); }
+    50%      { filter: drop-shadow(0 0 2px   #ffffff) drop-shadow(0 0 9px var(--day-color)) drop-shadow(0 0 22px var(--day-color)) drop-shadow(0 0 36px color-mix(in srgb, var(--day-color) 80%, transparent)); }
   }
 
   /* Entry stagger animation — node content scales in from center */
@@ -5533,31 +5572,30 @@
   /* When line becomes lit, its `animation` property is overridden by .is-lit rule above */
 
   .stv2-node { cursor: pointer; }
+
+  /* Unlit node — dim "potential" star (subtle ring, no fill bloom) */
   .stv2-node-glow {
     fill: var(--day-color);
-    opacity: 0.22;
+    opacity: 0.10;
     pointer-events: none;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease, transform 0.3s ease;
   }
   .stv2-node-bg {
-    fill: #2C2C38;
-    stroke: rgba(255,255,255,0.55);
-    stroke-width: 2;
+    fill: #15141c;
+    stroke: rgba(255,255,255,0.32);
+    stroke-width: 1.4;
     transform-origin: center;
     transform-box: fill-box;
     transition: stroke 0.3s ease, fill 0.4s ease, stroke-width 0.3s ease,
                 transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
                 filter 0.45s ease;
-    filter:
-      drop-shadow(0 0 8px rgba(255,255,255,0.18))
-      drop-shadow(0 0 3px var(--day-color));
   }
   .stv2-node-chapter .stv2-node-glow,
   .stv2-node-hub .stv2-node-glow {
-    opacity: 0.32;
+    opacity: 0.18;
   }
   .stv2-node-inner {
-    fill: rgba(255,255,255,0.22);
+    fill: rgba(255,255,255,0.18);
     pointer-events: none;
     transform-origin: center;
     transform-box: fill-box;
@@ -5573,62 +5611,100 @@
 
   .stv2-node:hover .stv2-node-bg {
     stroke: var(--day-color);
-    stroke-width: 2.4;
-    transform: scale(1.45);
-    filter: drop-shadow(0 0 8px var(--day-color));
+    stroke-width: 2;
+    transform: scale(1.4);
+    filter:
+      drop-shadow(0 0 6px var(--day-color))
+      drop-shadow(0 0 14px color-mix(in srgb, var(--day-color) 70%, transparent));
   }
-  .stv2-node:hover .stv2-node-inner { transform: scale(1.4); }
-  .stv2-node:hover .stv2-node-glow { opacity: 0.55 !important; }
+  .stv2-node:hover .stv2-node-inner { transform: scale(1.35); fill: #fff; }
+  .stv2-node:hover .stv2-node-glow { opacity: 0.45 !important; transform: scale(1.15); }
 
+  /* Lit node — bright white-hot core with colored bloom halo */
   .stv2-node.is-done .stv2-node-bg {
     fill: var(--day-color);
-    stroke: var(--day-color);
-    filter: drop-shadow(0 0 14px var(--day-color)) drop-shadow(0 0 5px var(--day-color)) drop-shadow(0 0 2px var(--day-color));
+    stroke: #ffffff;
+    stroke-width: 1.6;
+    filter:
+      drop-shadow(0 0 1.5px #ffffff)
+      drop-shadow(0 0 8px var(--day-color))
+      drop-shadow(0 0 18px var(--day-color))
+      drop-shadow(0 0 32px color-mix(in srgb, var(--day-color) 75%, transparent));
   }
   .stv2-node.is-done .stv2-node-inner {
-    fill: rgba(255,255,255,0.95);
+    fill: #ffffff;
+    transform: scale(1.15);
   }
   .stv2-node.is-done .stv2-node-glow {
-    opacity: 0.72;
-    animation: stv2-node-pulse 3.6s ease-in-out infinite;
+    opacity: 0.55;
+    animation: stv2-node-pulse 3.4s ease-in-out infinite;
   }
   @keyframes stv2-node-pulse {
-    0%, 100% { opacity: 0.42; }
-    50% { opacity: 0.78; }
+    0%, 100% { opacity: 0.40; transform: scale(1); }
+    50%      { opacity: 0.85; transform: scale(1.18); }
   }
+  /* Tier-specific glow strength: chapters glow widest, then subgroups, then tasks */
   .stv2-node-task.is-done .stv2-node-bg {
-    filter: drop-shadow(0 0 10px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
-  }
-  .stv2-node-chapter.is-done .stv2-node-bg {
-    filter: drop-shadow(0 0 24px var(--day-color)) drop-shadow(0 0 8px var(--day-color)) drop-shadow(0 0 3px var(--day-color));
+    filter:
+      drop-shadow(0 0 1.5px #ffffff)
+      drop-shadow(0 0 6px var(--day-color))
+      drop-shadow(0 0 12px var(--day-color));
   }
   .stv2-node-subgroup.is-done .stv2-node-bg {
-    filter: drop-shadow(0 0 16px var(--day-color)) drop-shadow(0 0 5px var(--day-color));
+    filter:
+      drop-shadow(0 0 1.5px #ffffff)
+      drop-shadow(0 0 8px var(--day-color))
+      drop-shadow(0 0 18px var(--day-color))
+      drop-shadow(0 0 28px color-mix(in srgb, var(--day-color) 60%, transparent));
+  }
+  .stv2-node-chapter.is-done .stv2-node-bg {
+    filter:
+      drop-shadow(0 0 2px #ffffff)
+      drop-shadow(0 0 12px var(--day-color))
+      drop-shadow(0 0 28px var(--day-color))
+      drop-shadow(0 0 50px color-mix(in srgb, var(--day-color) 70%, transparent));
   }
 
-  /* Hub special styling */
+  /* Hub special styling — like a tiny sun at the center of the wheel */
   .stv2-node-hub .stv2-node-bg {
-    fill: #1F1408;
+    fill: #2a1a08;
     stroke: #FFD89E;
-    stroke-width: 2.6;
-    filter: drop-shadow(0 0 14px rgba(255,216,158,0.6)) drop-shadow(0 0 4px #FFD89E);
+    stroke-width: 2.2;
+    filter:
+      drop-shadow(0 0 1.5px #ffffff)
+      drop-shadow(0 0 12px rgba(255,216,158,0.85))
+      drop-shadow(0 0 28px rgba(255,216,158,0.55))
+      drop-shadow(0 0 50px rgba(255,140,60,0.30));
+  }
+  .stv2-node-hub .stv2-node-inner {
+    fill: #FFE4B0;
+    transform: scale(1.2);
   }
   .stv2-node-hub .stv2-node-glow {
     fill: #FFD89E;
-    opacity: 0.45;
-    animation: stv2-node-pulse 3s ease-in-out infinite;
+    opacity: 0.55;
+    animation: stv2-hub-glow-pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes stv2-hub-glow-pulse {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50%      { opacity: 0.70; transform: scale(1.20); }
   }
   .stv2-node-hub.is-done .stv2-node-bg {
-    fill: #FFD89E;
-    filter: drop-shadow(0 0 26px #FFD89E) drop-shadow(0 0 10px #FFD89E);
+    fill: #FFE4B0;
+    filter:
+      drop-shadow(0 0 2px #ffffff)
+      drop-shadow(0 0 18px #FFD89E)
+      drop-shadow(0 0 40px #FFD89E)
+      drop-shadow(0 0 70px rgba(255,140,60,0.5));
   }
   .stv2-hub-ring {
     fill: none;
-    stroke: rgba(255,216,158,0.18);
-    stroke-width: 1.5;
-    stroke-dasharray: 4 6;
-    animation: stv2-hub-ring-rotate 30s linear infinite;
+    stroke: rgba(255,216,158,0.28);
+    stroke-width: 1.2;
+    stroke-dasharray: 3 9;
+    animation: stv2-hub-ring-rotate 36s linear infinite;
     transform-origin: 0 0;
+    filter: drop-shadow(0 0 4px rgba(255,216,158,0.4));
   }
   @keyframes stv2-hub-ring-rotate {
     to { transform: rotate(360deg); }
@@ -11658,8 +11734,13 @@
       '<div class="stv2-subtitle">' + module.subtitle + '</div>' +
       '<div class="stv2-progress-text">' + doneTasks + ' / ' + totalTasks + ' · ' + pct + '%</div>';
 
-    // Build SVG
+    // Build SVG (with cosmic dust + corner ornaments behind the canvas)
     wrap.innerHTML =
+      '<div class="stv2-dust"></div>' +
+      '<div class="stv2-corner is-tl"></div>' +
+      '<div class="stv2-corner is-tr"></div>' +
+      '<div class="stv2-corner is-bl"></div>' +
+      '<div class="stv2-corner is-br"></div>' +
       '<svg id="stv2Svg" xmlns="http://www.w3.org/2000/svg" viewBox="' +
         stv2State.viewBox.x + ' ' + stv2State.viewBox.y + ' ' +
         stv2State.viewBox.w + ' ' + stv2State.viewBox.h + '" preserveAspectRatio="xMidYMid meet">' +
