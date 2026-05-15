@@ -1605,34 +1605,35 @@
   }
   .cal-phase-band.is-morning {
     background:
-      linear-gradient(90deg, rgba(252,211,77,0.22) 0%, rgba(252,211,77,0.08) 50%, rgba(252,211,77,0.04) 100%);
-    box-shadow: inset 3px 0 0 rgba(252,211,77,0.55);
+      linear-gradient(90deg, rgba(180,150,55,0.10) 0%, rgba(180,150,55,0.04) 60%, rgba(180,150,55,0.02) 100%);
+    box-shadow: inset 2px 0 0 rgba(180,150,55,0.30);
   }
   .cal-phase-band.is-midday {
     background:
-      linear-gradient(90deg, rgba(251,146,60,0.22) 0%, rgba(251,146,60,0.08) 50%, rgba(251,146,60,0.04) 100%);
-    box-shadow: inset 3px 0 0 rgba(251,146,60,0.55);
+      linear-gradient(90deg, rgba(180,105,45,0.10) 0%, rgba(180,105,45,0.04) 60%, rgba(180,105,45,0.02) 100%);
+    box-shadow: inset 2px 0 0 rgba(180,105,45,0.30);
   }
   .cal-phase-band.is-evening {
     background:
-      linear-gradient(90deg, rgba(192,132,252,0.22) 0%, rgba(192,132,252,0.08) 50%, rgba(192,132,252,0.04) 100%);
-    box-shadow: inset 3px 0 0 rgba(192,132,252,0.55);
+      linear-gradient(90deg, rgba(135,95,180,0.10) 0%, rgba(135,95,180,0.04) 60%, rgba(135,95,180,0.02) 100%);
+    box-shadow: inset 2px 0 0 rgba(135,95,180,0.30);
   }
   .cal-phase-band-label {
     position: absolute;
     top: 8px;
     left: 14px;
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 10px;
+    font-size: 9.5px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     font-weight: 700;
     pointer-events: none;
     text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    opacity: 0.55;
   }
-  .cal-phase-band.is-morning .cal-phase-band-label { color: rgba(252,211,77,0.95); }
-  .cal-phase-band.is-midday  .cal-phase-band-label { color: rgba(251,146,60,0.95); }
-  .cal-phase-band.is-evening .cal-phase-band-label { color: rgba(192,132,252,0.95); }
+  .cal-phase-band.is-morning .cal-phase-band-label { color: rgba(200,170,90,0.85); }
+  .cal-phase-band.is-midday  .cal-phase-band-label { color: rgba(200,130,75,0.85); }
+  .cal-phase-band.is-evening .cal-phase-band-label { color: rgba(160,125,200,0.85); }
   .cal-week-day-col .cal-phase-band-label { display: none; }
 
   /* Sleep band — auto-shaded 9h before wake-up */
