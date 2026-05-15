@@ -294,6 +294,14 @@
     font-size: 10.5px;
     color: var(--text-tertiary);
     margin-top: 4px;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px 6px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .day-ring-clock:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.05);
   }
 
   .day-ring-side {
@@ -6527,8 +6535,24 @@
   const ANTHROPIC_API_KEY = '';
 
   // ─── Day-ring constants ───────────────────────────────────────────
-  const WAKE_HOUR = 8;
+  // WAKE_HOUR is now user-editable (click the clock on the dashboard).
+  // Stored in `wake_hour_v1`. Falls back to 8 if unset or invalid.
+  const WAKE_HOUR_DEFAULT = 8;
   const SLEEP_HOUR = 24;
+  function getWakeHour() {
+    const raw = storeGet('wake_hour_v1');
+    const n = typeof raw === 'number' ? raw : parseFloat(raw);
+    if (!isFinite(n) || n < 0 || n >= 24) return WAKE_HOUR_DEFAULT;
+    return n;
+  }
+  function setWakeHour(n) { storeSet('wake_hour_v1', n); }
+  function fmtWakeHour(n) {
+    const h = Math.floor(n);
+    const m = Math.round((n - h) * 60);
+    const ap = h >= 12 ? 'PM' : 'AM';
+    let h12 = h % 12; if (h12 === 0) h12 = 12;
+    return h12 + ':' + (m < 10 ? '0' : '') + m + ' ' + ap;
+  }
 
   // ─── Backend config ───────────────────────────────────────────────
   // Flip to 'supabase' once Clerk ↔ Supabase JWT bridge is configured.
@@ -6826,6 +6850,7 @@
   function updateDayBar() {
     const now = new Date();
     const hours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const wakeHour = getWakeHour();
     const pctEl     = document.getElementById('ringPct');
     const phaseEl   = document.getElementById('ringPhase');
     const clockEl   = document.getElementById('ringClock');
@@ -6833,14 +6858,15 @@
     const remainEl  = document.getElementById('ringRemaining');
 
     clockEl.textContent = fmtClock(now);
+    clockEl.title = 'Click para cambiar la hora a la que te levantas (actualmente ' + fmtWakeHour(wakeHour) + ')';
 
-    if (hours < WAKE_HOUR) {
+    if (hours < wakeHour) {
       ringFill.style.strokeDashoffset = RING_C;
       ringFill.style.stroke = '#4D4B47';
       pctEl.textContent = '—';
       phaseEl.textContent = 'SLEEPING';
       statusEl.textContent = '😴 Still sleeping';
-      const remH = WAKE_HOUR - hours;
+      const remH = wakeHour - hours;
       const h = Math.floor(remH), m = Math.round((remH - h) * 60);
       remainEl.textContent = h + 'h ' + m + 'm until wake-up';
       return;
@@ -6856,8 +6882,8 @@
       return;
     }
 
-    const span = SLEEP_HOUR - WAKE_HOUR;
-    const percent = Math.max(0, Math.min(100, ((hours - WAKE_HOUR) / span) * 100));
+    const span = SLEEP_HOUR - wakeHour;
+    const percent = Math.max(0, Math.min(100, ((hours - wakeHour) / span) * 100));
     ringFill.style.strokeDashoffset = RING_C * (1 - percent / 100);
     ringFill.style.stroke = paletteFor(percent);
     pctEl.textContent = Math.round(percent);
@@ -6874,6 +6900,43 @@
     const remH = SLEEP_HOUR - hours;
     const h = Math.floor(remH), m = Math.round((remH - h) * 60);
     remainEl.textContent = h + 'h ' + m + 'm awake time left';
+  }
+
+  function wireWakeHourEditor() {
+    const clockEl = document.getElementById('ringClock');
+    if (!clockEl || clockEl.dataset.wired) return;
+    clockEl.dataset.wired = '1';
+    clockEl.addEventListener('click', () => {
+      const cur = getWakeHour();
+      const curH = Math.floor(cur);
+      const curM = Math.round((cur - curH) * 60);
+      const curStr = curH + ':' + (curM < 10 ? '0' : '') + curM;
+      const v = prompt(
+        '¿A qué hora te levantas? (formato 24h, ej. 7 · 7:30 · 8:15)\n\n' +
+        'El día empieza a contar desde esa hora — afecta al porcentaje del día y al "until wake-up".',
+        curStr
+      );
+      if (v === null) return;
+      const cleaned = v.trim().replace(/[h\s]/gi, '');
+      let parsed = NaN;
+      if (cleaned.indexOf(':') >= 0) {
+        const [hs, ms] = cleaned.split(':');
+        const h = parseInt(hs, 10);
+        const m = parseInt(ms, 10);
+        if (isFinite(h) && isFinite(m) && h >= 0 && h < 24 && m >= 0 && m < 60) {
+          parsed = h + m / 60;
+        }
+      } else {
+        const n = parseFloat(cleaned);
+        if (isFinite(n) && n >= 0 && n < 24) parsed = n;
+      }
+      if (!isFinite(parsed)) {
+        alert('Hora no válida. Usa formato 24h, ej. 7 o 7:30.');
+        return;
+      }
+      setWakeHour(parsed);
+      updateDayBar();
+    });
   }
 
   // ─── To Do List rendering ─────────────────────────────────────────
@@ -12882,6 +12945,7 @@
     renderStreak();
     updateDayBar();
     setInterval(updateDayBar, 60 * 1000);
+    wireWakeHourEditor();
     startTicker();
     loadHabits();
     setupCalendarGrid();
