@@ -7207,9 +7207,11 @@
   const ADMIN_EMAILS = ['alexblancafortpujado@gmail.com'];
   const SKOOL_URL = 'https://www.skool.com/heroesacademy';
   // While ACCESS_GATE_ENFORCED=false the app behaves normally — admin can
-  // upload CSVs, see lists, etc. but no one is blocked. Flip to true to
-  // turn the gate on (commit 2).
-  const ACCESS_GATE_ENFORCED = false;
+  // upload CSVs, see lists, etc. but no one is blocked. true = paywall
+  // is active for anyone not in paying_members or access_overrides 'allow'.
+  // ADMIN_EMAILS always pass regardless; if Supabase errors out the gate
+  // fails open (better one extra user than a wrong lockout).
+  const ACCESS_GATE_ENFORCED = true;
 
   // ─── Storage helpers ──────────────────────────────────────────────
   // In 'local' mode these hit window.localStorage like before.
