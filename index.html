@@ -6089,6 +6089,297 @@
     color: #6BE3A4;
   }
 
+  /* ─── Admin · Access & subscriptions ─────────────────────────── */
+  .admin-section.access-section { margin-top: 28px; }
+  .access-section-title {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+  .access-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .access-card-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .access-card-eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    font-weight: 800;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .access-card-sub {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+  .access-pill {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+  .access-sync-status {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .access-status-ok   { color: #6BE3A4; }
+  .access-status-warn { color: #F2C063; font-weight: 600; }
+  .access-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 10px;
+    background: rgba(107,168,227,0.16);
+    border: 1px solid rgba(107,168,227,0.45);
+    color: #c7e0fb;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .access-upload-btn:hover {
+    background: rgba(107,168,227,0.25);
+    border-color: rgba(107,168,227,0.7);
+    color: #fff;
+  }
+  .access-upload-btn input[type="file"] { display: none; }
+  .access-preview {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(107,227,164,0.06);
+    border: 1px dashed rgba(107,227,164,0.35);
+  }
+  .access-preview-stats {
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+  .access-preview-actions { display: flex; gap: 8px; }
+
+  .access-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .access-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .access-row-info { flex: 1; min-width: 0; }
+  .access-row-email {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .access-row-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .access-empty {
+    padding: 18px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+  .access-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-secondary);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .access-btn:hover { background: rgba(255,255,255,0.10); color: #fff; }
+  .access-btn:disabled { opacity: 0.5; cursor: wait; }
+  .access-btn-allow {
+    background: rgba(107,227,164,0.14);
+    border-color: rgba(107,227,164,0.45);
+    color: #b5f3cb;
+  }
+  .access-btn-allow:hover {
+    background: rgba(107,227,164,0.22);
+    color: #fff;
+  }
+  .access-btn-remove {
+    background: rgba(255,90,110,0.10);
+    border-color: rgba(255,90,110,0.30);
+    color: #ff9eb0;
+  }
+  .access-btn-remove:hover { background: rgba(255,90,110,0.18); color: #fff; }
+  .access-btn-primary {
+    background: linear-gradient(180deg, #6BE3A4, #2eb070);
+    border-color: rgba(107,227,164,0.7);
+    color: #062c15;
+  }
+  .access-btn-primary:hover { filter: brightness(1.1); }
+  .access-add-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .access-add-row input[type="email"] {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 9px;
+    padding: 9px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+  }
+  .access-add-row input[type="email"]:focus {
+    border-color: rgba(107,227,164,0.55);
+    background: rgba(107,227,164,0.06);
+  }
+  .access-add-btn {
+    padding: 9px 16px;
+    border-radius: 9px;
+    background: rgba(107,227,164,0.14);
+    border: 1px solid rgba(107,227,164,0.45);
+    color: #b5f3cb;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .access-add-btn:hover { background: rgba(107,227,164,0.22); color: #fff; }
+
+  /* ─── Paywall ───────────────────────────────────────────────── */
+  .paywall-overlay {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(50,40,80,0.35), rgba(0,0,0,0.92) 70%);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: paywall-fade-in 0.4s ease;
+  }
+  @keyframes paywall-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  body.is-paywalled .tab-bar,
+  body.is-paywalled .tab-panel { display: none !important; }
+  .paywall-card {
+    width: 100%;
+    max-width: 460px;
+    text-align: center;
+    padding: 40px 30px 28px;
+    border-radius: 22px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(140,120,220,0.20), transparent 65%),
+      linear-gradient(180deg, #14101e 0%, #08060d 100%);
+    border: 1px solid rgba(140,120,220,0.40);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 80px rgba(140,120,220,0.15);
+  }
+  .paywall-eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.36em;
+    color: rgba(180,160,240,0.85);
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 14px;
+    text-shadow: 0 0 12px rgba(140,120,220,0.4);
+  }
+  .paywall-title {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .paywall-sub {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    margin-bottom: 26px;
+  }
+  .paywall-cta {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #b89be9, #6b4ea8);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13.5px;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border: 1px solid rgba(180,160,240,0.55);
+    box-shadow: 0 10px 28px rgba(140,120,220,0.4);
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+  .paywall-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .paywall-footer {
+    margin-top: 22px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .paywall-footer a {
+    color: #b89be9;
+    text-decoration: none;
+    margin-left: 6px;
+  }
+  .paywall-footer a:hover { text-decoration: underline; }
+  .paywall-signout {
+    margin-top: 18px;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+  }
+  .paywall-signout:hover { color: rgba(255,255,255,0.75); }
+
   .admin-body { display: flex; flex-direction: column; gap: 12px; }
   .admin-empty, .admin-error {
     background: rgba(255,255,255,0.03);
@@ -6755,8 +7046,61 @@
     <div class="admin-body" id="adminBody">
       <div class="admin-empty">Loading…</div>
     </div>
+
+    <!-- Access & subscriptions -->
+    <div class="admin-section access-section">
+      <div class="access-section-title">Acceso & suscripciones</div>
+
+      <div class="access-card">
+        <div class="access-card-row">
+          <div>
+            <div class="access-card-eyebrow">Sync de miembros de Skool</div>
+            <div class="access-sync-status" id="accessSyncStatus">Nunca sincronizado</div>
+          </div>
+          <label class="access-upload-btn">
+            <input type="file" id="accessCsvInput" accept=".csv,text/csv" />
+            <span>📁 Subir CSV de Skool</span>
+          </label>
+        </div>
+        <div class="access-preview" id="accessPreview" style="display:none;"></div>
+      </div>
+
+      <div class="access-card">
+        <div class="access-card-eyebrow">Cuentas bloqueadas <span id="accessBlockedCount" class="access-pill">0</span></div>
+        <div class="access-card-sub">Han entrado a la app pero no están en el último CSV de Skool.</div>
+        <div class="access-list" id="accessBlockedList"></div>
+      </div>
+
+      <div class="access-card">
+        <div class="access-card-eyebrow">Permitidos manualmente <span id="accessAllowedCount" class="access-pill">0</span></div>
+        <div class="access-card-sub">Siempre tienen acceso, aunque no estén en el CSV. (Team, comp gratis, beta-testers…)</div>
+        <div class="access-list" id="accessAllowedList"></div>
+        <div class="access-add-row">
+          <input type="email" id="accessAddInput" placeholder="email@ejemplo.com" autocomplete="off" />
+          <button type="button" id="accessAddBtn" class="access-add-btn">+ Añadir</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div><!-- /tab-panel admin -->
+
+<!-- Paywall overlay — shown when access gate denies a user -->
+<div class="paywall-overlay" id="paywallOverlay" style="display:none;">
+  <div class="paywall-card">
+    <div class="paywall-eyebrow">✦ Heroes Academy ✦</div>
+    <div class="paywall-title">Tu suscripción no está activa</div>
+    <div class="paywall-sub">
+      Para usar HeroesApp necesitas estar al día con tu mensualidad en Skool.
+      Si acabas de pagar, dale unos minutos a que sincronice.
+    </div>
+    <a class="paywall-cta" id="paywallCta" href="https://www.skool.com/heroesacademy" target="_blank" rel="noopener">Renovar en Skool →</a>
+    <div class="paywall-footer">
+      <span>¿Crees que es un error?</span>
+      <a href="mailto:alexblancafortpujado@gmail.com">Escríbeme →</a>
+    </div>
+    <button class="paywall-signout" id="paywallSignout" type="button">Cerrar sesión</button>
+  </div>
+</div>
 
 <div class="cal-modal-bg" id="calModalBg" style="display:none;">
   <div class="cal-modal" role="dialog" aria-modal="true">
@@ -6856,6 +7200,16 @@
   const STORAGE_MODE = 'supabase';
   const SUPABASE_URL = 'https://aqhivrigviknqozjbkba.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxaGl2cmlndmlrbnFvempia2JhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MDM2MzIsImV4cCI6MjA5NDA3OTYzMn0.UIQTGubOk61O3Ie4UHWUezcPPpBhwIUodp09kkWAnyU';
+
+  // ─── Access control (Skool subscription gate) ─────────────────────
+  // Hardcoded so the owner can NEVER lock themselves out, even if
+  // Supabase is down or the CSV is malformed.
+  const ADMIN_EMAILS = ['alexblancafortpujado@gmail.com'];
+  const SKOOL_URL = 'https://www.skool.com/heroesacademy';
+  // While ACCESS_GATE_ENFORCED=false the app behaves normally — admin can
+  // upload CSVs, see lists, etc. but no one is blocked. Flip to true to
+  // turn the gate on (commit 2).
+  const ACCESS_GATE_ENFORCED = false;
 
   // ─── Storage helpers ──────────────────────────────────────────────
   // In 'local' mode these hit window.localStorage like before.
@@ -6959,6 +7313,172 @@
     for (const row of data) supabaseCache.set(row.key, row.value);
     console.info('[supabase] loaded', data.length, 'state entries');
     return true;
+  }
+
+  // ─── Access control helpers (paying_members, overrides, known_users) ──
+  function _userEmail() {
+    try {
+      const u = window.Clerk && window.Clerk.user;
+      if (!u) return null;
+      const email = u.primaryEmailAddress && u.primaryEmailAddress.emailAddress;
+      return email ? String(email).trim().toLowerCase() : null;
+    } catch (e) { return null; }
+  }
+  function isAdminUser() {
+    const e = _userEmail();
+    return !!e && ADMIN_EMAILS.indexOf(e) >= 0;
+  }
+
+  async function fetchPayingMembers() {
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient
+      .from('paying_members')
+      .select('email, recurring_interval, tier, first_name, last_name, joined_at, last_synced_at');
+    if (error) { console.error('[access] fetch paying_members', error); return []; }
+    return data || [];
+  }
+  async function replacePayingMembers(rows, filename) {
+    if (!supabaseClient) return { ok: false, error: 'No Supabase' };
+    // Wipe and refill in one go (small N: ~500 rows max).
+    const delRes = await supabaseClient.from('paying_members').delete().neq('email', '__never__');
+    if (delRes.error) return { ok: false, error: delRes.error.message };
+    if (rows.length) {
+      const insRes = await supabaseClient.from('paying_members').insert(rows);
+      if (insRes.error) return { ok: false, error: insRes.error.message };
+    }
+    await supabaseClient.from('sync_meta').upsert({
+      id: 1,
+      last_csv_synced_at: new Date().toISOString(),
+      last_csv_count: rows.length,
+      last_csv_filename: filename || null
+    });
+    return { ok: true };
+  }
+  async function fetchAccessOverrides() {
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient
+      .from('access_overrides').select('email, override, reason, updated_at');
+    if (error) { console.error('[access] fetch overrides', error); return []; }
+    return data || [];
+  }
+  async function setAccessOverride(email, override, reason) {
+    if (!supabaseClient) return { ok: false };
+    const e = String(email || '').trim().toLowerCase();
+    if (!e) return { ok: false, error: 'Empty email' };
+    const { error } = await supabaseClient.from('access_overrides').upsert({
+      email: e, override, reason: reason || null, updated_at: new Date().toISOString()
+    });
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  }
+  async function removeAccessOverride(email) {
+    if (!supabaseClient) return { ok: false };
+    const e = String(email || '').trim().toLowerCase();
+    const { error } = await supabaseClient.from('access_overrides').delete().eq('email', e);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  }
+  async function fetchKnownUsers() {
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient
+      .from('known_users').select('email, clerk_user_id, display_name, first_seen_at, last_seen_at');
+    if (error) { console.error('[access] fetch known_users', error); return []; }
+    return data || [];
+  }
+  async function upsertKnownUser(email, clerkUserId, displayName) {
+    if (!supabaseClient || !email) return;
+    const e = String(email).trim().toLowerCase();
+    try {
+      await supabaseClient.from('known_users').upsert({
+        email: e,
+        clerk_user_id: clerkUserId || null,
+        display_name: displayName || null,
+        last_seen_at: new Date().toISOString()
+      }, { onConflict: 'email', ignoreDuplicates: false });
+    } catch (e2) { console.error('[access] upsertKnownUser', e2); }
+  }
+  async function fetchSyncMeta() {
+    if (!supabaseClient) return null;
+    const { data, error } = await supabaseClient
+      .from('sync_meta').select('*').eq('id', 1).maybeSingle();
+    if (error) { console.error('[access] fetch sync_meta', error); return null; }
+    return data || null;
+  }
+
+  // Effective access: 'allowed' | 'blocked' | 'grace'
+  // Used by the gate (commit 2) and by the admin panel to label rows.
+  function computeAccess(email, paying, overrides, syncMeta) {
+    const e = String(email || '').trim().toLowerCase();
+    if (!e) return { status: 'blocked', reason: 'no-email' };
+    if (ADMIN_EMAILS.indexOf(e) >= 0) return { status: 'allowed', reason: 'admin' };
+    const ov = overrides.find(x => x.email === e);
+    if (ov && ov.override === 'block') return { status: 'blocked', reason: 'manual-block' };
+    if (ov && ov.override === 'allow') return { status: 'allowed', reason: 'manual-allow' };
+    if (paying.some(p => p.email === e)) return { status: 'allowed', reason: 'paying' };
+    // Not in CSV. If user has never seen a CSV upload, they're in grace.
+    if (!syncMeta || !syncMeta.last_csv_synced_at) {
+      return { status: 'allowed', reason: 'no-csv-yet' };
+    }
+    return { status: 'blocked', reason: 'not-in-csv' };
+  }
+
+  // ─── CSV parsing (Skool members export format) ────────────────────
+  // Handles quoted fields (questions/answers contain commas) per RFC 4180.
+  function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { cur += '"'; i++; }
+          else inQuotes = false;
+        } else cur += c;
+      } else {
+        if (c === '"') inQuotes = true;
+        else if (c === ',') { row.push(cur); cur = ''; }
+        else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+        else if (c === '\r') { /* skip */ }
+        else cur += c;
+      }
+    }
+    if (cur.length || row.length) { row.push(cur); rows.push(row); }
+    return rows.filter(r => r.some(c => c && c.length));
+  }
+  function parseSkoolCsv(text) {
+    const rows = parseCsv(text);
+    if (rows.length === 0) return { headers: [], members: [] };
+    const headers = rows[0].map(h => h.trim());
+    const idxEmail = headers.findIndex(h => h.toLowerCase() === 'email');
+    const idxFirst = headers.findIndex(h => h.toLowerCase() === 'firstname');
+    const idxLast  = headers.findIndex(h => h.toLowerCase() === 'lastname');
+    const idxJoin  = headers.findIndex(h => h.toLowerCase() === 'joineddate');
+    const idxInt   = headers.findIndex(h => h.toLowerCase() === 'recurring interval');
+    const idxTier  = headers.findIndex(h => h.toLowerCase() === 'tier');
+    const members = [];
+    for (let r = 1; r < rows.length; r++) {
+      const row = rows[r];
+      const email = idxEmail >= 0 ? String(row[idxEmail] || '').trim().toLowerCase() : '';
+      if (!email || email.indexOf('@') < 0) continue;
+      members.push({
+        email,
+        first_name: idxFirst >= 0 ? (row[idxFirst] || '').trim() : '',
+        last_name:  idxLast  >= 0 ? (row[idxLast]  || '').trim() : '',
+        joined_at:  idxJoin  >= 0 ? _parseSkoolDate(row[idxJoin]) : null,
+        recurring_interval: idxInt >= 0 ? (row[idxInt] || '').trim() || null : null,
+        tier: idxTier >= 0 ? (row[idxTier] || '').trim() || null : null
+      });
+    }
+    return { headers, members };
+  }
+  function _parseSkoolDate(s) {
+    if (!s) return null;
+    // "2026-05-11 11:17:08" → ISO
+    const m = String(s).trim().match(/^(\d{4})-(\d{2})-(\d{2})[\sT](\d{2}):(\d{2}):(\d{2})/);
+    if (!m) return null;
+    return m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + m[6] + 'Z';
   }
 
   // ─── Date logic (6 AM day boundary) ───────────────────────────────
@@ -12619,6 +13139,237 @@
     else tabBtn.classList.remove('is-revealed');
   }
 
+  // ─── Admin access & subscriptions panel ──────────────────────────
+  function _fmtDateLong(iso) {
+    if (!iso) return '—';
+    try {
+      const d = new Date(iso);
+      return d.toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' });
+    } catch (e) { return iso; }
+  }
+  function _daysSince(iso) {
+    if (!iso) return Infinity;
+    try { return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000); }
+    catch (e) { return Infinity; }
+  }
+
+  async function renderAccessAdminPanel() {
+    if (!supabaseClient) return;
+    const [paying, overrides, known, meta] = await Promise.all([
+      fetchPayingMembers(), fetchAccessOverrides(), fetchKnownUsers(), fetchSyncMeta()
+    ]);
+
+    // Sync status
+    const statusEl = document.getElementById('accessSyncStatus');
+    if (statusEl) {
+      if (!meta || !meta.last_csv_synced_at) {
+        statusEl.innerHTML = '<span class="access-status-warn">Nunca sincronizado — el gate está abierto a todos hasta el primer CSV.</span>';
+      } else {
+        const days = _daysSince(meta.last_csv_synced_at);
+        const stale = days >= 8;
+        statusEl.innerHTML =
+          '<span class="' + (stale ? 'access-status-warn' : 'access-status-ok') + '">' +
+            (stale ? '⚠ Sync vencido · ' : '✓ ') +
+            'Último sync: ' + _fmtDateLong(meta.last_csv_synced_at) +
+            ' · ' + (meta.last_csv_count || 0) + ' miembros' +
+            (meta.last_csv_filename ? ' · <em>' + _esc(meta.last_csv_filename) + '</em>' : '') +
+          '</span>';
+      }
+    }
+
+    // Compute who's blocked: known users not in paying and not allow-overridden, OR explicitly blocked
+    const payingSet = new Set(paying.map(p => p.email));
+    const allowOverridden = new Set(overrides.filter(o => o.override === 'allow').map(o => o.email));
+    const blockOverridden = new Set(overrides.filter(o => o.override === 'block').map(o => o.email));
+    const hasCsv = !!(meta && meta.last_csv_synced_at);
+
+    const blockedList = known.filter(u => {
+      const e = u.email;
+      if (ADMIN_EMAILS.indexOf(e) >= 0) return false;
+      if (allowOverridden.has(e)) return false;
+      if (blockOverridden.has(e)) return true;
+      if (payingSet.has(e)) return false;
+      if (!hasCsv) return false; // grace mode — no one is blocked
+      // If user signed up AFTER the last CSV, they're in grace too
+      if (u.first_seen_at && new Date(u.first_seen_at) > new Date(meta.last_csv_synced_at)) return false;
+      return true;
+    });
+
+    const blockedEl = document.getElementById('accessBlockedList');
+    const blockedCount = document.getElementById('accessBlockedCount');
+    if (blockedCount) blockedCount.textContent = String(blockedList.length);
+    if (blockedEl) {
+      if (blockedList.length === 0) {
+        blockedEl.innerHTML = '<div class="access-empty">Ningún usuario bloqueado ahora mismo.</div>';
+      } else {
+        blockedEl.innerHTML = blockedList.map(u =>
+          '<div class="access-row" data-email="' + _esc(u.email) + '">' +
+            '<div class="access-row-info">' +
+              '<div class="access-row-email">' + _esc(u.email) + '</div>' +
+              '<div class="access-row-meta">' +
+                _esc(u.display_name || '—') +
+                ' · visto por última vez ' + _fmtDateLong(u.last_seen_at) +
+              '</div>' +
+            '</div>' +
+            '<button type="button" class="access-btn access-btn-allow" data-action="allow">✓ Permitir</button>' +
+          '</div>'
+        ).join('');
+        blockedEl.querySelectorAll('.access-btn-allow').forEach(b => {
+          b.addEventListener('click', async () => {
+            const email = b.closest('.access-row').dataset.email;
+            b.disabled = true;
+            const r = await setAccessOverride(email, 'allow', 'manual-allow-from-blocked-list');
+            if (r.ok) renderAccessAdminPanel();
+            else { alert('Error: ' + (r.error || 'no se pudo guardar')); b.disabled = false; }
+          });
+        });
+      }
+    }
+
+    // Allow overrides list
+    const allows = overrides.filter(o => o.override === 'allow');
+    const allowEl = document.getElementById('accessAllowedList');
+    const allowCount = document.getElementById('accessAllowedCount');
+    if (allowCount) allowCount.textContent = String(allows.length);
+    if (allowEl) {
+      if (allows.length === 0) {
+        allowEl.innerHTML = '<div class="access-empty">Ningún email permitido manualmente.</div>';
+      } else {
+        allowEl.innerHTML = allows.map(o =>
+          '<div class="access-row" data-email="' + _esc(o.email) + '">' +
+            '<div class="access-row-info">' +
+              '<div class="access-row-email">' + _esc(o.email) + '</div>' +
+              '<div class="access-row-meta">añadido ' + _fmtDateLong(o.updated_at) +
+                (o.reason ? ' · <em>' + _esc(o.reason) + '</em>' : '') +
+              '</div>' +
+            '</div>' +
+            '<button type="button" class="access-btn access-btn-remove" data-action="remove">× Quitar</button>' +
+          '</div>'
+        ).join('');
+        allowEl.querySelectorAll('.access-btn-remove').forEach(b => {
+          b.addEventListener('click', async () => {
+            const email = b.closest('.access-row').dataset.email;
+            if (!confirm('¿Quitar el permiso manual para ' + email + '?')) return;
+            b.disabled = true;
+            const r = await removeAccessOverride(email);
+            if (r.ok) renderAccessAdminPanel();
+            else { alert('Error: ' + (r.error || '')); b.disabled = false; }
+          });
+        });
+      }
+    }
+  }
+
+  function _esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ─── Access gate (paywall) ───────────────────────────────────────
+  // Called after Clerk signs the user in. Decides whether to show the
+  // paywall overlay. Fail-open: if Supabase fails for any reason, the
+  // user gets in (better one extra user than a wrong lockout).
+  async function maybeApplyAccessGate() {
+    if (!ACCESS_GATE_ENFORCED) return; // commit 1: gate is off
+    const email = _userEmail();
+    if (!email) return;
+    if (ADMIN_EMAILS.indexOf(email) >= 0) return; // owner is always allowed
+    try {
+      const [paying, overrides, meta] = await Promise.all([
+        fetchPayingMembers(), fetchAccessOverrides(), fetchSyncMeta()
+      ]);
+      const access = computeAccess(email, paying, overrides, meta);
+      if (access.status === 'blocked') showPaywall(access.reason);
+    } catch (e) {
+      console.error('[access] gate check failed, allowing through', e);
+      // fail-open: do nothing
+    }
+  }
+
+  function showPaywall(reason) {
+    const ov = document.getElementById('paywallOverlay');
+    if (!ov) return;
+    ov.style.display = '';
+    document.body.classList.add('is-paywalled');
+    const cta = document.getElementById('paywallCta');
+    if (cta) cta.href = SKOOL_URL;
+    console.info('[access] paywall shown · reason:', reason);
+  }
+
+  function wireAccessAdminUI() {
+    // CSV upload
+    const inp = document.getElementById('accessCsvInput');
+    if (inp && !inp.dataset.wired) {
+      inp.dataset.wired = '1';
+      inp.addEventListener('change', async (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const text = await f.text();
+        const parsed = parseSkoolCsv(text);
+        const preview = document.getElementById('accessPreview');
+        const totalRows = parsed.members.length;
+        const noEmail = (parseCsv(text).length - 1) - totalRows;
+        preview.style.display = '';
+        preview.innerHTML =
+          '<div class="access-preview-stats">' +
+            '<strong>' + totalRows + '</strong> emails válidos encontrados · ' +
+            '<strong>' + (noEmail < 0 ? 0 : noEmail) + '</strong> filas sin email (ignoradas)' +
+          '</div>' +
+          '<div class="access-preview-actions">' +
+            '<button type="button" class="access-btn access-btn-primary" id="accessConfirmUpload">Confirmar y reemplazar</button>' +
+            '<button type="button" class="access-btn" id="accessCancelUpload">Cancelar</button>' +
+          '</div>';
+        document.getElementById('accessConfirmUpload').addEventListener('click', async () => {
+          const btn = document.getElementById('accessConfirmUpload');
+          btn.disabled = true; btn.textContent = 'Guardando…';
+          const r = await replacePayingMembers(parsed.members, f.name);
+          if (!r.ok) {
+            alert('Error guardando: ' + (r.error || 'desconocido'));
+            btn.disabled = false; btn.textContent = 'Confirmar y reemplazar';
+            return;
+          }
+          preview.style.display = 'none';
+          preview.innerHTML = '';
+          inp.value = '';
+          renderAccessAdminPanel();
+        });
+        document.getElementById('accessCancelUpload').addEventListener('click', () => {
+          preview.style.display = 'none';
+          preview.innerHTML = '';
+          inp.value = '';
+        });
+      });
+    }
+    // Manual add
+    const addBtn = document.getElementById('accessAddBtn');
+    const addInp = document.getElementById('accessAddInput');
+    if (addBtn && !addBtn.dataset.wired) {
+      addBtn.dataset.wired = '1';
+      const submit = async () => {
+        const email = (addInp.value || '').trim().toLowerCase();
+        if (!email || email.indexOf('@') < 0) { alert('Email no válido'); return; }
+        addBtn.disabled = true;
+        const r = await setAccessOverride(email, 'allow', 'manual-add');
+        addBtn.disabled = false;
+        if (r.ok) { addInp.value = ''; renderAccessAdminPanel(); }
+        else alert('Error: ' + (r.error || ''));
+      };
+      addBtn.addEventListener('click', submit);
+      addInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+    }
+    // Paywall sign-out button
+    const so = document.getElementById('paywallSignout');
+    if (so && !so.dataset.wired) {
+      so.dataset.wired = '1';
+      so.addEventListener('click', () => {
+        try { window.Clerk && window.Clerk.signOut && window.Clerk.signOut(); } catch (e) {}
+        setTimeout(() => location.reload(), 200);
+      });
+    }
+    renderAccessAdminPanel();
+  }
+
   // ─── Display name ────────────────────────────────────────────────
   const DISPLAY_NAME_KEY = 'display_name';
 
@@ -13405,6 +14156,7 @@
       renderBossFight();
     } else if (name === 'admin') {
       loadAdminData();
+      if (typeof wireAccessAdminUI === 'function') wireAccessAdminUI();
     }
   }
   document.querySelectorAll('.tab-btn').forEach(b => {
@@ -13490,6 +14242,17 @@
       setupBossControls();
       setupDashNameEditable();
       renderDashName();
+      // Track this user as "known" so they appear in the admin access panel.
+      try {
+        const email = _userEmail();
+        if (email) {
+          upsertKnownUser(email, Clerk.user.id,
+            (Clerk.user.firstName || '') + ' ' + (Clerk.user.lastName || ''));
+        }
+      } catch (e) { /* non-fatal */ }
+      // Apply the access gate if it's enforced (commit 2 flips the flag).
+      try { if (typeof maybeApplyAccessGate === 'function') maybeApplyAccessGate(); }
+      catch (e) { console.error('[access] gate apply failed', e); }
       bootApp();
     } else {
       document.body.classList.add('auth-pending');
