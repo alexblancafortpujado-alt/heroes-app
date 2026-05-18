@@ -5537,16 +5537,16 @@
     stroke: #ffffff;
     stroke-width: 2.2;
     opacity: 1;
+    /* Safari can't render long drop-shadow chains — keep at 2 layers
+       and let the wider colored stroke shadow give the bloom. */
     filter:
-      drop-shadow(0 0 1.5px #ffffff)
-      drop-shadow(0 0 6px var(--day-color))
-      drop-shadow(0 0 14px var(--day-color))
-      drop-shadow(0 0 26px color-mix(in srgb, var(--day-color) 70%, transparent));
+      drop-shadow(0 0 2px #ffffff)
+      drop-shadow(0 0 14px var(--day-color));
     animation: stv2-line-breathe 4.2s ease-in-out infinite;
   }
   @keyframes stv2-line-breathe {
-    0%, 100% { filter: drop-shadow(0 0 1.5px #ffffff) drop-shadow(0 0 6px var(--day-color)) drop-shadow(0 0 14px var(--day-color)) drop-shadow(0 0 22px color-mix(in srgb, var(--day-color) 60%, transparent)); }
-    50%      { filter: drop-shadow(0 0 2px   #ffffff) drop-shadow(0 0 9px var(--day-color)) drop-shadow(0 0 22px var(--day-color)) drop-shadow(0 0 36px color-mix(in srgb, var(--day-color) 80%, transparent)); }
+    0%, 100% { filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 12px var(--day-color)); }
+    50%      { filter: drop-shadow(0 0 3px #ffffff) drop-shadow(0 0 22px var(--day-color)); }
   }
 
   /* Entry stagger animation — node content scales in from center */
@@ -5615,21 +5615,21 @@
     transform: scale(1.4);
     filter:
       drop-shadow(0 0 6px var(--day-color))
-      drop-shadow(0 0 14px color-mix(in srgb, var(--day-color) 70%, transparent));
+      drop-shadow(0 0 14px var(--day-color));
   }
   .stv2-node:hover .stv2-node-inner { transform: scale(1.35); fill: #fff; }
   .stv2-node:hover .stv2-node-glow { opacity: 0.45 !important; transform: scale(1.15); }
 
-  /* Lit node — bright white-hot core with colored bloom halo */
+  /* Lit node — bright white-hot core with colored bloom halo.
+     Safari only honors ~2 drop-shadow layers reliably, so we use one
+     tight white halo + one wide colored bloom. */
   .stv2-node.is-done .stv2-node-bg {
     fill: var(--day-color);
     stroke: #ffffff;
     stroke-width: 1.6;
     filter:
-      drop-shadow(0 0 1.5px #ffffff)
-      drop-shadow(0 0 8px var(--day-color))
-      drop-shadow(0 0 18px var(--day-color))
-      drop-shadow(0 0 32px color-mix(in srgb, var(--day-color) 75%, transparent));
+      drop-shadow(0 0 2px #ffffff)
+      drop-shadow(0 0 20px var(--day-color));
   }
   .stv2-node.is-done .stv2-node-inner {
     fill: #ffffff;
@@ -5643,26 +5643,23 @@
     0%, 100% { opacity: 0.40; transform: scale(1); }
     50%      { opacity: 0.85; transform: scale(1.18); }
   }
-  /* Tier-specific glow strength: chapters glow widest, then subgroups, then tasks */
+  /* Tier-specific glow strength: chapters glow widest, then subgroups,
+     then tasks. Each tier uses exactly 2 drop-shadow layers so Safari
+     renders them; the bigger bloom comes from the second layer's radius. */
   .stv2-node-task.is-done .stv2-node-bg {
     filter:
-      drop-shadow(0 0 1.5px #ffffff)
-      drop-shadow(0 0 6px var(--day-color))
+      drop-shadow(0 0 2px #ffffff)
       drop-shadow(0 0 12px var(--day-color));
   }
   .stv2-node-subgroup.is-done .stv2-node-bg {
     filter:
-      drop-shadow(0 0 1.5px #ffffff)
-      drop-shadow(0 0 8px var(--day-color))
-      drop-shadow(0 0 18px var(--day-color))
-      drop-shadow(0 0 28px color-mix(in srgb, var(--day-color) 60%, transparent));
+      drop-shadow(0 0 2px #ffffff)
+      drop-shadow(0 0 24px var(--day-color));
   }
   .stv2-node-chapter.is-done .stv2-node-bg {
     filter:
-      drop-shadow(0 0 2px #ffffff)
-      drop-shadow(0 0 12px var(--day-color))
-      drop-shadow(0 0 28px var(--day-color))
-      drop-shadow(0 0 50px color-mix(in srgb, var(--day-color) 70%, transparent));
+      drop-shadow(0 0 3px #ffffff)
+      drop-shadow(0 0 40px var(--day-color));
   }
 
   /* Hub special styling — like a tiny sun at the center of the wheel */
@@ -5671,10 +5668,8 @@
     stroke: #FFD89E;
     stroke-width: 2.2;
     filter:
-      drop-shadow(0 0 1.5px #ffffff)
-      drop-shadow(0 0 12px rgba(255,216,158,0.85))
-      drop-shadow(0 0 28px rgba(255,216,158,0.55))
-      drop-shadow(0 0 50px rgba(255,140,60,0.30));
+      drop-shadow(0 0 2px #ffffff)
+      drop-shadow(0 0 30px #FFD89E);
   }
   .stv2-node-hub .stv2-node-inner {
     fill: #FFE4B0;
@@ -5692,10 +5687,8 @@
   .stv2-node-hub.is-done .stv2-node-bg {
     fill: #FFE4B0;
     filter:
-      drop-shadow(0 0 2px #ffffff)
-      drop-shadow(0 0 18px #FFD89E)
-      drop-shadow(0 0 40px #FFD89E)
-      drop-shadow(0 0 70px rgba(255,140,60,0.5));
+      drop-shadow(0 0 3px #ffffff)
+      drop-shadow(0 0 50px #FFD89E);
   }
   .stv2-hub-ring {
     fill: none;
