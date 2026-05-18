@@ -14342,6 +14342,11 @@
       }
     }
 
+    // Cache is now hydrated — re-apply anything that depends on storeGet
+    // and was first computed before the cache loaded (the avatar frame
+    // gets set right after Clerk login, before the cache exists).
+    try { applyRankAvatarFrame(); } catch (e) { /* non-fatal */ }
+
     renderDashName();
     runRollover();
     runStreakCheck();
