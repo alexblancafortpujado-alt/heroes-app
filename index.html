@@ -6606,7 +6606,47 @@
   #clerkUserButton {
     display: flex;
     align-items: center;
+    position: relative;
+    z-index: 1;
   }
+  /* Rank-themed frame around the Clerk avatar (top-right). */
+  .rank-avatar-frame {
+    --rank-glow: rgba(255,255,255,0.25);
+    position: relative;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .rank-avatar-frame-img {
+    position: absolute;
+    inset: -12px;
+    width: calc(100% + 24px);
+    height: calc(100% + 24px);
+    pointer-events: none;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px var(--rank-glow));
+    animation: rank-frame-breathe 4.5s ease-in-out infinite;
+  }
+  @keyframes rank-frame-breathe {
+    0%, 100% { filter: drop-shadow(0 0 8px  var(--rank-glow)); }
+    50%      { filter: drop-shadow(0 0 18px var(--rank-glow)); }
+  }
+  /* Tighten the Clerk avatar so it sits clean inside the frame. */
+  .rank-avatar-frame .cl-userButtonAvatarBox,
+  .rank-avatar-frame .cl-avatarBox {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  /* Per-rank glow colors (match the rank-widget palette) */
+  .rank-avatar-frame[data-rank="base"]       { --rank-glow: rgba(180,180,180,0.40); }
+  .rank-avatar-frame[data-rank="esmeralda"]  { --rank-glow: rgba(80,235,160,0.65); }
+  .rank-avatar-frame[data-rank="azurita"]    { --rank-glow: rgba(96,165,250,0.65); }
+  .rank-avatar-frame[data-rank="amatista"]   { --rank-glow: rgba(192,132,252,0.70); }
+  .rank-avatar-frame[data-rank="ruby"]       { --rank-glow: rgba(255,90,110,0.75); }
+  .rank-avatar-frame[data-rank="superheroe"] { --rank-glow: rgba(251,191,36,0.85); }
 
   /* Clerk popover dark-theme contrast fixes */
   .cl-userButtonPopoverCard,
@@ -6753,7 +6793,10 @@
 
 <div class="dash-title-row">
   <h1 class="dash-title">Bienvenido, <span class="dash-name" id="dashName" title="Haz click para cambiar tu nombre">…</span></h1>
-  <div id="clerkUserButton"></div>
+  <div class="rank-avatar-frame" id="rankAvatarFrame" data-rank="base" title="Tu rango actual">
+    <img class="rank-avatar-frame-img" alt="" draggable="false" />
+    <div id="clerkUserButton"></div>
+  </div>
 </div>
 
 <nav class="tab-nav" id="tabNav" aria-label="Sections">
@@ -10947,8 +10990,35 @@
     return null;
   }
 
+  // Filename map: 'ruby' uses the Spanish "rubi" filename on disk.
+  const RANK_BORDER_FILES = {
+    base:       'rango-base-border.png',
+    esmeralda:  'rango-esmeralda-border.png',
+    azurita:    'rango-azurita-border.png',
+    amatista:   'rango-amatista-border.png',
+    ruby:       'rango-rubi-border.png',
+    superheroe: 'rango-superheroe-border.png'
+  };
+  function applyRankAvatarFrame() {
+    const wrap = document.getElementById('rankAvatarFrame');
+    if (!wrap) return;
+    const rankId = computeUserRank();
+    wrap.dataset.rank = rankId;
+    const img = wrap.querySelector('.rank-avatar-frame-img');
+    if (img) {
+      const target = RANK_BORDER_FILES[rankId] || RANK_BORDER_FILES.base;
+      if (!img.getAttribute('src') || !img.getAttribute('src').endsWith(target)) {
+        img.src = target;
+      }
+      const def = RANK_DEFS.find(r => r.id === rankId);
+      wrap.title = def ? ('Tu rango: ' + def.name) : 'Tu rango';
+    }
+  }
+
   let _lastRenderedRank = null;
   function renderRankWidget() {
+    // Keep the avatar frame in sync whenever we recompute the rank.
+    applyRankAvatarFrame();
     const wrap = document.getElementById('rankWidget');
     if (!wrap) return;
     const rankId = computeUserRank();
@@ -11985,6 +12055,8 @@
       state.passedAt = Date.now();
     }
     setModuleExamState(data.moduleId, state);
+    // Boss died → user's rank may have just bumped → refresh the avatar frame.
+    if (passed && typeof applyRankAvatarFrame === 'function') applyRankAvatarFrame();
     _examResult = {
       moduleId: data.moduleId,
       passed: passed,
@@ -14256,6 +14328,7 @@
         Clerk.mountUserButton(ubEl, { appearance: CLERK_APPEARANCE });
         _userButtonMounted = true;
       }
+      try { applyRankAvatarFrame(); } catch (e) { /* non-fatal */ }
       revealAdminTabIfNeeded();
       setupAdminControls();
       setupBossControls();
