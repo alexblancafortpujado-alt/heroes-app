@@ -6831,7 +6831,6 @@
   <button class="tab-btn" data-tab="portal" type="button">Portal</button>
   <button class="tab-btn" data-tab="bossfight" type="button">Boss Fight</button>
   <button class="tab-btn" data-tab="skilltree" type="button">Checklist</button>
-  <button class="tab-btn" data-tab="skilltree-v2" type="button">Skilltree</button>
   <button class="tab-btn tab-btn-admin" data-tab="admin" type="button">Admin</button>
 </nav>
 
@@ -7029,15 +7028,8 @@
   </div>
 </div><!-- /tab-panel skilltree -->
 
-<div class="tab-panel" data-tab="skilltree-v2">
-  <div class="section">
-    <div class="section-title">Skilltree</div>
-    <div class="stv2-module-tabs" id="stv2ModuleTabs"></div>
-    <div class="stv2-header" id="stv2Header"></div>
-    <div class="stv2-canvas-wrap" id="stv2CanvasWrap"></div>
-    <div class="stv2-hint">Drag to pan · Scroll to zoom · Click a node to toggle</div>
-  </div>
-</div><!-- /tab-panel skilltree-v2 -->
+<!-- Skilltree v2 (Gate of Fates) removed — was buggy on Safari and
+     redundant with the Checklist tab + rank widget. -->
 
 <div class="tab-panel" data-tab="bossfight">
   <div class="section">
@@ -14423,8 +14415,6 @@
       renderPortalV2();
     } else if (name === 'skilltree') {
       renderSkilltree();
-    } else if (name === 'skilltree-v2') {
-      renderSkilltreeV2();
     } else if (name === 'bossfight') {
       renderBossFight();
     } else if (name === 'admin') {
@@ -14476,7 +14466,9 @@
     setInterval(() => { if (calView === 'day' || calView === 'week') renderCalendar(); }, 60 * 1000);
     renderPortalV2();
     try {
-      const saved = localStorage.getItem('active_tab_v1');
+      let saved = localStorage.getItem('active_tab_v1');
+      // Old "skilltree-v2" tab was removed — silently demote to checklist.
+      if (saved === 'skilltree-v2') saved = 'skilltree';
       if (saved) setActiveTab(saved);
       else if (document.querySelector('.tab-panel.is-active')?.dataset.tab === 'calendar') {
         requestAnimationFrame(() => scrollCalendarToNow());
