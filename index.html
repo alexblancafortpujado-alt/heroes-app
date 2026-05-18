@@ -6613,8 +6613,9 @@
   .rank-avatar-frame {
     --rank-glow: rgba(255,255,255,0.25);
     position: relative;
-    width: 52px;
-    height: 52px;
+    width: 40px;
+    height: 40px;
+    margin-top: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6622,23 +6623,23 @@
   }
   .rank-avatar-frame-img {
     position: absolute;
-    inset: -12px;
-    width: calc(100% + 24px);
-    height: calc(100% + 24px);
+    inset: -9px;
+    width: calc(100% + 18px);
+    height: calc(100% + 18px);
     pointer-events: none;
     z-index: 2;
-    filter: drop-shadow(0 0 10px var(--rank-glow));
+    filter: drop-shadow(0 0 8px var(--rank-glow));
     animation: rank-frame-breathe 4.5s ease-in-out infinite;
   }
   @keyframes rank-frame-breathe {
-    0%, 100% { filter: drop-shadow(0 0 8px  var(--rank-glow)); }
-    50%      { filter: drop-shadow(0 0 18px var(--rank-glow)); }
+    0%, 100% { filter: drop-shadow(0 0 6px  var(--rank-glow)); }
+    50%      { filter: drop-shadow(0 0 14px var(--rank-glow)); }
   }
   /* Tighten the Clerk avatar so it sits clean inside the frame. */
   .rank-avatar-frame .cl-userButtonAvatarBox,
   .rank-avatar-frame .cl-avatarBox {
-    width: 36px !important;
-    height: 36px !important;
+    width: 28px !important;
+    height: 28px !important;
   }
   /* Per-rank glow colors (match the rank-widget palette) */
   .rank-avatar-frame[data-rank="base"]       { --rank-glow: rgba(180,180,180,0.40); }
