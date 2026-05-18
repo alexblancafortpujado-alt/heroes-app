@@ -7157,6 +7157,16 @@
       </div>
 
       <div class="access-card">
+        <div class="access-card-eyebrow">👑 Admins <span id="adminsCount" class="access-pill">0</span></div>
+        <div class="access-card-sub">Pueden ver este panel y todas las herramientas de admin. El owner está siempre dentro y no se puede quitar.</div>
+        <div class="access-list" id="appAdminsList"></div>
+        <div class="access-add-row">
+          <input type="email" id="appAdminAddInput" placeholder="email@ejemplo.com" autocomplete="off" />
+          <button type="button" id="appAdminAddBtn" class="access-add-btn">+ Hacer admin</button>
+        </div>
+      </div>
+
+      <div class="access-card">
         <div class="access-card-eyebrow">🛠 Debug · forzar rango</div>
         <div class="access-card-sub">Solo para pruebas visuales. Override del rango calculado por bosses.</div>
         <div class="rank-debug-row" id="rankDebugRow"></div>
@@ -7407,9 +7417,51 @@
       return email ? String(email).trim().toLowerCase() : null;
     } catch (e) { return null; }
   }
+  // Dynamic admin list, loaded from Supabase at boot. Adds on top of
+  // the hardcoded ADMIN_EMAILS (the owner can't be removed). Mutated
+  // through the Admin tab "Admins" panel.
+  let _dynamicAdmins = new Set();
+  function isHardcodedAdmin(email) {
+    return !!email && ADMIN_EMAILS.indexOf(email) >= 0;
+  }
   function isAdminUser() {
     const e = _userEmail();
-    return !!e && ADMIN_EMAILS.indexOf(e) >= 0;
+    if (!e) return false;
+    if (isHardcodedAdmin(e)) return true;
+    if (_dynamicAdmins.has(e)) return true;
+    return false;
+  }
+
+  async function fetchAppAdmins() {
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient
+      .from('app_admins').select('email, added_by, added_at');
+    if (error) { console.error('[admin] fetch admins', error); return []; }
+    return data || [];
+  }
+  async function loadDynamicAdmins() {
+    const rows = await fetchAppAdmins();
+    _dynamicAdmins = new Set(rows.map(r => String(r.email || '').toLowerCase()));
+  }
+  async function addAppAdmin(email) {
+    if (!supabaseClient) return { ok: false };
+    const e = String(email || '').trim().toLowerCase();
+    if (!e || e.indexOf('@') < 0) return { ok: false, error: 'Email no válido' };
+    const { error } = await supabaseClient.from('app_admins').upsert({
+      email: e, added_by: _userEmail(), added_at: new Date().toISOString()
+    });
+    if (error) return { ok: false, error: error.message };
+    _dynamicAdmins.add(e);
+    return { ok: true };
+  }
+  async function removeAppAdmin(email) {
+    if (!supabaseClient) return { ok: false };
+    const e = String(email || '').trim().toLowerCase();
+    if (isHardcodedAdmin(e)) return { ok: false, error: 'No se puede quitar al owner' };
+    const { error } = await supabaseClient.from('app_admins').delete().eq('email', e);
+    if (error) return { ok: false, error: error.message };
+    _dynamicAdmins.delete(e);
+    return { ok: true };
   }
 
   async function fetchPayingMembers() {
@@ -13047,6 +13099,7 @@
     if (u.publicMetadata && u.publicMetadata.role === 'admin') return true;
     if (u.unsafeMetadata && u.unsafeMetadata.role === 'admin') return true;
     if (ADMIN_FALLBACK_USER_IDS.indexOf(u.id) >= 0) return true;
+    if (isAdminUser()) return true; // hardcoded ADMIN_EMAILS + dynamic app_admins
     return false;
   }
 
@@ -13440,6 +13493,49 @@
     console.info('[access] paywall shown · reason:', reason);
   }
 
+  async function renderAppAdminsList() {
+    const listEl = document.getElementById('appAdminsList');
+    const countEl = document.getElementById('adminsCount');
+    if (!listEl) return;
+    const rows = await fetchAppAdmins();
+    const dynEmails = rows.map(r => String(r.email).toLowerCase());
+    _dynamicAdmins = new Set(dynEmails);
+    const all = ADMIN_EMAILS.map(e => ({ email: e, locked: true })).concat(
+      dynEmails.filter(e => !isHardcodedAdmin(e)).map(e => {
+        const r = rows.find(x => x.email === e);
+        return { email: e, locked: false, added_by: r && r.added_by, added_at: r && r.added_at };
+      })
+    );
+    if (countEl) countEl.textContent = String(all.length);
+    listEl.innerHTML = all.map(a =>
+      '<div class="access-row" data-email="' + _esc(a.email) + '">' +
+        '<div class="access-row-info">' +
+          '<div class="access-row-email">' + _esc(a.email) +
+            (a.locked ? ' <span class="access-pill" style="margin-left:6px;">owner</span>' : '') +
+          '</div>' +
+          (a.locked
+            ? '<div class="access-row-meta">Hardcoded en el código · no se puede quitar.</div>'
+            : '<div class="access-row-meta">añadido por ' + _esc(a.added_by || '—') +
+                ' · ' + _fmtDateLong(a.added_at) + '</div>'
+          ) +
+        '</div>' +
+        (a.locked ? '' :
+          '<button type="button" class="access-btn access-btn-remove" data-action="remove">× Quitar admin</button>'
+        ) +
+      '</div>'
+    ).join('');
+    listEl.querySelectorAll('.access-btn-remove').forEach(b => {
+      b.addEventListener('click', async () => {
+        const email = b.closest('.access-row').dataset.email;
+        if (!confirm('¿Quitar acceso admin a ' + email + '?')) return;
+        b.disabled = true;
+        const r = await removeAppAdmin(email);
+        if (r.ok) renderAppAdminsList();
+        else { alert('Error: ' + (r.error || '')); b.disabled = false; }
+      });
+    });
+  }
+
   function renderRankDebugRow() {
     const row = document.getElementById('rankDebugRow');
     if (!row) return;
@@ -13532,7 +13628,25 @@
         setTimeout(() => location.reload(), 200);
       });
     }
+    // Wire the "make admin" row
+    const adminAddBtn = document.getElementById('appAdminAddBtn');
+    const adminAddInp = document.getElementById('appAdminAddInput');
+    if (adminAddBtn && !adminAddBtn.dataset.wired) {
+      adminAddBtn.dataset.wired = '1';
+      const submit = async () => {
+        const email = (adminAddInp.value || '').trim().toLowerCase();
+        if (!email || email.indexOf('@') < 0) { alert('Email no válido'); return; }
+        adminAddBtn.disabled = true;
+        const r = await addAppAdmin(email);
+        adminAddBtn.disabled = false;
+        if (r.ok) { adminAddInp.value = ''; renderAppAdminsList(); }
+        else alert('Error: ' + (r.error || ''));
+      };
+      adminAddBtn.addEventListener('click', submit);
+      adminAddInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+    }
     renderAccessAdminPanel();
+    renderAppAdminsList();
     renderRankDebugRow();
   }
 
@@ -14346,6 +14460,12 @@
     // and was first computed before the cache loaded (the avatar frame
     // gets set right after Clerk login, before the cache exists).
     try { applyRankAvatarFrame(); } catch (e) { /* non-fatal */ }
+    // Pull the dynamic admin list so isAdmin() returns true for promoted
+    // users, then re-check whether the Admin tab should be revealed.
+    try {
+      await loadDynamicAdmins();
+      revealAdminTabIfNeeded();
+    } catch (e) { console.error('[admin] dynamic admins load failed', e); }
 
     renderDashName();
     runRollover();
