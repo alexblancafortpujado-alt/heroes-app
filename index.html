@@ -15206,10 +15206,18 @@
     return Math.max(0, 100 - Math.round((corrects / total) * 100));
   }
 
+  function _correctsNeeded(data) {
+    // To kill the boss you need to answer every question you're not
+    // allowed to miss — i.e. total - maxWrong. With 20q + 3 wrongs that's
+    // 17 corrects = win, matching the original spec ("max 3 fallos").
+    const exam = MODULE_EXAMS[data.moduleId];
+    const total = (data.questions && data.questions.length) || exam.questions.length;
+    return Math.max(1, total - exam.maxWrong);
+  }
   function _bossHpPctFor(data) {
     if (!data) return 100;
-    const total = (data.questions && data.questions.length) || MODULE_EXAMS[data.moduleId].questions.length;
-    return Math.max(0, 100 - Math.round((_examCorrectsSoFar(data) / total) * 100));
+    const needed = _correctsNeeded(data);
+    return Math.max(0, 100 - Math.round((_examCorrectsSoFar(data) / needed) * 100));
   }
 
   function _playerHpPctFor(data) {
@@ -15457,17 +15465,19 @@
     const delay = isCorrect ? 950 : 1500;
     setTimeout(() => {
       const total = pool.length;
+      const needed = _correctsNeeded(data);
       const playerDead = data.wrongs > exam.maxWrong;
-      const bossDead = _examCorrectsSoFar(data) >= total;
-      // Out of questions — if neither dead, the player ran out of HP
-      // before killing the boss → boss wins. Without this guard qIdx++
-      // sends us past the end of the pool and the UI shows "21/20".
+      // Boss dies when you've landed enough hits — not all 20. With
+      // maxWrong=3 that's 17, so anyone who ends with ≤3 fails wins.
+      const bossDead = _examCorrectsSoFar(data) >= needed;
       const exhausted = (data.qIdx + 1) >= total;
       if (playerDead) {
         _bossKillsPlayer(data);
       } else if (bossDead) {
         _playerKillsBoss(data);
       } else if (exhausted) {
+        // Should be unreachable now (with the new bossDead threshold,
+        // anyone alive at the end has hit it), but keep as a safety net.
         _bossKillsPlayer(data);
       } else {
         data.qIdx++;
