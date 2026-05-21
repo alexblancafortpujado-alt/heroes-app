@@ -7385,6 +7385,8 @@
         <span class="admin-count" id="adminCount">— students</span>
         <span class="admin-refresh-time" id="adminRefreshTime">never</span>
         <button class="admin-reset-boss-btn" id="adminResetBossBtn" type="button" title="Reset your Boss Fight state (lets you fight again)">⚔ Reset boss</button>
+        <button class="admin-reset-boss-btn" id="adminResetRankBtn" type="button" title="Reset your rank (boss state + forced rank) to start from zero">⭐ Reset rango</button>
+        <button class="admin-reset-boss-btn" id="adminCompleteAllBtn" type="button" title="Solo admin: marca todas las checklists como completadas para testing">✓ Completar todo</button>
         <button class="admin-refresh-btn" id="adminRefreshBtn" type="button" title="Refresh">⟳</button>
       </div>
     </div>
@@ -16693,27 +16695,75 @@
     }
   }
 
+  function _flashAdminBtn(btn, msg) {
+    btn.classList.add('is-flash');
+    const orig = btn.textContent;
+    btn.textContent = msg || '✓ Listo';
+    setTimeout(() => { btn.classList.remove('is-flash'); btn.textContent = orig; }, 1400);
+  }
+
   function setupAdminControls() {
     const btn = document.getElementById('adminRefreshBtn');
     if (btn) btn.addEventListener('click', loadAdminData);
+
     const resetBtn = document.getElementById('adminResetBossBtn');
     if (resetBtn && !resetBtn.dataset.wired) {
       resetBtn.dataset.wired = '1';
       resetBtn.addEventListener('click', () => {
         if (!confirm('¿Reiniciar tu estado de Boss Fight? Borra trofeos y cooldowns para que puedas volver a pelear.')) return;
         Object.keys(MODULE_EXAMS).forEach(id => storeDelete(ME_PREFIX + id));
-        // If we are inside an exam/result view, kick back to checklist
         _examAnswers = null;
         _examResult = null;
         _stView = 'checklist';
         renderSkilltree();
-        resetBtn.classList.add('is-flash');
-        const orig = resetBtn.textContent;
-        resetBtn.textContent = '✓ Reset';
-        setTimeout(() => {
-          resetBtn.classList.remove('is-flash');
-          resetBtn.textContent = orig;
-        }, 1400);
+        _flashAdminBtn(resetBtn, '✓ Reset');
+      });
+    }
+
+    const rankBtn = document.getElementById('adminResetRankBtn');
+    if (rankBtn && !rankBtn.dataset.wired) {
+      rankBtn.dataset.wired = '1';
+      rankBtn.addEventListener('click', () => {
+        if (!confirm('¿Reset de rango? Vuelves al rango base — todos los bosses como vivos, sin trofeos, sin cooldowns, sin override de rango forzado.')) return;
+        // Wipe every boss-defeat record (this is what computeUserRank reads).
+        Object.keys(MODULE_EXAMS).forEach(id => storeDelete(ME_PREFIX + id));
+        // Wipe the debug rank override too.
+        if (typeof setForcedRank === 'function') setForcedRank(null);
+        // Active exam state
+        _examAnswers = null;
+        _examResult = null;
+        _stView = 'checklist';
+        // Re-render everything that depends on the rank
+        try { renderSkilltree(); } catch (e) {}
+        try { if (typeof renderRankWidget === 'function') renderRankWidget(); } catch (e) {}
+        try { if (typeof applyRankAvatarFrame === 'function') applyRankAvatarFrame(); } catch (e) {}
+        _flashAdminBtn(rankBtn, '✓ Reset');
+      });
+    }
+
+    const completeBtn = document.getElementById('adminCompleteAllBtn');
+    if (completeBtn && !completeBtn.dataset.wired) {
+      completeBtn.dataset.wired = '1';
+      completeBtn.addEventListener('click', () => {
+        if (!confirm('¿Marcar TODAS las tareas de TODOS los módulos como completadas? Solo para testing del flujo de bosses/rangos.')) return;
+        const state = getSkilltreeState() || {};
+        let count = 0;
+        for (const mod of SKILLTREE_MODULES) {
+          if (!mod.chapters) continue;
+          for (let chIdx = 0; chIdx < mod.chapters.length; chIdx++) {
+            const ch = mod.chapters[chIdx];
+            for (let sgIdx = 0; sgIdx < ch.subgroups.length; sgIdx++) {
+              const sg = ch.subgroups[sgIdx];
+              for (let tIdx = 0; tIdx < sg.tasks.length; tIdx++) {
+                state[stTaskId(mod.id, chIdx, sgIdx, tIdx)] = true;
+                count++;
+              }
+            }
+          }
+        }
+        storeSet(ST_KEY, state);
+        try { renderSkilltree(); } catch (e) {}
+        _flashAdminBtn(completeBtn, '✓ ' + count);
       });
     }
   }
