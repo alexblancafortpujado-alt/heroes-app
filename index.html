@@ -15178,14 +15178,19 @@
     if (!exam) return;
     const status = moduleExamCanAttempt(moduleId);
     if (!status.ok) return;
+    // numToAsk = corrects required to kill the boss (e.g. 20).
+    // We sample numToAsk + maxWrong so that every wrong answer can be
+    // "replaced" by another question from the queue. Net: you must
+    // truly answer 20 correctly to win, with up to 3 wrongs allowed.
     const numToAsk = exam.numToAsk || exam.questions.length;
+    const sampleCount = Math.min(exam.questions.length, numToAsk + (exam.maxWrong || 0));
     _examAnswers = {
       moduleId,
       qIdx: 0,
       answers: [],
       wrongs: 0,
       locked: false,
-      questions: _sampleQuestions(exam.questions, numToAsk)
+      questions: _sampleQuestions(exam.questions, sampleCount)
     };
     _stView = 'exam';
     renderSkilltree();
@@ -15207,12 +15212,11 @@
   }
 
   function _correctsNeeded(data) {
-    // To kill the boss you need to answer every question you're not
-    // allowed to miss — i.e. total - maxWrong. With 20q + 3 wrongs that's
-    // 17 corrects = win, matching the original spec ("max 3 fallos").
+    // Win threshold = numToAsk (e.g. 20). The sampled pool is bigger
+    // (numToAsk + maxWrong) so each wrong gets replaced by a fresh
+    // question from the queue.
     const exam = MODULE_EXAMS[data.moduleId];
-    const total = (data.questions && data.questions.length) || exam.questions.length;
-    return Math.max(1, total - exam.maxWrong);
+    return exam.numToAsk || exam.questions.length;
   }
   function _bossHpPctFor(data) {
     if (!data) return 100;
@@ -15394,8 +15398,14 @@
     }
     const q = pool[data.qIdx];
 
-    data.refs.qCounter.textContent = 'Pregunta ' + (data.qIdx + 1) + ' / ' + total;
-    data.refs.qProgressFill.style.width = ((data.qIdx / total) * 100) + '%';
+    // Show progress against the win target (corrects needed) instead of
+    // the sampled pool — the pool can be larger (numToAsk + maxWrong)
+    // but the user is racing to land numToAsk correct hits.
+    const needed = _correctsNeeded(data);
+    const corrects = _examCorrectsSoFar(data);
+    data.refs.qCounter.textContent = 'Aciertos: ' + corrects + ' / ' + needed +
+      (data.wrongs > 0 ? '  ·  ' + data.wrongs + ' fallo' + (data.wrongs === 1 ? '' : 's') : '');
+    data.refs.qProgressFill.style.width = ((corrects / needed) * 100) + '%';
     data.refs.qText.textContent = q.q;
     data.refs.comboNum.textContent = data.combo || 0;
     data.refs.playerCombo.classList.toggle('is-streak', (data.combo || 0) >= 3);
@@ -15623,6 +15633,8 @@
       moduleId: data.moduleId,
       passed: passed,
       wrongs: data.wrongs,
+      corrects: _examCorrectsSoFar(data),
+      target: _correctsNeeded(data),
       total: total
     };
     _examAnswers = null;
@@ -15646,7 +15658,7 @@
       box.innerHTML =
         '<div class="exam-result-eyebrow">✦ Boss Defeated ✦</div>' +
         '<div class="exam-result-title">¡Has cruzado el portal!</div>' +
-        '<div class="exam-result-sub">Fallos: ' + r.wrongs + ' / ' + exam.maxWrong + ' · Aciertos: ' + (r.total - r.wrongs) + ' / ' + r.total + '<br>Modo Creativo desbloqueado. Sigue construyendo.</div>' +
+        '<div class="exam-result-sub">Fallos: ' + r.wrongs + ' / ' + exam.maxWrong + ' · Aciertos: ' + (r.corrects != null ? r.corrects : (r.target - r.wrongs)) + ' / ' + (r.target || r.total) + '<br>Modo Creativo desbloqueado. Sigue construyendo.</div>' +
         '<div class="exam-result-actions">' +
           '<button type="button" class="exam-result-btn is-gold" data-action="back">Volver al checklist</button>' +
         '</div>';
