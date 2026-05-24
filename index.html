@@ -5178,6 +5178,27 @@
     color: #2a1c08;
     box-shadow: 0 10px 28px rgba(242,192,99,0.35);
   }
+  .exam-result-btn.is-claim {
+    background: linear-gradient(180deg, #4f88ff, #1f4fb8);
+    border-color: rgba(120,170,255,0.65);
+    color: #fff;
+    box-shadow: 0 10px 28px rgba(60,120,240,0.45);
+    animation: exam-claim-pulse 1.8s ease-in-out infinite;
+  }
+  .exam-result-btn.is-claim:hover {
+    background: linear-gradient(180deg, #5f96ff, #2a5fcf);
+    filter: brightness(1.05);
+  }
+  @keyframes exam-claim-pulse {
+    0%, 100% { box-shadow: 0 10px 28px rgba(60,120,240,0.45); }
+    50%      { box-shadow: 0 14px 38px rgba(120,170,255,0.80), 0 0 24px rgba(120,170,255,0.55); }
+  }
+  .exam-result-claim-note {
+    margin-top: 12px;
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.65);
+  }
 
   .st-chapter {
     background: rgba(255,255,255,0.04);
@@ -16774,10 +16795,23 @@
     renderSkilltree();
   }
 
+  // Google Form URLs — once a user kills a boss they fill out the form,
+  // which Skool admin watches to unlock the corresponding course there.
+  const MODULE_FORM_URLS = {
+    'modo-creativo':      'https://forms.gle/CzadeLEZJDiGyFfe6',
+    'salud-mental':       'https://forms.gle/eWzh78PDQUxQDUJr9',
+    'ultra-productividad':'https://forms.gle/xrD7v2F8SwVqJZrZ9',
+    'hybrid-athlete':     'https://forms.gle/ktge9UPuNxY93SVeA',
+    'social-natural':     'https://forms.gle/Dv7siSeHbmJdZ3Rj6',
+    'optimiza':           'https://forms.gle/1e9TbARYPbVSK4B28'
+  };
+
   function _renderExamResult(content) {
     const r = _examResult;
     if (!r) { _stView = 'checklist'; return renderSkilltree(); }
     const exam = MODULE_EXAMS[r.moduleId];
+    const module = SKILLTREE_MODULES.find(m => m.id === r.moduleId);
+    const moduleName = (module && module.name) || 'el curso';
     content.innerHTML = '';
 
     const stage = document.createElement('div');
@@ -16787,13 +16821,22 @@
     box.className = 'exam-result' + (r.passed ? '' : ' is-fail');
 
     if (r.passed) {
+      const formUrl = MODULE_FORM_URLS[r.moduleId];
+      const claimBlock = formUrl
+        ? '<button type="button" class="exam-result-btn is-claim" data-action="claim">🎁 Reclamar curso en Skool</button>'
+        : '';
+      const claimNote = formUrl
+        ? '<div class="exam-result-claim-note">Rellena el formulario y desbloquearemos el curso en Skool</div>'
+        : '';
       box.innerHTML =
         '<div class="exam-result-eyebrow">✦ Boss Defeated ✦</div>' +
         '<div class="exam-result-title">¡Has cruzado el portal!</div>' +
-        '<div class="exam-result-sub">Fallos: ' + r.wrongs + ' / ' + exam.maxWrong + ' · Aciertos: ' + (r.corrects != null ? r.corrects : (r.target - r.wrongs)) + ' / ' + (r.target || r.total) + '<br>Modo Creativo desbloqueado. Sigue construyendo.</div>' +
+        '<div class="exam-result-sub">Fallos: ' + r.wrongs + ' / ' + exam.maxWrong + ' · Aciertos: ' + (r.corrects != null ? r.corrects : (r.target - r.wrongs)) + ' / ' + (r.target || r.total) + '<br>' + _esc(moduleName) + ' desbloqueado. Sigue construyendo.</div>' +
         '<div class="exam-result-actions">' +
+          claimBlock +
           '<button type="button" class="exam-result-btn is-gold" data-action="back">Volver al checklist</button>' +
-        '</div>';
+        '</div>' +
+        claimNote;
     } else {
       const status = moduleExamCanAttempt(r.moduleId);
       const cdLabel = status.status === 'cooldown' ? _formatExamCooldown(status.msLeft) : '00:00';
@@ -16827,6 +16870,9 @@
         _examResult = null;
         _stView = 'checklist';
         renderSkilltree();
+      } else if (t.dataset.action === 'claim') {
+        const url = MODULE_FORM_URLS[r.moduleId];
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
       }
     });
 
