@@ -3570,6 +3570,17 @@
       drop-shadow(0 6px 18px rgba(0,0,0,0.7))
       drop-shadow(0 0 22px color-mix(in srgb, var(--rank-glow) 80%, transparent));
   }
+  /* Unranked placeholder (no emblem image yet) */
+  .rank-widget-emblem-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 78px;
+    color: rgba(255,255,255,0.55);
+    text-shadow: 0 6px 18px rgba(0,0,0,0.7);
+    filter: none;
+    background: radial-gradient(circle at 50% 45%, rgba(255,255,255,0.06), rgba(0,0,0,0));
+  }
   /* Sparkles around the emblem */
   .rank-widget-spark-dot {
     position: absolute;
@@ -3699,6 +3710,7 @@
   }
 
   /* Per-rank palette */
+  .rank-widget[data-rank="unranked"]   { --rank-glow: rgba(150,150,160,0.22); --rank-1: #cccccc; --rank-2: #8a8a90; --rank-3: #4a4a52; --rank-deep: #14141a; }
   .rank-widget[data-rank="base"]       { --rank-glow: rgba(180,180,180,0.40); --rank-1: #f0f0f0; --rank-2: #b8b8b8; --rank-3: #6e6e6e; --rank-deep: #1a1a1a; }
   .rank-widget[data-rank="esmeralda"]  { --rank-glow: rgba(80,235,160,0.62);  --rank-1: #d1ffe6; --rank-2: #4ade80; --rank-3: #166534; --rank-deep: #062318; }
   .rank-widget[data-rank="azurita"]    { --rank-glow: rgba(96,165,250,0.62);  --rank-1: #dbeafe; --rank-2: #60a5fa; --rank-3: #1e40af; --rank-deep: #061d3a; }
@@ -3865,6 +3877,13 @@
     display: flex; align-items: center; justify-content: center;
     box-shadow: inset 0 0 24px rgba(0,0,0,0.7), 0 0 22px color-mix(in srgb, var(--tier-glow) 60%, transparent);
   }
+  .rank-tree-tier-emblem-placeholder {
+    width: 76px; height: 76px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    color: rgba(255,255,255,0.5);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  }
   .rank-tree-tier-emblem img {
     width: 76px; height: 76px;
     object-fit: contain;
@@ -3908,6 +3927,7 @@
   }
 
   /* Per-tier glows in the tree */
+  .rank-tree-tier[data-rank="unranked"]   { --tier-glow: rgba(150,150,160,0.22); }
   .rank-tree-tier[data-rank="base"]       { --tier-glow: rgba(180,180,180,0.40); }
   .rank-tree-tier[data-rank="esmeralda"]  { --tier-glow: rgba(80,235,160,0.55); }
   .rank-tree-tier[data-rank="azurita"]    { --tier-glow: rgba(96,165,250,0.55); }
@@ -7558,6 +7578,7 @@
     height: 36px !important;
   }
   /* Per-rank glow colors (match the rank-widget palette) */
+  .rank-avatar-frame[data-rank="unranked"]   { --rank-glow: rgba(150,150,160,0.06); }
   .rank-avatar-frame[data-rank="base"]       { --rank-glow: rgba(180,180,180,0.15); }
   .rank-avatar-frame[data-rank="esmeralda"]  { --rank-glow: rgba(80,235,160,0.22); }
   .rank-avatar-frame[data-rank="azurita"]    { --rank-glow: rgba(96,165,250,0.22); }
@@ -11566,6 +11587,7 @@
   // Rank progression: defeat bosses → unlock the next rank.
   // Computed on the fly from MODULE_EXAMS state.
   const RANK_DEFS = [
+    { id: 'unranked',   name: 'Unranked',        img: null,                   subtitle: 'Completa la Coronación para empezar el juego' },
     { id: 'base',       name: 'Aspirante',       img: 'rango-base.png',       subtitle: 'Tu camino empieza aquí' },
     { id: 'esmeralda',  name: 'Rango Esmeralda', img: 'rango-esmeralda.png',  subtitle: 'Modo Creativo desbloqueado · elige tu camino' },
     { id: 'azurita',    name: 'Rango Azurita',   img: 'rango-azurita.png',    subtitle: 'Has matado tu primer boss del camino' },
@@ -11603,6 +11625,8 @@
     if (RANK_TIER_3_IDS.some(_bossDefeated))          return 'amatista';
     if (RANK_TIER_2_IDS.some(_bossDefeated))          return 'azurita';
     if (_bossDefeated('modo-creativo'))               return 'esmeralda';
+    // No bosses defeated yet — must complete Coronación to earn Aspirante.
+    if (!isModuleCompleted('coronacion'))             return 'unranked';
     return 'base';
   }
 
@@ -15494,6 +15518,18 @@
     const idx = order.indexOf(rankId);
     if (idx < 0 || idx >= RANK_DEFS.length - 1) return null;
     const nextDef = RANK_DEFS[idx + 1];
+    if (rankId === 'unranked') {
+      const m = SKILLTREE_MODULES.find(x => x.id === 'coronacion');
+      let total = 0, done = 0;
+      if (m) {
+        const state = (typeof getSkilltreeState === 'function') ? getSkilltreeState() : {};
+        m.chapters.forEach((ch, chIdx) => {
+          const s = computeChapterStats(m, chIdx, state);
+          total += s.total; done += s.done;
+        });
+      }
+      return { nextDef, current: done, target: total || 4, label: 'Completa la Coronación · 4 tareas' };
+    }
     if (rankId === 'base') {
       return { nextDef, current: _bossDefeated('modo-creativo') ? 1 : 0, target: 1, label: 'Mata al boss de Modo Creativo' };
     }
@@ -15516,6 +15552,7 @@
   }
 
   const RANK_BORDER_FILES = {
+    unranked:   null,
     base:       'rango-base-border.png',
     esmeralda:  'rango-esmeralda-border.png',
     azurita:    'rango-azurita-border.png',
@@ -15530,9 +15567,18 @@
     wrap.dataset.rank = rankId;
     const img = wrap.querySelector('.rank-avatar-frame-img');
     if (img) {
-      const target = RANK_BORDER_FILES[rankId] || RANK_BORDER_FILES.base;
-      if (!img.getAttribute('src') || !img.getAttribute('src').endsWith(target)) {
-        img.src = target;
+      const target = RANK_BORDER_FILES.hasOwnProperty(rankId)
+        ? RANK_BORDER_FILES[rankId]
+        : RANK_BORDER_FILES.base;
+      if (target) {
+        if (!img.getAttribute('src') || !img.getAttribute('src').endsWith(target)) {
+          img.src = target;
+        }
+        img.style.display = '';
+      } else {
+        // Unranked: no border — show bare avatar.
+        img.removeAttribute('src');
+        img.style.display = 'none';
       }
       const def = RANK_DEFS.find(r => r.id === rankId);
       wrap.title = def ? ('Tu rango: ' + def.name) : 'Tu rango';
@@ -15590,6 +15636,9 @@
         '</div>';
     }
 
+    const emblemHtml = def.img
+      ? '<img class="rank-widget-emblem" src="' + def.img + '" alt="" draggable="false" />'
+      : '<div class="rank-widget-emblem rank-widget-emblem-placeholder" aria-hidden="true">🔒</div>';
     wrap.innerHTML =
       '<div class="rank-widget-eyebrow">' +
         '<span class="rank-spark">✦</span>Tu rango<span class="rank-spark">✦</span>' +
@@ -15597,7 +15646,7 @@
       '<div class="rank-widget-emblem-wrap">' +
         '<div class="rank-widget-aura"></div>' +
         '<div class="rank-widget-disc"></div>' +
-        '<img class="rank-widget-emblem" src="' + def.img + '" alt="" draggable="false" />' +
+        emblemHtml +
         sparkles.join('') +
       '</div>' +
       '<div class="rank-widget-name"></div>' +
@@ -15638,6 +15687,7 @@
   // the next rank. `kind`: 'single' (must beat that one), 'choice'
   // (any one defeats unlocks), 'all' (need all defeated).
   const RANK_TREE_TIERS = [
+    { rank: 'unranked',   bridge: { kind: 'single', moduleIds: ['coronacion'],      label: 'Completa la Coronación · 4 tareas' } },
     { rank: 'base',       bridge: { kind: 'single', moduleIds: ['modo-creativo'],   label: 'Mata al boss de Modo Creativo' } },
     { rank: 'esmeralda',  bridge: { kind: 'choice', moduleIds: null /* tier 2 */,   label: 'Mata cualquier curso del Camino Esmeralda' } },
     { rank: 'azurita',    bridge: { kind: 'choice', moduleIds: null /* tier 3 */,   label: 'Mata cualquier curso del Camino Azurita' } },
@@ -15710,9 +15760,12 @@
       tier.dataset.rank = t.rank;
 
       const badgeText = isCurrent ? 'Tu rango' : (achieved ? '✦ Alcanzado' : 'Bloqueado');
+      const tierEmblemHtml = def.img
+        ? '<img src="' + def.img + '" alt="" draggable="false" />'
+        : '<div class="rank-tree-tier-emblem-placeholder" aria-hidden="true">🔒</div>';
       tier.innerHTML =
         '<div class="rank-tree-tier-emblem">' +
-          '<img src="' + def.img + '" alt="" draggable="false" />' +
+          tierEmblemHtml +
         '</div>' +
         '<div class="rank-tree-tier-info">' +
           '<div class="rank-tree-tier-name"></div>' +
@@ -15762,21 +15815,21 @@
       const m = SKILLTREE_MODULES.find(x => x.id === mid);
       if (!m) return;
       const unlocked = isModuleUnlocked(mid);
-      const defeated = _bossDefeated(mid);
+      const completed = isModuleCompleted(mid);
       const chip = document.createElement('button');
       chip.type = 'button';
       let cls = 'rank-tree-course';
-      if (defeated) cls += ' is-defeated';
-      if (!unlocked && !defeated) cls += ' is-locked';
+      if (completed) cls += ' is-defeated';
+      if (!unlocked && !completed) cls += ' is-locked';
       chip.className = cls;
       const icon = unlocked ? (m.icon || '·') : '🔒';
       chip.innerHTML =
         '<span class="rank-tree-course-icon">' + icon + '</span>' +
         '<span class="rank-tree-course-name"></span>';
       chip.querySelector('.rank-tree-course-name').textContent = m.name;
-      if (unlocked || defeated) {
-        chip.title = defeated
-          ? m.name + ' · jefe derrotado'
+      if (unlocked || completed) {
+        chip.title = completed
+          ? (m.id === 'coronacion' ? m.name + ' · completada' : m.name + ' · jefe derrotado')
           : 'Ir a ' + m.name;
         chip.addEventListener('click', () => {
           stCurrentModuleId = mid;
