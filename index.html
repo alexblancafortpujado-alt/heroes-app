@@ -7095,6 +7095,78 @@
     color: var(--text-tertiary);
   }
 
+  /* Pre-start disclaimer — 3 mandatory checks before "Empezar" unlocks */
+  .self-assess-disclaimer {
+    margin-top: 22px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(170,120,255,0.06);
+    border: 1px solid rgba(170,120,255,0.22);
+  }
+  .self-assess-disclaimer-head {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #c9a8ff;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .self-assess-disclaimer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .self-assess-disclaimer-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    user-select: none;
+  }
+  .self-assess-disclaimer-item:hover {
+    background: rgba(170,120,255,0.08);
+    border-color: rgba(170,120,255,0.30);
+  }
+  .self-assess-disclaimer-item.is-checked {
+    background: rgba(170,120,255,0.12);
+    border-color: rgba(170,120,255,0.55);
+  }
+  .self-assess-disclaimer-box {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.30);
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 1px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .self-assess-disclaimer-item.is-checked .self-assess-disclaimer-box {
+    background: linear-gradient(180deg, #b89be9, #6b4ea8);
+    border-color: #c9a8ff;
+    box-shadow: 0 0 12px rgba(170,120,255,0.55);
+  }
+  .self-assess-disclaimer-text {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+  .self-assess-disclaimer-item.is-checked .self-assess-disclaimer-text { color: #fff; }
+  .self-assess-disclaimer-text strong { color: #fff; font-weight: 700; }
+
   /* Results screen */
   .self-assess-result-date {
     text-align: center;
@@ -18428,10 +18500,49 @@
         '<br>Recomendado: rehacerlo cada 3 meses para ver tu progreso.' +
       '</div>' +
       lastBlock +
+      '<div class="self-assess-disclaimer">' +
+        '<div class="self-assess-disclaimer-head">Antes de empezar · acepta los 3 puntos</div>' +
+        '<div class="self-assess-disclaimer-list">' +
+          '<label class="self-assess-disclaimer-item" data-check="serious">' +
+            '<span class="self-assess-disclaimer-box" aria-hidden="true"></span>' +
+            '<span class="self-assess-disclaimer-text">' +
+              'Me lo voy a tomar <strong>en serio</strong>. No es un test rápido — es la radiografía de mi vida ahora mismo.' +
+            '</span>' +
+          '</label>' +
+          '<label class="self-assess-disclaimer-item" data-check="lockout">' +
+            '<span class="self-assess-disclaimer-box" aria-hidden="true"></span>' +
+            '<span class="self-assess-disclaimer-text">' +
+              'Entiendo que, una vez lo complete, <strong>no podré volver a hacerlo durante 30 días</strong>.' +
+            '</span>' +
+          '</label>' +
+          '<label class="self-assess-disclaimer-item" data-check="honest">' +
+            '<span class="self-assess-disclaimer-box" aria-hidden="true"></span>' +
+            '<span class="self-assess-disclaimer-text">' +
+              'No voy a mentir. Voy a ser <strong>totalmente honesto</strong> y voy a dejar el ego de lado.' +
+            '</span>' +
+          '</label>' +
+        '</div>' +
+      '</div>' +
       '<div style="text-align:center;margin-top:22px;">' +
-        '<button type="button" class="self-assess-submit-btn" id="selfAssessStartBtn">Empezar</button>' +
+        '<button type="button" class="self-assess-submit-btn" id="selfAssessStartBtn" disabled>Empezar</button>' +
       '</div>';
-    document.getElementById('selfAssessStartBtn').addEventListener('click', _renderSelfAssessQuestions);
+
+    const startBtn = document.getElementById('selfAssessStartBtn');
+    const items = body.querySelectorAll('.self-assess-disclaimer-item');
+    const checked = new Set();
+    items.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const key = item.dataset.check;
+        if (checked.has(key)) { checked.delete(key); item.classList.remove('is-checked'); }
+        else                  { checked.add(key);    item.classList.add('is-checked'); }
+        startBtn.disabled = checked.size < items.length;
+      });
+    });
+    startBtn.addEventListener('click', () => {
+      if (startBtn.disabled) return;
+      _renderSelfAssessQuestions();
+    });
   }
 
   function _renderSelfAssessQuestions() {
