@@ -19838,7 +19838,17 @@
       document.body.classList.remove('auth-pending');
       const ubEl = document.getElementById('clerkUserButton');
       if (ubEl && !_userButtonMounted) {
-        Clerk.mountUserButton(ubEl, { appearance: CLERK_APPEARANCE });
+        // Force every UserButton action ("Add account", "Sign out",
+        // session switch) to stay on this app — without these props
+        // Clerk falls back to its hosted accounts.dev welcome page.
+        Clerk.mountUserButton(ubEl, {
+          appearance: CLERK_APPEARANCE,
+          signInUrl: window.location.origin + '/',
+          userProfileUrl: window.location.origin + '/',
+          afterSignOutUrl: window.location.origin + '/',
+          afterMultiSessionSingleSignOutUrl: window.location.origin + '/',
+          afterSwitchSessionUrl: window.location.origin + '/'
+        });
         _userButtonMounted = true;
       }
       try { applyRankAvatarFrame(); } catch (e) { /* non-fatal */ }
@@ -19889,7 +19899,19 @@
   (async () => {
     try {
       const Clerk = await waitForClerk();
-      await Clerk.load();
+      // Global redirect defaults — apply to every Clerk-driven flow,
+      // including the hosted account portal pages that fire on "Add
+      // account" / "Switch session" from the UserButton.
+      await Clerk.load({
+        signInUrl: window.location.origin + '/',
+        signUpUrl: window.location.origin + '/',
+        signInForceRedirectUrl: window.location.origin + '/',
+        signUpForceRedirectUrl: window.location.origin + '/',
+        signInFallbackRedirectUrl: window.location.origin + '/',
+        signUpFallbackRedirectUrl: window.location.origin + '/',
+        afterSignOutUrl: window.location.origin + '/',
+        afterMultiSessionSingleSignOutUrl: window.location.origin + '/'
+      });
       reflectAuthState();
       Clerk.addListener(reflectAuthState);
     } catch (e) {
