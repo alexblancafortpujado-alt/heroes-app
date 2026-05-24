@@ -6653,6 +6653,385 @@
     position: relative;
     z-index: 1;
   }
+  /* ─── Self-assessment ─────────────────────────────────────────── */
+  .self-assess-cta-wrap { margin-top: 28px; }
+  .self-assess-cta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 18px 22px;
+    border-radius: 14px;
+    background:
+      radial-gradient(ellipse at 0% 50%, rgba(140,90,230,0.18), transparent 60%),
+      linear-gradient(180deg, rgba(40,30,70,0.55), rgba(20,15,40,0.7));
+    border: 1px solid rgba(170,120,255,0.35);
+    color: #f0e9ff;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    box-shadow: 0 0 28px rgba(80,60,160,0.18), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .self-assess-cta:hover {
+    transform: translateY(-1px);
+    border-color: rgba(170,120,255,0.55);
+    box-shadow: 0 0 40px rgba(110,90,220,0.32), inset 0 1px 0 rgba(255,255,255,0.07);
+  }
+  .self-assess-cta-icon {
+    font-size: 24px;
+    color: #c9a8ff;
+    text-shadow: 0 0 12px rgba(170,120,255,0.6);
+  }
+  .self-assess-cta-text { flex: 1; min-width: 0; }
+  .self-assess-cta-title {
+    display: block;
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.005em;
+  }
+  .self-assess-cta-sub {
+    display: block;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 4px;
+  }
+  .self-assess-cta-arrow {
+    font-size: 22px;
+    color: rgba(170,120,255,0.7);
+  }
+
+  .self-assess-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(40,30,80,0.65), rgba(0,0,0,0.92) 70%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9993;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .self-assess-overlay.is-visible { opacity: 1; }
+  .self-assess-modal {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    margin: auto;
+    padding: 36px 28px 32px;
+    border-radius: 22px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(170,120,255,0.18), transparent 60%),
+      linear-gradient(180deg, #12101c 0%, #08060d 100%);
+    border: 1px solid rgba(170,120,255,0.35);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 80px rgba(110,90,220,0.20);
+    transform: translateY(16px) scale(0.985);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .self-assess-overlay.is-visible .self-assess-modal { transform: translateY(0) scale(1); }
+  .self-assess-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    font-family: inherit;
+    z-index: 2;
+  }
+  .self-assess-close:hover { background: rgba(255,255,255,0.14); color: #fff; }
+  .self-assess-progress-wrap {
+    position: sticky;
+    top: 0;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .self-assess-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #b89be9, #e9d8ff);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .self-assess-eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    color: #c9a8ff;
+    text-transform: uppercase;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 8px;
+    text-shadow: 0 0 12px rgba(170,120,255,0.4);
+  }
+  .self-assess-title {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.015em;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .self-assess-intro {
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .self-assess-last {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(170,120,255,0.08);
+    border: 1px solid rgba(170,120,255,0.22);
+    font-size: 12.5px;
+    color: #d6c0ff;
+    text-align: center;
+  }
+  .self-assess-last.is-overdue {
+    background: rgba(242,192,99,0.10);
+    border-color: rgba(242,192,99,0.35);
+    color: #ffe4b0;
+  }
+
+  .self-assess-area {
+    margin: 22px 0;
+    padding: 18px 18px 10px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .self-assess-area-title {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #c9a8ff;
+    margin-bottom: 14px;
+    text-shadow: 0 0 12px rgba(170,120,255,0.25);
+  }
+  .self-assess-q {
+    margin-bottom: 16px;
+  }
+  .self-assess-q:last-child { margin-bottom: 0; }
+  .self-assess-q-text {
+    font-size: 13.5px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.45;
+  }
+  .self-assess-scale {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .self-assess-scale-btn {
+    padding: 10px 6px 8px;
+    border-radius: 9px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+  .self-assess-scale-btn:hover { background: rgba(170,120,255,0.10); border-color: rgba(170,120,255,0.32); color: #fff; }
+  .self-assess-scale-btn.is-picked {
+    background: rgba(170,120,255,0.22);
+    border-color: rgba(170,120,255,0.65);
+    color: #fff;
+    box-shadow: 0 0 14px rgba(170,120,255,0.32);
+  }
+  .self-assess-scale-num {
+    display: block;
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .self-assess-scale-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+  .self-assess-scale-btn.is-picked .self-assess-scale-label { color: #c9a8ff; }
+
+  .self-assess-submit {
+    position: sticky;
+    bottom: -32px;
+    margin: 24px -28px -32px;
+    padding: 16px 28px 22px;
+    background: linear-gradient(180deg, rgba(8,6,13,0), rgba(8,6,13,0.95) 35%);
+    text-align: center;
+  }
+  .self-assess-submit-btn {
+    padding: 14px 32px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #b89be9, #6b4ea8);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    border: 1px solid rgba(180,140,240,0.6);
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 10px 28px rgba(140,90,230,0.4);
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+  .self-assess-submit-btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+  .self-assess-submit-btn:disabled {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.40);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .self-assess-submit-note {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: var(--text-tertiary);
+  }
+
+  /* Results screen */
+  .self-assess-result-total {
+    text-align: center;
+    margin: 24px 0 8px;
+  }
+  .self-assess-result-total-num {
+    font-size: 52px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 0 22px rgba(170,120,255,0.45);
+  }
+  .self-assess-result-total-max {
+    color: rgba(255,255,255,0.45);
+    font-size: 24px;
+    margin-left: 4px;
+  }
+  .self-assess-result-total-label {
+    margin-top: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    color: #c9a8ff;
+    text-transform: uppercase;
+  }
+
+  .self-assess-result-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 10px;
+  }
+  .self-assess-result-area-info { flex: 1; min-width: 0; }
+  .self-assess-result-area-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .self-assess-result-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .self-assess-result-bar-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+    border-radius: 4px;
+  }
+  .self-assess-result-area-num {
+    flex: 0 0 auto;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-weight: 800;
+    font-size: 16px;
+    color: #fff;
+    min-width: 56px;
+    text-align: right;
+  }
+  .self-assess-result-area-level {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+  .self-assess-level-critica   { background: rgba(255,80,100,0.16); border: 1px solid rgba(255,80,100,0.45); color: #ff9eb0; }
+  .self-assess-level-debil     { background: rgba(255,160,100,0.16); border: 1px solid rgba(255,160,100,0.45); color: #ffc89e; }
+  .self-assess-level-desarrollo{ background: rgba(107,168,227,0.16); border: 1px solid rgba(107,168,227,0.45); color: #c7e0fb; }
+  .self-assess-level-solida    { background: rgba(107,227,164,0.16); border: 1px solid rgba(107,227,164,0.45); color: #b5f3cb; }
+  .self-assess-bar-critica    { background: linear-gradient(90deg, #cc1f3a, #ff6e7f); }
+  .self-assess-bar-debil      { background: linear-gradient(90deg, #c2671c, #ff9f4a); }
+  .self-assess-bar-desarrollo { background: linear-gradient(90deg, #2563eb, #6BA8E3); }
+  .self-assess-bar-solida     { background: linear-gradient(90deg, #15803d, #6BE3A4); }
+
+  .self-assess-plan {
+    margin-top: 22px;
+    padding: 18px 18px 14px;
+    border-radius: 14px;
+    background: rgba(170,120,255,0.06);
+    border: 1px solid rgba(170,120,255,0.25);
+  }
+  .self-assess-plan-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #d6c0ff;
+    margin-bottom: 10px;
+  }
+  .self-assess-plan-field {
+    margin-bottom: 10px;
+  }
+  .self-assess-plan-field label {
+    display: block;
+    font-size: 11.5px;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+  .self-assess-plan-field input,
+  .self-assess-plan-field textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(170,120,255,0.22);
+    border-radius: 9px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+  .self-assess-plan-field textarea { min-height: 60px; }
+  .self-assess-plan-field input:focus,
+  .self-assess-plan-field textarea:focus { border-color: rgba(170,120,255,0.55); }
+
   /* Fragmentos chip — next to the avatar */
   .fragments-chip {
     display: inline-flex;
@@ -7321,6 +7700,18 @@
       <div class="pv2-eyebrow">— Anti-portal</div>
       <textarea class="pv2-textarea" id="pv2AntiportalText" placeholder="Tu anti-portal…" spellcheck="true"></textarea>
     </div>
+
+    <!-- Self-assessment entry point at the bottom of the Portal tab -->
+    <div class="self-assess-cta-wrap">
+      <button type="button" class="self-assess-cta" id="selfAssessOpenBtn">
+        <span class="self-assess-cta-icon">✦</span>
+        <span class="self-assess-cta-text">
+          <span class="self-assess-cta-title">Auto-evaluación</span>
+          <span class="self-assess-cta-sub" id="selfAssessCtaSub">30 preguntas · 5-10 min · puntúa cómo estás en las 5 áreas de tu vida</span>
+        </span>
+        <span class="self-assess-cta-arrow">→</span>
+      </button>
+    </div>
   </div>
 </div><!-- /tab-panel portal -->
 
@@ -7484,6 +7875,16 @@
       </div>
 
       <div class="access-card">
+        <div class="access-card-eyebrow">✦ Auto-evaluaciones <span id="selfAssessAdminCount" class="access-pill">0</span></div>
+        <div class="access-card-sub">Cuestionarios completados por los usuarios. Click en un email para ver el desglose.</div>
+        <div class="access-add-row" style="grid-template-columns:1fr auto;">
+          <input type="text" id="selfAssessFilter" placeholder="filtrar por email…" autocomplete="off" />
+          <button type="button" class="access-add-btn" id="selfAssessExportBtn">⬇ Exportar CSV</button>
+        </div>
+        <div class="access-list" id="selfAssessAdminList"></div>
+      </div>
+
+      <div class="access-card">
         <div class="access-card-eyebrow">🛠 Debug · forzar rango</div>
         <div class="access-card-sub">Solo para pruebas visuales. Override del rango calculado por bosses.</div>
         <div class="rank-debug-row" id="rankDebugRow"></div>
@@ -7491,6 +7892,15 @@
     </div>
   </div>
 </div><!-- /tab-panel admin -->
+
+<!-- Self-assessment modal — opened from the Portal tab -->
+<div class="self-assess-overlay" id="selfAssessOverlay" style="display:none;">
+  <div class="self-assess-modal">
+    <button class="self-assess-close" id="selfAssessClose" type="button" aria-label="Cerrar">×</button>
+    <div class="self-assess-progress-wrap"><div class="self-assess-progress-fill" id="selfAssessProgressFill"></div></div>
+    <div class="self-assess-body" id="selfAssessBody"></div>
+  </div>
+</div>
 
 <!-- Fragmentos modal — user-facing balance + progress + redeem -->
 <div class="fragments-overlay" id="fragmentsOverlay" style="display:none;">
@@ -7785,6 +8195,103 @@
       .from('user_fragments').select('balance').eq('email', e).maybeSingle();
     if (error) { console.error('[fragments] fetch balance', error); return 0; }
     return (data && data.balance) || 0;
+  }
+
+  // ─── Self-assessment ─────────────────────────────────────────────
+  const SELF_ASSESS_AREAS = [
+    { id: 'mentalidad', title: '01 · Mentalidad y control', questions: [
+      'Soy consciente de mis creencias limitantes y trabajo activamente en cambiarlas.',
+      'Soy capaz de mantener la calma y gestionar mis emociones bajo presión.',
+      'Mi diálogo interno es mayoritariamente positivo y constructivo.',
+      'Actúo a pesar del miedo o la incertidumbre, sin dejar que me paralice.',
+      'Tengo claridad sobre lo que quiero conseguir en los próximos 3-12 meses.',
+      'Mi nivel de disciplina diaria refleja mis valores y objetivos.'
+    ]},
+    { id: 'sociales', title: '02 · Habilidades sociales y relaciones', questions: [
+      'Me resulta natural iniciar conversaciones con personas desconocidas.',
+      'Mis relaciones cercanas me suman energía y me apoyan en mi crecimiento.',
+      'Sé comunicar lo que quiero y poner límites de forma asertiva.',
+      'Tengo personas en mi vida que son referentes o me inspiran a crecer.',
+      'Mi entorno social está alineado con la persona que quiero ser.',
+      'Me siento cómodo siendo auténtico y vulnerable con personas de confianza.'
+    ]},
+    { id: 'bienestar', title: '03 · Bienestar y salud mental', questions: [
+      'Mi nivel de ansiedad o estrés me permite funcionar con claridad en el día a día.',
+      'Tengo rutinas que me ayudan a desconectar y recargar energía.',
+      'Duermo suficiente y con calidad (7-9 horas la mayor parte de la semana).',
+      'Soy capaz de disfrutar el presente sin estar en el pasado o el futuro.',
+      'Me siento en control de mi estado emocional la mayor parte del tiempo.',
+      'Dedico tiempo a actividades que me generan paz, disfrute o plenitud.'
+    ]},
+    { id: 'productividad', title: '04 · Productividad, emprendimiento y finanzas', questions: [
+      'Trabajo cada día con intención clara, sabiendo exactamente qué tengo que hacer.',
+      'Mis ingresos o resultados económicos avanzan hacia donde quiero llegar.',
+      'Soy capaz de mantener el foco durante períodos largos sin caer en la distracción.',
+      'Mi proyecto o trabajo está alineado con mi propósito o visión a largo plazo.',
+      'Tengo un sistema de gestión del tiempo y tareas que funciona para mí.',
+      'Estoy aprendiendo y desarrollando habilidades nuevas de forma activa y constante.'
+    ]},
+    { id: 'fisico', title: '05 · Físico, aspecto y gimnasio', questions: [
+      'Entreno de forma consistente (3 o más veces por semana).',
+      'Mi alimentación está alineada con mis objetivos físicos la mayor parte del tiempo.',
+      'Cuido mi imagen personal de forma consciente: ropa, higiene y presencia.',
+      'Mi cuerpo tiene la energía y vitalidad que necesito para rendir en el día a día.',
+      'Estoy satisfecho con el progreso físico que estoy haciendo.',
+      'Tengo hábitos de recuperación activos: descanso, movilidad o gestión del estrés.'
+    ]}
+  ];
+  const SELF_ASSESS_SCALE = [
+    { v: 1, label: 'Nada' },
+    { v: 2, label: 'Pocas veces' },
+    { v: 3, label: 'A veces' },
+    { v: 4, label: 'Casi siempre' },
+    { v: 5, label: 'Siempre' }
+  ];
+  const SELF_ASSESS_TOTAL_QUESTIONS = SELF_ASSESS_AREAS.length * 6; // 30
+  const SELF_ASSESS_MAX_PER_AREA = 30; // 6 questions × 5
+  const SELF_ASSESS_MAX_TOTAL = SELF_ASSESS_AREAS.length * SELF_ASSESS_MAX_PER_AREA; // 150
+  // Recommended cadence: every 90 days. Used to flag "overdue" in the modal.
+  const SELF_ASSESS_CADENCE_DAYS = 90;
+
+  function _selfAssessLevel(score) {
+    if (score <= 12) return { key: 'critica',    label: 'Área crítica',  hint: 'Empieza aquí.' };
+    if (score <= 18) return { key: 'debil',      label: 'Área débil',    hint: 'Trabajar activamente.' };
+    if (score <= 24) return { key: 'desarrollo', label: 'En desarrollo', hint: 'Buen progreso.' };
+    return                  { key: 'solida',     label: 'Área sólida',   hint: 'Mantener y optimizar.' };
+  }
+
+  async function fetchLatestSelfAssessment(email) {
+    if (!supabaseClient || !email) return null;
+    const e = String(email).trim().toLowerCase();
+    const { data, error } = await supabaseClient
+      .from('self_assessments').select('*').eq('email', e)
+      .order('completed_at', { ascending: false }).limit(1).maybeSingle();
+    if (error) { console.error('[self-assess] fetch latest', error); return null; }
+    return data || null;
+  }
+  async function fetchAllSelfAssessments() {
+    if (!supabaseClient) return [];
+    const { data, error } = await supabaseClient
+      .from('self_assessments').select('*').order('completed_at', { ascending: false });
+    if (error) { console.error('[self-assess] fetch all', error); return []; }
+    return data || [];
+  }
+  async function saveSelfAssessment(payload) {
+    if (!supabaseClient) return { ok: false, error: 'No Supabase' };
+    const email = (_userEmail() || '').toLowerCase();
+    if (!email) return { ok: false, error: 'No email' };
+    const row = {
+      email,
+      user_id: (window.Clerk && window.Clerk.user && window.Clerk.user.id) || null,
+      answers: payload.answers,
+      scores: payload.scores,
+      total: payload.total,
+      plan: payload.plan || null,
+      completed_at: new Date().toISOString()
+    };
+    const { error } = await supabaseClient.from('self_assessments').insert(row);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
   }
 
   async function fetchAllFragments() {
@@ -17495,6 +18002,336 @@
     renderFragmentsAdminPanel();
   }
 
+  // ─── Self-assessment · UI ────────────────────────────────────────
+  let _selfAssessAnswers = {}; // { 'mentalidad-0': 4, ... }
+
+  function _selfAssessAnswerKey(areaId, qIdx) { return areaId + '-' + qIdx; }
+
+  function _selfAssessTotalAnswered() {
+    return Object.keys(_selfAssessAnswers).length;
+  }
+
+  function _renderSelfAssessIntro(latest) {
+    const body = document.getElementById('selfAssessBody');
+    if (!body) return;
+    _selfAssessAnswers = {};
+    document.getElementById('selfAssessProgressFill').style.width = '0%';
+    let lastBlock = '';
+    if (latest) {
+      const days = Math.floor((Date.now() - new Date(latest.completed_at).getTime()) / 86400000);
+      const overdue = days >= SELF_ASSESS_CADENCE_DAYS;
+      const when = days === 0 ? 'hoy' : days === 1 ? 'ayer' : 'hace ' + days + ' días';
+      lastBlock =
+        '<div class="self-assess-last' + (overdue ? ' is-overdue' : '') + '">' +
+          (overdue ? '⏰ Vencido · ' : '✓ ') +
+          'Última: ' + when + ' · puntuación ' + latest.total + ' / ' + SELF_ASSESS_MAX_TOTAL +
+          (overdue ? ' · recomendado rehacerlo' : '') +
+        '</div>';
+    }
+    body.innerHTML =
+      '<div class="self-assess-eyebrow">✦ Auto-evaluación de vida</div>' +
+      '<div class="self-assess-title">¿Cómo estás en las 5 áreas?</div>' +
+      '<div class="self-assess-intro">' +
+        SELF_ASSESS_TOTAL_QUESTIONS + ' preguntas · escala 1 (Nada) a 5 (Siempre). ' +
+        'Para reflejar tu situación real, responde lo más honesto posible — no hay buenas o malas respuestas.' +
+        '<br>Recomendado: rehacerlo cada 3 meses para ver tu progreso.' +
+      '</div>' +
+      lastBlock +
+      '<div style="text-align:center;margin-top:22px;">' +
+        '<button type="button" class="self-assess-submit-btn" id="selfAssessStartBtn">Empezar</button>' +
+      '</div>';
+    document.getElementById('selfAssessStartBtn').addEventListener('click', _renderSelfAssessQuestions);
+  }
+
+  function _renderSelfAssessQuestions() {
+    const body = document.getElementById('selfAssessBody');
+    if (!body) return;
+    const html = [];
+    html.push('<div class="self-assess-eyebrow">Responde con honestidad</div>');
+    html.push('<div class="self-assess-title">Auto-evaluación de vida</div>');
+    SELF_ASSESS_AREAS.forEach(area => {
+      html.push('<div class="self-assess-area">');
+      html.push('<div class="self-assess-area-title">' + _esc(area.title) + '</div>');
+      area.questions.forEach((q, qIdx) => {
+        const key = _selfAssessAnswerKey(area.id, qIdx);
+        html.push('<div class="self-assess-q" data-key="' + key + '">');
+        html.push('<div class="self-assess-q-text">' + _esc(q) + '</div>');
+        html.push('<div class="self-assess-scale">');
+        SELF_ASSESS_SCALE.forEach(s => {
+          html.push(
+            '<button type="button" class="self-assess-scale-btn" data-key="' + key + '" data-v="' + s.v + '">' +
+              '<span class="self-assess-scale-num">' + s.v + '</span>' +
+              '<span class="self-assess-scale-label">' + _esc(s.label) + '</span>' +
+            '</button>'
+          );
+        });
+        html.push('</div></div>');
+      });
+      html.push('</div>');
+    });
+    html.push('<div class="self-assess-submit">');
+    html.push('<button type="button" class="self-assess-submit-btn" id="selfAssessFinishBtn" disabled>Calcular puntuación</button>');
+    html.push('<div class="self-assess-submit-note" id="selfAssessProgressNote">0 / ' + SELF_ASSESS_TOTAL_QUESTIONS + ' respondidas</div>');
+    html.push('</div>');
+    body.innerHTML = html.join('');
+
+    body.querySelectorAll('.self-assess-scale-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.key;
+        const v = parseInt(btn.dataset.v, 10);
+        _selfAssessAnswers[k] = v;
+        // Update visual state for this question's buttons
+        const group = document.querySelector('.self-assess-q[data-key="' + k + '"] .self-assess-scale');
+        if (group) group.querySelectorAll('.self-assess-scale-btn').forEach(b => {
+          b.classList.toggle('is-picked', parseInt(b.dataset.v, 10) === v);
+        });
+        _updateSelfAssessProgress();
+      });
+    });
+    _updateSelfAssessProgress();
+    document.getElementById('selfAssessFinishBtn').addEventListener('click', _renderSelfAssessResults);
+  }
+
+  function _updateSelfAssessProgress() {
+    const n = _selfAssessTotalAnswered();
+    const pct = Math.round((n / SELF_ASSESS_TOTAL_QUESTIONS) * 100);
+    const fill = document.getElementById('selfAssessProgressFill');
+    if (fill) fill.style.width = pct + '%';
+    const note = document.getElementById('selfAssessProgressNote');
+    if (note) note.textContent = n + ' / ' + SELF_ASSESS_TOTAL_QUESTIONS + ' respondidas';
+    const btn = document.getElementById('selfAssessFinishBtn');
+    if (btn) btn.disabled = n < SELF_ASSESS_TOTAL_QUESTIONS;
+  }
+
+  function _computeSelfAssessScores() {
+    const scores = {};
+    let total = 0;
+    SELF_ASSESS_AREAS.forEach(area => {
+      let s = 0;
+      area.questions.forEach((_, qIdx) => {
+        s += _selfAssessAnswers[_selfAssessAnswerKey(area.id, qIdx)] || 0;
+      });
+      scores[area.id] = s;
+      total += s;
+    });
+    return { scores, total };
+  }
+
+  function _renderSelfAssessResults() {
+    const body = document.getElementById('selfAssessBody');
+    if (!body) return;
+    const { scores, total } = _computeSelfAssessScores();
+    document.getElementById('selfAssessProgressFill').style.width = '100%';
+
+    const areasHtml = SELF_ASSESS_AREAS.map(area => {
+      const score = scores[area.id];
+      const level = _selfAssessLevel(score);
+      const pct = Math.round((score / SELF_ASSESS_MAX_PER_AREA) * 100);
+      return (
+        '<div class="self-assess-result-area">' +
+          '<div class="self-assess-result-area-info">' +
+            '<div class="self-assess-result-area-title">' + _esc(area.title) + '</div>' +
+            '<div class="self-assess-result-bar">' +
+              '<div class="self-assess-result-bar-fill self-assess-bar-' + level.key + '" style="width:' + pct + '%"></div>' +
+            '</div>' +
+            '<span class="self-assess-result-area-level self-assess-level-' + level.key + '">' + level.label + '</span>' +
+          '</div>' +
+          '<div class="self-assess-result-area-num">' + score + '<span style="color:rgba(255,255,255,0.4);font-size:11px;"> / 30</span></div>' +
+        '</div>'
+      );
+    }).join('');
+
+    // Sort areas by score asc to suggest the weakest as starting point.
+    const sorted = SELF_ASSESS_AREAS.map(a => ({ id: a.id, title: a.title, score: scores[a.id] }))
+      .sort((a, b) => a.score - b.score);
+    const weakest = sorted[0];
+
+    body.innerHTML =
+      '<div class="self-assess-eyebrow">Tu auto-evaluación</div>' +
+      '<div class="self-assess-result-total">' +
+        '<span class="self-assess-result-total-num">' + total + '</span>' +
+        '<span class="self-assess-result-total-max"> / ' + SELF_ASSESS_MAX_TOTAL + '</span>' +
+        '<div class="self-assess-result-total-label">Puntuación total</div>' +
+      '</div>' +
+      areasHtml +
+      '<div class="self-assess-plan">' +
+        '<div class="self-assess-plan-title">📌 Plan a 3 meses · opcional</div>' +
+        '<div class="self-assess-plan-field">' +
+          '<label>Tu área más baja</label>' +
+          '<input type="text" id="selfAssessPlanArea" value="' + _esc(weakest.title) + '" />' +
+        '</div>' +
+        '<div class="self-assess-plan-field">' +
+          '<label>El cambio concreto que vas a hacer</label>' +
+          '<textarea id="selfAssessPlanChange" placeholder="ej. Meditar 10 min al día, leer 1 libro al mes…"></textarea>' +
+        '</div>' +
+        '<div class="self-assess-plan-field">' +
+          '<label>Tu compromiso</label>' +
+          '<textarea id="selfAssessPlanCommit" placeholder="ej. Lo haré sí o sí desde mañana, sin excusas."></textarea>' +
+        '</div>' +
+      '</div>' +
+      '<div class="self-assess-submit">' +
+        '<button type="button" class="self-assess-submit-btn" id="selfAssessSaveBtn">Guardar resultado</button>' +
+        '<div class="self-assess-submit-note">Los datos quedan guardados para tu próxima evaluación en 3 meses.</div>' +
+      '</div>';
+
+    document.getElementById('selfAssessSaveBtn').addEventListener('click', async () => {
+      const saveBtn = document.getElementById('selfAssessSaveBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Guardando…';
+      const plan = {
+        area: document.getElementById('selfAssessPlanArea').value.trim() || null,
+        cambio: document.getElementById('selfAssessPlanChange').value.trim() || null,
+        compromiso: document.getElementById('selfAssessPlanCommit').value.trim() || null
+      };
+      const r = await saveSelfAssessment({
+        answers: Object.assign({}, _selfAssessAnswers),
+        scores: scores,
+        total: total,
+        plan: plan
+      });
+      if (!r.ok) {
+        alert('Error guardando: ' + (r.error || 'desconocido'));
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Guardar resultado';
+        return;
+      }
+      saveBtn.textContent = '✓ Guardado';
+      setTimeout(closeSelfAssessModal, 900);
+    });
+  }
+
+  async function openSelfAssessModal() {
+    const ov = document.getElementById('selfAssessOverlay');
+    if (!ov) return;
+    const email = _userEmail();
+    const latest = email ? await fetchLatestSelfAssessment(email) : null;
+    _renderSelfAssessIntro(latest);
+    ov.style.display = '';
+    requestAnimationFrame(() => ov.classList.add('is-visible'));
+  }
+  function closeSelfAssessModal() {
+    const ov = document.getElementById('selfAssessOverlay');
+    if (!ov) return;
+    ov.classList.remove('is-visible');
+    setTimeout(() => { ov.style.display = 'none'; }, 280);
+  }
+  function wireSelfAssessUI() {
+    const openBtn = document.getElementById('selfAssessOpenBtn');
+    if (openBtn && !openBtn.dataset.wired) {
+      openBtn.dataset.wired = '1';
+      openBtn.addEventListener('click', openSelfAssessModal);
+    }
+    const closeBtn = document.getElementById('selfAssessClose');
+    if (closeBtn && !closeBtn.dataset.wired) {
+      closeBtn.dataset.wired = '1';
+      closeBtn.addEventListener('click', closeSelfAssessModal);
+    }
+    const ov = document.getElementById('selfAssessOverlay');
+    if (ov && !ov.dataset.wired) {
+      ov.dataset.wired = '1';
+      ov.addEventListener('click', (e) => { if (e.target === ov) closeSelfAssessModal(); });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && ov.classList.contains('is-visible')) closeSelfAssessModal();
+      });
+    }
+    // Update the CTA subtitle if we have a "last done" record
+    const sub = document.getElementById('selfAssessCtaSub');
+    const email = _userEmail();
+    if (sub && email) {
+      fetchLatestSelfAssessment(email).then(latest => {
+        if (!latest) return;
+        const days = Math.floor((Date.now() - new Date(latest.completed_at).getTime()) / 86400000);
+        const when = days === 0 ? 'hoy' : days === 1 ? 'ayer' : 'hace ' + days + ' d';
+        sub.textContent = 'Última: ' + when + ' · puntuación ' + latest.total + '/' + SELF_ASSESS_MAX_TOTAL;
+      });
+    }
+  }
+
+  // ─── Self-assessment · admin panel ───────────────────────────────
+  async function renderSelfAssessAdminPanel() {
+    const listEl = document.getElementById('selfAssessAdminList');
+    const countEl = document.getElementById('selfAssessAdminCount');
+    if (!listEl) return;
+    const filterEl = document.getElementById('selfAssessFilter');
+    const filter = (filterEl && filterEl.value || '').trim().toLowerCase();
+    const all = await fetchAllSelfAssessments();
+    const filtered = filter ? all.filter(r => (r.email || '').toLowerCase().includes(filter)) : all;
+    if (countEl) countEl.textContent = String(all.length);
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div class="access-empty">' + (filter ? 'Sin resultados para "' + _esc(filter) + '"' : 'Aún no hay auto-evaluaciones.') + '</div>';
+      return;
+    }
+    listEl.innerHTML = filtered.slice(0, 100).map(r => {
+      const sc = r.scores || {};
+      const scoreLine = SELF_ASSESS_AREAS.map(a => (a.id + ' ' + (sc[a.id] || 0))).join(' · ');
+      return '<div class="access-row">' +
+        '<div class="access-row-info">' +
+          '<div class="access-row-email">' + _esc(r.email) +
+            ' <span style="color:rgba(255,255,255,0.3);font-weight:400;">·</span> ' +
+            '<span style="color:#c9a8ff;font-weight:800;">' + r.total + '/' + SELF_ASSESS_MAX_TOTAL + '</span>' +
+          '</div>' +
+          '<div class="access-row-meta">' +
+            _fragmentsRelTime(r.completed_at) + ' · ' + _esc(scoreLine) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function _selfAssessCsv(rows) {
+    const headers = ['email', 'completed_at', 'total'];
+    SELF_ASSESS_AREAS.forEach(a => headers.push('score_' + a.id));
+    SELF_ASSESS_AREAS.forEach(a => {
+      a.questions.forEach((_, qIdx) => headers.push(a.id + '_q' + (qIdx + 1)));
+    });
+    headers.push('plan_area', 'plan_cambio', 'plan_compromiso');
+    const esc = (v) => {
+      if (v == null) return '';
+      const s = String(v);
+      if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    };
+    const lines = [headers.join(',')];
+    rows.forEach(r => {
+      const sc = r.scores || {};
+      const ans = r.answers || {};
+      const plan = r.plan || {};
+      const row = [esc(r.email), esc(r.completed_at), esc(r.total)];
+      SELF_ASSESS_AREAS.forEach(a => row.push(esc(sc[a.id])));
+      SELF_ASSESS_AREAS.forEach(a => {
+        a.questions.forEach((_, qIdx) => row.push(esc(ans[a.id + '-' + qIdx])));
+      });
+      row.push(esc(plan.area), esc(plan.cambio), esc(plan.compromiso));
+      lines.push(row.join(','));
+    });
+    return lines.join('\n');
+  }
+
+  function wireSelfAssessAdminUI() {
+    const filterEl = document.getElementById('selfAssessFilter');
+    if (filterEl && !filterEl.dataset.wired) {
+      filterEl.dataset.wired = '1';
+      filterEl.addEventListener('input', () => renderSelfAssessAdminPanel());
+    }
+    const exportBtn = document.getElementById('selfAssessExportBtn');
+    if (exportBtn && !exportBtn.dataset.wired) {
+      exportBtn.dataset.wired = '1';
+      exportBtn.addEventListener('click', async () => {
+        const all = await fetchAllSelfAssessments();
+        if (!all.length) { alert('No hay auto-evaluaciones para exportar.'); return; }
+        const csv = _selfAssessCsv(all);
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'auto-evaluaciones-' + new Date().toISOString().slice(0, 10) + '.csv';
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+      });
+    }
+    renderSelfAssessAdminPanel();
+  }
+
   function renderRankDebugRow() {
     const row = document.getElementById('rankDebugRow');
     if (!row) return;
@@ -17607,6 +18444,7 @@
     renderAccessAdminPanel();
     renderAppAdminsList();
     if (typeof wireFragmentsAdminUI === 'function') wireFragmentsAdminUI();
+    if (typeof wireSelfAssessAdminUI === 'function') wireSelfAssessAdminUI();
     renderRankDebugRow();
   }
 
@@ -18429,6 +19267,9 @@
       if (typeof wireFragmentsUserUI === 'function') wireFragmentsUserUI();
       if (typeof refreshFragmentsChip === 'function') refreshFragmentsChip();
     } catch (e) { console.error('[fragments] init failed', e); }
+    // Wire self-assessment CTA in the Portal tab.
+    try { if (typeof wireSelfAssessUI === 'function') wireSelfAssessUI(); }
+    catch (e) { console.error('[self-assess] init failed', e); }
 
     renderDashName();
     runRollover();
