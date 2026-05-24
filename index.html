@@ -6909,9 +6909,19 @@
   }
 
   /* Results screen */
+  .self-assess-result-date {
+    text-align: center;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: 0.10em;
+    color: rgba(255,255,255,0.55);
+    margin-top: 4px;
+    margin-bottom: 4px;
+    text-transform: lowercase;
+  }
   .self-assess-result-total {
     text-align: center;
-    margin: 24px 0 8px;
+    margin: 14px 0 8px;
   }
   .self-assess-result-total-num {
     font-size: 52px;
@@ -8288,6 +8298,16 @@
   const SELF_ASSESS_MAX_TOTAL = SELF_ASSESS_AREAS.length * SELF_ASSESS_MAX_PER_AREA; // 150
   // Recommended cadence: every 90 days. Used to flag "overdue" in the modal.
   const SELF_ASSESS_CADENCE_DAYS = 90;
+  // Hard lockout: can't redo within this many days after completing one.
+  const SELF_ASSESS_LOCKOUT_DAYS = 30;
+
+  function _fmtFullDate(iso) {
+    try {
+      return new Date(iso).toLocaleDateString('es-ES', {
+        day: '2-digit', month: 'long', year: 'numeric'
+      });
+    } catch (e) { return iso; }
+  }
 
   // Levels are now driven by % (0-25 / 25-50 / 50-75 / 75+) and map to
   // red / orange / yellow / green bands per Alex's spec.
@@ -18058,11 +18078,47 @@
     if (!body) return;
     _selfAssessAnswers = {};
     document.getElementById('selfAssessProgressFill').style.width = '0%';
+
+    // Lockout: if the user completed one in the last LOCKOUT_DAYS,
+    // they can only view the past result, not start a new one.
+    if (latest) {
+      const days = Math.floor((Date.now() - new Date(latest.completed_at).getTime()) / 86400000);
+      if (days < SELF_ASSESS_LOCKOUT_DAYS) {
+        const remaining = SELF_ASSESS_LOCKOUT_DAYS - days;
+        const when = days === 0 ? 'hoy' : days === 1 ? 'ayer' : 'hace ' + days + ' días';
+        const pct = Math.round((latest.total / SELF_ASSESS_MAX_TOTAL) * 100);
+        const level = _selfAssessLevelPct(pct);
+        body.innerHTML =
+          '<div class="self-assess-eyebrow">✦ Auto-evaluación de vida</div>' +
+          '<div class="self-assess-title">Ya completaste tu evaluación</div>' +
+          '<div class="self-assess-intro">' +
+            'Completada ' + when + ' · <strong style="color:#fff;">' + pct + '%</strong> · ' + _esc(level.label) +
+            '<br><br>Para que la auto-evaluación tenga sentido como herramienta de progreso, ' +
+            'solo puedes rehacerla cada ' + SELF_ASSESS_LOCKOUT_DAYS + ' días.' +
+          '</div>' +
+          '<div class="self-assess-last is-overdue" style="margin-top:14px;">' +
+            '⏳ Próxima evaluación disponible en <strong>' + remaining + ' día' + (remaining === 1 ? '' : 's') + '</strong>' +
+          '</div>' +
+          '<div style="text-align:center;margin-top:22px;">' +
+            '<button type="button" class="self-assess-submit-btn" id="selfAssessViewLastBtn">Ver mi último resultado</button>' +
+          '</div>';
+        document.getElementById('selfAssessViewLastBtn').addEventListener('click', () => {
+          _renderSelfAssessResultsFromPayload({
+            scores: latest.scores,
+            total: latest.total,
+            completedAt: latest.completed_at,
+            isPast: true
+          });
+        });
+        return;
+      }
+    }
+
     let lastBlock = '';
     if (latest) {
       const days = Math.floor((Date.now() - new Date(latest.completed_at).getTime()) / 86400000);
       const overdue = days >= SELF_ASSESS_CADENCE_DAYS;
-      const when = days === 0 ? 'hoy' : days === 1 ? 'ayer' : 'hace ' + days + ' días';
+      const when = days === 1 ? 'ayer' : 'hace ' + days + ' días';
       const pct = Math.round((latest.total / SELF_ASSESS_MAX_TOTAL) * 100);
       lastBlock =
         '<div class="self-assess-last' + (overdue ? ' is-overdue' : '') + '">' +
@@ -18161,16 +18217,32 @@
   }
 
   function _renderSelfAssessResults() {
+    // Called right after the user finishes the questionnaire.
+    const { scores, total } = _computeSelfAssessScores();
+    _renderSelfAssessResultsFromPayload({
+      scores: scores,
+      total: total,
+      completedAt: new Date().toISOString(),
+      isPast: false
+    });
+  }
+
+  function _renderSelfAssessResultsFromPayload(p) {
     const body = document.getElementById('selfAssessBody');
     if (!body) return;
-    const { scores, total } = _computeSelfAssessScores();
+    const scores = p.scores || {};
+    const total = p.total || 0;
+    const completedAt = p.completedAt;
+    const isPast = !!p.isPast;
+
     document.getElementById('selfAssessProgressFill').style.width = '100%';
 
     const totalPct = Math.round((total / SELF_ASSESS_MAX_TOTAL) * 100);
     const totalLevel = _selfAssessLevelPct(totalPct);
+    const dateStr = completedAt ? _fmtFullDate(completedAt) : _fmtFullDate(new Date().toISOString());
 
     const areasHtml = SELF_ASSESS_AREAS.map(area => {
-      const score = scores[area.id];
+      const score = scores[area.id] || 0;
       const pct = Math.round((score / SELF_ASSESS_MAX_PER_AREA) * 100);
       const level = _selfAssessLevelPct(pct);
       return (
@@ -18187,9 +18259,17 @@
       );
     }).join('');
 
+    const saveBlock = isPast
+      ? '' // already saved
+      : '<div class="self-assess-submit">' +
+          '<button type="button" class="self-assess-submit-btn" id="selfAssessSaveBtn">Guardar resultado</button>' +
+          '<div class="self-assess-submit-note">No podrás rehacer la auto-evaluación hasta dentro de ' + SELF_ASSESS_LOCKOUT_DAYS + ' días.</div>' +
+        '</div>';
+
     body.innerHTML =
       '<div class="self-assess-result-card" id="selfAssessResultCard">' +
-        '<div class="self-assess-eyebrow">Tu auto-evaluación</div>' +
+        '<div class="self-assess-eyebrow">✦ Auto-evaluación de vida ✦</div>' +
+        '<div class="self-assess-result-date">' + _esc(dateStr) + '</div>' +
         '<div class="self-assess-result-total">' +
           '<span class="self-assess-result-total-num self-assess-total-' + totalLevel.key + '">' + totalPct + '<span class="self-assess-result-total-max">%</span></span>' +
           '<div class="self-assess-result-total-label">' + totalLevel.label + '</div>' +
@@ -18199,30 +18279,29 @@
       '<div class="self-assess-export-row">' +
         '<button type="button" class="self-assess-export-btn" id="selfAssessDownloadBtn">⬇ Descargar PNG</button>' +
       '</div>' +
-      '<div class="self-assess-submit">' +
-        '<button type="button" class="self-assess-submit-btn" id="selfAssessSaveBtn">Guardar resultado</button>' +
-        '<div class="self-assess-submit-note">Los datos quedan guardados para tu próxima evaluación en 3 meses.</div>' +
-      '</div>';
+      saveBlock;
 
-    document.getElementById('selfAssessSaveBtn').addEventListener('click', async () => {
-      const saveBtn = document.getElementById('selfAssessSaveBtn');
-      saveBtn.disabled = true;
-      saveBtn.textContent = 'Guardando…';
-      const r = await saveSelfAssessment({
-        answers: Object.assign({}, _selfAssessAnswers),
-        scores: scores,
-        total: total,
-        plan: null
+    if (!isPast) {
+      document.getElementById('selfAssessSaveBtn').addEventListener('click', async () => {
+        const saveBtn = document.getElementById('selfAssessSaveBtn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Guardando…';
+        const r = await saveSelfAssessment({
+          answers: Object.assign({}, _selfAssessAnswers),
+          scores: scores,
+          total: total,
+          plan: null
+        });
+        if (!r.ok) {
+          alert('Error guardando: ' + (r.error || 'desconocido') + '\n\n(Si dice que no encuentra la tabla, copia el SQL del chat y córrelo en Supabase.)');
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Guardar resultado';
+          return;
+        }
+        saveBtn.textContent = '✓ Guardado';
+        setTimeout(closeSelfAssessModal, 900);
       });
-      if (!r.ok) {
-        alert('Error guardando: ' + (r.error || 'desconocido'));
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Guardar resultado';
-        return;
-      }
-      saveBtn.textContent = '✓ Guardado';
-      setTimeout(closeSelfAssessModal, 900);
-    });
+    }
 
     document.getElementById('selfAssessDownloadBtn').addEventListener('click', _downloadSelfAssessPng);
   }
