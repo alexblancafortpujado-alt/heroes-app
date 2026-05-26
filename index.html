@@ -6503,6 +6503,50 @@
     margin-bottom: 10px;
     flex-wrap: wrap;
   }
+  /* Click-to-expand header (when wrapping a <button>) */
+  .admin-row-header.is-toggle {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+  }
+  .admin-row-header.is-toggle:hover .admin-row-name { color: #fff; }
+  .admin-row-caret {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    transform: rotate(0deg);
+    transition: transform 0.18s ease, color 0.15s ease;
+    width: 12px;
+    text-align: center;
+  }
+  .admin-row:not(.is-collapsed) .admin-row-caret {
+    transform: rotate(90deg);
+    color: var(--text-primary);
+  }
+  .admin-row-pct {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  /* Collapsed: hide details, tighten the row */
+  .admin-row.is-collapsed { padding: 12px 18px; }
+  .admin-row.is-collapsed .admin-row-header { margin-bottom: 0; }
+  .admin-row.is-collapsed .admin-row-details { display: none; }
+  .admin-row-details {
+    margin-top: 10px;
+  }
   .admin-row-name {
     font-size: 16px;
     font-weight: 800;
@@ -17987,16 +18031,29 @@
     body.innerHTML = '';
     for (const st of students) {
       const row = document.createElement('div');
-      row.className = 'admin-row' + (st.isMe ? ' is-me' : '');
+      row.className = 'admin-row is-collapsed' + (st.isMe ? ' is-me' : '');
 
-      const header = document.createElement('div');
-      header.className = 'admin-row-header';
+      const header = document.createElement('button');
+      header.type = 'button';
+      header.className = 'admin-row-header is-toggle';
+      header.setAttribute('aria-expanded', 'false');
+
+      const caret = document.createElement('span');
+      caret.className = 'admin-row-caret';
+      caret.textContent = '▸';
+      caret.setAttribute('aria-hidden', 'true');
+      header.appendChild(caret);
 
       const nameEl = document.createElement('span');
       nameEl.className = 'admin-row-name' + (st.displayName ? '' : ' is-unset');
       nameEl.textContent = st.displayName || 'Sin nombre';
       nameEl.title = st.userId;
       header.appendChild(nameEl);
+
+      const pctBadge = document.createElement('span');
+      pctBadge.className = 'admin-row-pct';
+      pctBadge.textContent = st.percentage + '%';
+      header.appendChild(pctBadge);
 
       const idEl = document.createElement('span');
       idEl.className = 'admin-row-id';
@@ -18017,6 +18074,9 @@
       header.appendChild(activity);
       row.appendChild(header);
 
+      const details = document.createElement('div');
+      details.className = 'admin-row-details';
+
       // Overall progress bar across every module
       const prog = document.createElement('div');
       prog.className = 'admin-progress';
@@ -18031,7 +18091,7 @@
       txt.textContent = st.completed + ' / ' + grandTotal + ' · ' + st.percentage + '%';
       prog.appendChild(bar);
       prog.appendChild(txt);
-      row.appendChild(prog);
+      details.appendChild(prog);
 
       // Per-module progress rows
       const mods = document.createElement('div');
@@ -18078,7 +18138,13 @@
 
         mods.appendChild(modRow);
       }
-      row.appendChild(mods);
+      details.appendChild(mods);
+      row.appendChild(details);
+
+      header.addEventListener('click', () => {
+        const collapsed = row.classList.toggle('is-collapsed');
+        header.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      });
 
       body.appendChild(row);
     }
