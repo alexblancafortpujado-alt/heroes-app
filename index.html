@@ -6622,6 +6622,95 @@
     .admin-chapters { gap: 4px; }
   }
 
+  /* Per-module progress rows inside each student card */
+  .admin-modules {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255,255,255,0.08);
+  }
+  .admin-module-row {
+    --mod-color: #9aa0aa;
+    display: grid;
+    grid-template-columns: 22px minmax(120px, 1.4fr) 2.4fr auto auto;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .admin-module-row.is-complete {
+    background: color-mix(in srgb, var(--mod-color) 10%, transparent);
+    border-color: color-mix(in srgb, var(--mod-color) 45%, transparent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--mod-color) 22%, transparent);
+  }
+  .admin-module-icon {
+    font-size: 14px;
+    text-align: center;
+    opacity: 0.9;
+  }
+  .admin-module-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .admin-module-row.is-complete .admin-module-name { color: var(--mod-color); }
+  .admin-module-bar {
+    height: 5px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .admin-module-fill {
+    height: 100%;
+    background: var(--mod-color);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--mod-color) 60%, transparent);
+    transition: width 0.4s ease;
+  }
+  .admin-module-count,
+  .admin-module-pct {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .admin-module-pct {
+    min-width: 38px;
+    text-align: right;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 640px) {
+    .admin-module-row {
+      grid-template-columns: 20px minmax(90px, 1fr) 1.8fr auto;
+      gap: 6px;
+      padding: 5px 8px;
+    }
+    .admin-module-row .admin-module-count { display: none; }
+    .admin-module-name { font-size: 11px; }
+  }
+
+  /* Godmode "Desbloquear todo" button */
+  .admin-reset-boss-btn.is-godmode {
+    background: linear-gradient(180deg, #B89BE9, #6b4ea8);
+    border-color: rgba(180,140,240,0.6);
+    color: #fff;
+    box-shadow: 0 0 14px rgba(170,120,255,0.35);
+  }
+  .admin-reset-boss-btn.is-godmode:hover {
+    background: linear-gradient(180deg, #c9adf0, #7b5cb8);
+    filter: brightness(1.06);
+  }
+
   /* Auth gate (Clerk) */
   body.auth-pending > *:not(.auth-gate):not(#authGate) {
     visibility: hidden;
@@ -8125,6 +8214,7 @@
         <button class="admin-reset-boss-btn" id="adminResetBossBtn" type="button" title="Reset your Boss Fight state (lets you fight again)">⚔ Reset boss</button>
         <button class="admin-reset-boss-btn" id="adminResetRankBtn" type="button" title="Reset your rank (boss state + forced rank) to start from zero">⭐ Reset rango</button>
         <button class="admin-reset-boss-btn" id="adminCompleteAllBtn" type="button" title="Solo admin: marca todas las checklists como completadas para testing">✓ Completar todo</button>
+        <button class="admin-reset-boss-btn is-godmode" id="adminUnlockAllBtn" type="button" title="Solo admin: completa checklists + mata todos los bosses + rango máximo (Superhéroe)">🚀 Desbloquear todo</button>
         <button class="admin-refresh-btn" id="adminRefreshBtn" type="button" title="Refresh">⟳</button>
       </div>
     </div>
@@ -17796,6 +17886,41 @@
     return uid.slice(0, 8) + '…' + uid.slice(-6);
   }
 
+  // Per-module totals: { moduleId: { total, chapterTotals: [n, n, ...] } }
+  function adminComputeAllModuleTotals() {
+    const out = {};
+    for (const m of SKILLTREE_MODULES) {
+      if (!m.chapters || m.chapters.length === 0) {
+        out[m.id] = { total: 0, chapterTotals: [] };
+        continue;
+      }
+      const chapterTotals = m.chapters.map(ch =>
+        ch.subgroups.reduce((s, sg) => s + sg.tasks.length, 0)
+      );
+      out[m.id] = {
+        total: chapterTotals.reduce((s, n) => s + n, 0),
+        chapterTotals
+      };
+    }
+    return out;
+  }
+
+  // Per-student per-module counts: { moduleId: completed }
+  function adminComputeAllModuleCounts(stateValue) {
+    const out = {};
+    for (const m of SKILLTREE_MODULES) out[m.id] = 0;
+    if (!stateValue || typeof stateValue !== 'object') return out;
+    for (const key in stateValue) {
+      if (stateValue[key] !== true) continue;
+      // key shape: '<moduleId>/c{idx}/g{idx}/t{idx}'
+      const slash = key.indexOf('/');
+      if (slash <= 0) continue;
+      const modId = key.slice(0, slash);
+      if (out.hasOwnProperty(modId)) out[modId]++;
+    }
+    return out;
+  }
+
   async function loadAdminData() {
     const body = document.getElementById('adminBody');
     const countEl = document.getElementById('adminCount');
@@ -17808,9 +17933,8 @@
     }
     refreshBtn && refreshBtn.classList.add('is-loading');
 
-    const moduleId = SKILLTREE_MODULES[0].id;
-    const chapterTotals = adminComputeChapterTotals(moduleId);
-    const moduleTotal = chapterTotals.reduce((s, n) => s + n, 0);
+    const allTotals = adminComputeAllModuleTotals();
+    const grandTotal = Object.values(allTotals).reduce((s, m) => s + m.total, 0);
 
     try {
       const [stateRes, namesRes] = await Promise.all([
@@ -17828,14 +17952,14 @@
       const myId = (window.Clerk && window.Clerk.user) ? window.Clerk.user.id : null;
       const students = (stateRes.data || []).map(row => {
         const v = row.value || {};
-        const completed = Object.values(v).filter(x => x === true).length;
-        const perChapter = adminComputeChapterCounts(v, moduleId);
+        const perModule = adminComputeAllModuleCounts(v);
+        const completed = Object.values(perModule).reduce((s, n) => s + n, 0);
         return {
           userId: row.user_id,
           displayName: namesByUser[row.user_id] || null,
           completed,
-          percentage: moduleTotal > 0 ? Math.round((completed / moduleTotal) * 100) : 0,
-          perChapter,
+          percentage: grandTotal > 0 ? Math.round((completed / grandTotal) * 100) : 0,
+          perModule,
           updatedAt: row.updated_at,
           isMe: row.user_id === myId
         };
@@ -17843,7 +17967,7 @@
 
       countEl.textContent = students.length + ' student' + (students.length === 1 ? '' : 's');
       refreshTimeEl.textContent = 'updated ' + adminRelativeTime(new Date().toISOString());
-      renderAdminTable(students, moduleId, chapterTotals, moduleTotal);
+      renderAdminTable(students, allTotals, grandTotal);
     } catch (e) {
       console.error('[admin] load failed', e);
       body.innerHTML = '<div class="admin-error">Failed to load: ' + (e.message || 'unknown error') +
@@ -17853,14 +17977,13 @@
     }
   }
 
-  function renderAdminTable(students, moduleId, chapterTotals, moduleTotal) {
+  function renderAdminTable(students, allTotals, grandTotal) {
     const body = document.getElementById('adminBody');
     if (!body) return;
     if (students.length === 0) {
       body.innerHTML = '<div class="admin-empty">No student activity yet.</div>';
       return;
     }
-    const module = SKILLTREE_MODULES.find(m => m.id === moduleId);
     body.innerHTML = '';
     for (const st of students) {
       const row = document.createElement('div');
@@ -17894,6 +18017,7 @@
       header.appendChild(activity);
       row.appendChild(header);
 
+      // Overall progress bar across every module
       const prog = document.createElement('div');
       prog.className = 'admin-progress';
       const bar = document.createElement('div');
@@ -17904,38 +18028,57 @@
       bar.appendChild(fill);
       const txt = document.createElement('div');
       txt.className = 'admin-progress-text';
-      txt.textContent = st.completed + ' / ' + moduleTotal + ' · ' + st.percentage + '%';
+      txt.textContent = st.completed + ' / ' + grandTotal + ' · ' + st.percentage + '%';
       prog.appendChild(bar);
       prog.appendChild(txt);
       row.appendChild(prog);
 
-      const chaps = document.createElement('div');
-      chaps.className = 'admin-chapters';
-      module.chapters.forEach((ch, ci) => {
-        const chip = document.createElement('div');
-        chip.className = 'admin-chip';
-        const done = st.perChapter[ci] || 0;
-        const total = chapterTotals[ci];
-        if (total > 0 && done === total) chip.classList.add('is-complete');
-        chip.style.setProperty('--ch-color', ch.color);
-        const name = document.createElement('div');
-        name.className = 'admin-chip-name';
-        name.textContent = ch.name;
-        const cbar = document.createElement('div');
-        cbar.className = 'admin-chip-bar';
-        const cfill = document.createElement('div');
-        cfill.className = 'admin-chip-fill';
-        cfill.style.width = (total > 0 ? (done / total) * 100 : 0) + '%';
-        cbar.appendChild(cfill);
-        const cnt = document.createElement('div');
-        cnt.className = 'admin-chip-count';
-        cnt.textContent = done + ' / ' + total;
-        chip.appendChild(name);
-        chip.appendChild(cbar);
-        chip.appendChild(cnt);
-        chaps.appendChild(chip);
-      });
-      row.appendChild(chaps);
+      // Per-module progress rows
+      const mods = document.createElement('div');
+      mods.className = 'admin-modules';
+      for (const m of SKILLTREE_MODULES) {
+        const totals = allTotals[m.id] || { total: 0 };
+        if (totals.total === 0) continue;
+        const done = st.perModule[m.id] || 0;
+        const pct = totals.total > 0 ? Math.round((done / totals.total) * 100) : 0;
+        const complete = done === totals.total;
+
+        const modRow = document.createElement('div');
+        modRow.className = 'admin-module-row' + (complete ? ' is-complete' : '');
+        const firstColor = (m.chapters && m.chapters[0] && m.chapters[0].color) || '#9aa0aa';
+        modRow.style.setProperty('--mod-color', firstColor);
+
+        const ico = document.createElement('span');
+        ico.className = 'admin-module-icon';
+        ico.textContent = m.icon || '·';
+        modRow.appendChild(ico);
+
+        const nm = document.createElement('span');
+        nm.className = 'admin-module-name';
+        nm.textContent = m.name;
+        modRow.appendChild(nm);
+
+        const mbar = document.createElement('div');
+        mbar.className = 'admin-module-bar';
+        const mfill = document.createElement('div');
+        mfill.className = 'admin-module-fill';
+        mfill.style.width = pct + '%';
+        mbar.appendChild(mfill);
+        modRow.appendChild(mbar);
+
+        const cnt = document.createElement('span');
+        cnt.className = 'admin-module-count';
+        cnt.textContent = done + ' / ' + totals.total;
+        modRow.appendChild(cnt);
+
+        const pctEl = document.createElement('span');
+        pctEl.className = 'admin-module-pct';
+        pctEl.textContent = pct + '%';
+        modRow.appendChild(pctEl);
+
+        mods.appendChild(modRow);
+      }
+      row.appendChild(mods);
 
       body.appendChild(row);
     }
@@ -18010,6 +18153,54 @@
         storeSet(ST_KEY, state);
         try { renderSkilltree(); } catch (e) {}
         _flashAdminBtn(completeBtn, '✓ ' + count);
+      });
+    }
+
+    const unlockAllBtn = document.getElementById('adminUnlockAllBtn');
+    if (unlockAllBtn && !unlockAllBtn.dataset.wired) {
+      unlockAllBtn.dataset.wired = '1';
+      unlockAllBtn.addEventListener('click', () => {
+        if (!confirm('🚀 ¿DESBLOQUEAR TODO?\n\nVas a:\n• Completar todas las checklists\n• Matar a todos los bosses (con trofeo)\n• Subir al rango máximo (Superhéroe)\n\nSolo para testing.')) return;
+
+        // 1) Mark every checklist task as done
+        const state = getSkilltreeState() || {};
+        let taskCount = 0;
+        for (const mod of SKILLTREE_MODULES) {
+          if (!mod.chapters) continue;
+          for (let chIdx = 0; chIdx < mod.chapters.length; chIdx++) {
+            const ch = mod.chapters[chIdx];
+            for (let sgIdx = 0; sgIdx < ch.subgroups.length; sgIdx++) {
+              const sg = ch.subgroups[sgIdx];
+              for (let tIdx = 0; tIdx < sg.tasks.length; tIdx++) {
+                state[stTaskId(mod.id, chIdx, sgIdx, tIdx)] = true;
+                taskCount++;
+              }
+            }
+          }
+        }
+        storeSet(ST_KEY, state);
+
+        // 2) Mark every boss exam as passed (this is what computeUserRank reads)
+        const now = Date.now();
+        let bossCount = 0;
+        Object.keys(MODULE_EXAMS).forEach(id => {
+          setModuleExamState(id, { attempts: [], passed: true, passedAt: now });
+          bossCount++;
+        });
+
+        // 3) Force rank to Superhéroe — top of the ladder
+        if (typeof setForcedRank === 'function') setForcedRank('superheroe');
+
+        // 4) Re-render every dependent UI
+        _examAnswers = null;
+        _examResult = null;
+        _stView = 'checklist';
+        try { renderSkilltree(); } catch (e) {}
+        try { if (typeof renderRankWidget === 'function') renderRankWidget(); } catch (e) {}
+        try { if (typeof applyRankAvatarFrame === 'function') applyRankAvatarFrame(); } catch (e) {}
+        try { if (typeof renderRankDebugRow === 'function') renderRankDebugRow(); } catch (e) {}
+
+        _flashAdminBtn(unlockAllBtn, '🚀 ' + bossCount + ' bosses · ' + taskCount + ' tareas');
       });
     }
   }
