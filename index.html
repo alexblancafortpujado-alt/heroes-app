@@ -7953,6 +7953,7 @@
     <div class="auth-gate-title">Heroes App</div>
     <div class="auth-gate-sub">Sign in to access your dashboard.</div>
     <div id="clerkSignIn"></div>
+    <div id="clerkSignUp"></div>
   </div>
 </div>
 
@@ -20232,6 +20233,7 @@
   };
 
   let _signInMounted = false;
+  let _signUpMounted = false;
   let _userButtonMounted = false;
   let _lastClerkUserId = null;
 
@@ -20257,7 +20259,7 @@
         // Clerk falls back to its hosted accounts.dev welcome page.
         Clerk.mountUserButton(ubEl, {
           appearance: CLERK_APPEARANCE,
-          signInUrl: 'https://accounts.heroes.academy/sign-in',
+          signInUrl: window.location.origin + '/',
           userProfileUrl: 'https://accounts.heroes.academy/user',
           afterSignOutUrl: window.location.origin + '/',
           afterMultiSessionSingleSignOutUrl: window.location.origin + '/',
@@ -20285,19 +20287,33 @@
       bootApp();
     } else {
       document.body.classList.add('auth-pending');
+      // Route between SignIn and SignUp using ?view=sign-up so the
+      // user never leaves app.heroes.academy and keeps the brand theme.
+      const wantSignUp = new URLSearchParams(window.location.search).get('view') === 'sign-up';
       const siEl = document.getElementById('clerkSignIn');
-      if (siEl && !_signInMounted) {
-        // Force Clerk to redirect back to this app's origin after both
-        // sign-in and sign-up — otherwise it falls back to its dev
-        // instance default-redirect page on accounts.dev.
-        Clerk.mountSignIn(siEl, {
-          appearance: CLERK_APPEARANCE,
-          signInForceRedirectUrl: window.location.origin + '/',
-          signUpForceRedirectUrl: window.location.origin + '/',
-          signInFallbackRedirectUrl: window.location.origin + '/',
-          signUpFallbackRedirectUrl: window.location.origin + '/'
-        });
-        _signInMounted = true;
+      const suEl = document.getElementById('clerkSignUp');
+
+      const commonRedirects = {
+        signInForceRedirectUrl: window.location.origin + '/',
+        signUpForceRedirectUrl: window.location.origin + '/',
+        signInFallbackRedirectUrl: window.location.origin + '/',
+        signUpFallbackRedirectUrl: window.location.origin + '/'
+      };
+
+      if (wantSignUp) {
+        if (siEl) siEl.style.display = 'none';
+        if (suEl && !_signUpMounted) {
+          Clerk.mountSignUp(suEl, Object.assign({ appearance: CLERK_APPEARANCE }, commonRedirects));
+          _signUpMounted = true;
+        }
+        if (suEl) suEl.style.display = '';
+      } else {
+        if (suEl) suEl.style.display = 'none';
+        if (siEl && !_signInMounted) {
+          Clerk.mountSignIn(siEl, Object.assign({ appearance: CLERK_APPEARANCE }, commonRedirects));
+          _signInMounted = true;
+        }
+        if (siEl) siEl.style.display = '';
       }
     }
   }
@@ -20316,14 +20332,13 @@
       // Global redirect defaults — apply to every Clerk-driven flow,
       // including the hosted account portal pages that fire on "Add
       // account" / "Switch session" from the UserButton.
-      // Sign-in / sign-up live on Clerk's hosted Account Portal
-      // (accounts.heroes.academy). Setting these to "/" used to trap
-      // the "Sign up" link in a redirect loop because the app doesn't
-      // render a <SignUp/>. The *ForceRedirectUrl values still bring
-      // the user back to the app after the flow completes.
+      // Sign-in and sign-up render inline on this app via the
+      // ?view=sign-up query param (see reflectAuthState). Pointing the
+      // URLs back here keeps the user on app.heroes.academy with the
+      // dark/gold theme instead of jumping to the white Account Portal.
       await Clerk.load({
-        signInUrl: 'https://accounts.heroes.academy/sign-in',
-        signUpUrl: 'https://accounts.heroes.academy/sign-up',
+        signInUrl: window.location.origin + '/',
+        signUpUrl: window.location.origin + '/?view=sign-up',
         signInForceRedirectUrl: window.location.origin + '/',
         signUpForceRedirectUrl: window.location.origin + '/',
         signInFallbackRedirectUrl: window.location.origin + '/',
