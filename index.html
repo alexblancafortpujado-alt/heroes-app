@@ -20257,8 +20257,8 @@
         // Clerk falls back to its hosted accounts.dev welcome page.
         Clerk.mountUserButton(ubEl, {
           appearance: CLERK_APPEARANCE,
-          signInUrl: window.location.origin + '/',
-          userProfileUrl: window.location.origin + '/',
+          signInUrl: 'https://accounts.heroes.academy/sign-in',
+          userProfileUrl: 'https://accounts.heroes.academy/user',
           afterSignOutUrl: window.location.origin + '/',
           afterMultiSessionSingleSignOutUrl: window.location.origin + '/',
           afterSwitchSessionUrl: window.location.origin + '/'
@@ -20316,9 +20316,14 @@
       // Global redirect defaults — apply to every Clerk-driven flow,
       // including the hosted account portal pages that fire on "Add
       // account" / "Switch session" from the UserButton.
+      // Sign-in / sign-up live on Clerk's hosted Account Portal
+      // (accounts.heroes.academy). Setting these to "/" used to trap
+      // the "Sign up" link in a redirect loop because the app doesn't
+      // render a <SignUp/>. The *ForceRedirectUrl values still bring
+      // the user back to the app after the flow completes.
       await Clerk.load({
-        signInUrl: window.location.origin + '/',
-        signUpUrl: window.location.origin + '/',
+        signInUrl: 'https://accounts.heroes.academy/sign-in',
+        signUpUrl: 'https://accounts.heroes.academy/sign-up',
         signInForceRedirectUrl: window.location.origin + '/',
         signUpForceRedirectUrl: window.location.origin + '/',
         signInFallbackRedirectUrl: window.location.origin + '/',
